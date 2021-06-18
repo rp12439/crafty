@@ -1,0 +1,6 @@
+## Title: Crafty
+## APIVersion: 100025
+## SavedVariables: CraftySavedVariables
+
+Crafty.xml
+Crafty.lua
