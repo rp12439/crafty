@@ -16,6 +16,8 @@ Crafty.activewatchList = Crafty.watchList1
 Crafty.activewatchListID = 1
 Crafty.masterHeight = 600
 Crafty.masterWidth = 300
+Crafty.autoHeightWL = 600
+Crafty.autoHeightWLOpt = true
 Crafty.masterAlpha = 0
 
 function Crafty.OnAddOnLoaded(event, addonName)
@@ -65,6 +67,9 @@ function Crafty:Initialize()
   end
   if Crafty.savedVariables.MasterHeight ~= nil then
     Crafty.masterHeight = Crafty.savedVariables.MasterHeight
+  end
+  if Crafty.savedVariables.AutoHeightWLOpt ~= nil then
+    Crafty.autoHeightWLOpt = Crafty.savedVariables.AutoHeightWLOpt
   end
    
   Crafty:RestorePosition()
@@ -117,7 +122,6 @@ end
 
 function Crafty.OnIndicatorMoveStop()
   Crafty.DB("Crafty: OnIndicatorMoveStop")
-  Crafty.DB(Crafty.ankerSL)
 
   Crafty.savedVariables.leftSL = CraftyStockList:GetLeft()
   Crafty.savedVariables.topSL = CraftyStockList:GetTop()
@@ -257,6 +261,7 @@ function Crafty.PopulateWL()
       cinfo = watchList[i].cinfo
     }
   end
+  Crafty.SetHeightWL()
   return stock
 end
 
@@ -325,6 +330,35 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
   
   rowControl.name:SetText(data.link)
   rowControl.amount:SetText(data.amount)  
+end
+
+function Crafty.CalculateHeightWL()
+  Crafty.DB("Crafty: CalculateHeightWL")
+  
+  local watchList = Crafty.activewatchList
+  local watchlistItems = table.getn(watchList)
+  
+  Crafty.autoHeightWL = 65+watchlistItems*25
+end
+
+function Crafty.SetHeightWL()
+  if Crafty.autoHeightWLOpt then
+    Crafty.DB("Crafty: SetHeightWL")
+    Crafty.CalculateHeightWL()
+    local width = Crafty.masterWidth
+    local height = Crafty.autoHeightWL
+    
+    CraftyWatchList:SetWidth(width)
+    CraftyWatchList:SetHeight(height)
+  end
+end
+
+function Crafty.CheckAutoHeightWLOpt()
+  if Crafty.autoHeightWLOpt then
+    Crafty.SetHeightWL()
+  else
+    Crafty.SetMasterHeight()
+  end
 end
 
 function Crafty.InvChange()
@@ -528,6 +562,8 @@ function Crafty.AddItemToWatchList(control)
         amount = control.data.amount,
         cinfo = control.data.cinfo
       }
+      Crafty.undoRemove = nil
+      Crafty.CheckUndo()
   end
   
   Crafty.DB("Crafty: Added "..name.." at #"..table.getn(watchList))
@@ -563,10 +599,12 @@ end
 
 function Crafty.UndoRemove()
   Crafty.DB("Crafty: UndoRemove")
-  local found = Crafty.CheckItemInWatchList(control.name)
+  local found = Crafty.CheckItemInWatchList(Crafty.undoRemove.name)
   if Crafty.undoRemove ~= nil then
     if not found then
       table.insert(Crafty.activewatchList, Crafty.undoRemove)
+    else
+      return
     end
   end
   Crafty.undoRemove = nil
@@ -575,6 +613,7 @@ function Crafty.UndoRemove()
 end
 
 function Crafty.CheckItemInWatchList(control)
+  Crafty.DB("Crafty: CheckItemInWatchList")
   local found = false
   local watchList = Crafty.activewatchList
   for i=1,table.getn(watchList) do

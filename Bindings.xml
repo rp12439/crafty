@@ -1,0 +1,12 @@
+<Bindings>
+	<Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
+		<Category name="Crafty">
+			<Action name="CRAFTY_STOCKLIST">
+				<Down>Crafty.showWL =  (not Crafty.showWL) Crafty.Check()</Down>
+			</Action>
+      <Action name="CRAFTY_STOCKLIST2">
+				<Down>Crafty.Refresh()</Down>
+			</Action>
+		</Category>
+	</Layer>
+</Bindings>

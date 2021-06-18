@@ -34,7 +34,7 @@ function Crafty.ControlSettings()
     [3] = {
         type = "slider",
         name = "Background transparency",
-        tooltip = "Set background transparency",
+        tooltip = "Set overall background transparency",
         min = 0,
         max = 1,
         step = 0.1, --(optional)
@@ -45,8 +45,8 @@ function Crafty.ControlSettings()
     },
     [4] = {
         type = "slider",
-        name = "Window Height",
-        tooltip = "Set window height",
+        name = "Windowheight",
+        tooltip = "Set overall window height",
         min = 260,
         max = 1000,
         step = 10, --(optional)
@@ -55,6 +55,14 @@ function Crafty.ControlSettings()
         width = "full", --or "full" (optional)
         default = 600,  --(optional)
     },
+    [5] = {
+          type = "checkbox",
+          name = "Autoheight watchlist",
+          tooltip = "Automatically set the height of the watchlist",
+          getFunc = function() return Crafty.autoHeightWLOpt end,
+          setFunc = function(value) Crafty.autoHeightWLOpt = value Crafty.CheckAutoHeightWLOpt() end,
+    }, 
+    
   }
   
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST", "Show/Hide Stocklist")

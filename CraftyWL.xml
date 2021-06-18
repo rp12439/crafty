@@ -21,11 +21,11 @@
 					</OnClicked>
 				</Button>
 				<Button name="$(parent)ButtonUndo" inherits="ZO_ButtonBehaviorClickSound" hidden="true">
-					<Dimensions x="20" y="20" />
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonClose" relativePoint="TOPRIGHT" offsetX="0" offsetY="20" />
-					<Textures normal="esoui/art/buttons/decline_up.dds"
-						pressed="esoui/art/buttons/decline_down.dds"
-						mouseOver="esoui/art/buttons/decline_over.dds"/>
+					<Dimensions x="25" y="25" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="27" />
+					<Textures normal="esoui\art\vendor\vendor_tabicon_buyback_up.dds"
+						pressed="esoui\art\vendor\vendor_tabicon_buyback_down.dds"
+						mouseOver="esoui\art\vendor\vendor_tabicon_buyback_over.dds"/>
 					<OnClicked>
 						Crafty.UndoRemove()
 					</OnClicked>
