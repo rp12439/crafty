@@ -1,6 +1,7 @@
 ## Title: Crafty
 ## APIVersion: 100025
 ## SavedVariables: CraftySavedVariables
+## Update API Version!
 
 Crafty.xml
 Crafty.lua
