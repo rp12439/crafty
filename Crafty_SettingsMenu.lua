@@ -1,7 +1,10 @@
+
+-- show settings menue for xml button
 function Crafty.ShowSettings()
   LibAddonMenu2:OpenToPanel(CraftySettings)
 end
 
+-- build settings menue with libaddonmenu2
 function Crafty.ControlSettings()
   Crafty.DB("Crafty: ControlSettings")
   local panelData = {
@@ -65,9 +68,11 @@ function Crafty.ControlSettings()
     
   }
   
+    -- Create Keybindings 
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST", "Show/Hide Stocklist")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST2", "Reload Stockamounts") 
     
+    -- Register the settingmenu
     LibAddonMenu2:RegisterAddonPanel("CraftySettings", panelData) 
     LibAddonMenu2:RegisterOptionControls("CraftySettings", optionsTable)
     

@@ -1,3 +1,8 @@
+
+----------------------------------------------------------------------------------------
+-- Global vars and constants
+----------------------------------------------------------------------------------------
+
 Crafty = {}
 Crafty.name = "Crafty"
 Crafty.showSL = true
@@ -20,13 +25,19 @@ Crafty.autoHeightWL = 600
 Crafty.autoHeightWLOpt = true
 Crafty.masterAlpha = 0
 
+----------------------------------------------------------------------------------------
+-- Init functions
+----------------------------------------------------------------------------------------
+
+-- initialize when addon was loaded
 function Crafty.OnAddOnLoaded(event, addonName)
   if addonName == Crafty.name then
     Crafty.DB("Crafty: OnAddOnLoaded")
     Crafty:Initialize()
   end
 end
- 
+
+-- initialize saved vars, positions, listdata and settings
 function Crafty:Initialize()
   Crafty.DB("Crafty: Initialize")
   
@@ -93,6 +104,11 @@ function Crafty:Initialize()
   Crafty.SetActiveWatchList(Crafty.activewatchListID)
 end
 
+----------------------------------------------------------------------------------------
+-- Modifiy the interface position / height
+----------------------------------------------------------------------------------------
+
+-- set overall interfaceheight (from settings)
 function Crafty.SetMasterHeight()
   Crafty.DB("Crafty: SetMasterHeight")
   
@@ -110,6 +126,7 @@ function Crafty.SetMasterHeight()
   Crafty.Refresh()
 end
 
+-- set overall backgroundalpha (from settings)
 function Crafty.SetMasterAlpha()
   Crafty.DB("Crafty: SetMasterAlpha")
   
@@ -120,6 +137,7 @@ function Crafty.SetMasterAlpha()
   Crafty.savedVariables.MasterAlpha = Crafty.masterAlpha
 end
 
+-- save position data after moving the interface (from xml)
 function Crafty.OnIndicatorMoveStop()
   Crafty.DB("Crafty: OnIndicatorMoveStop")
 
@@ -134,6 +152,7 @@ function Crafty.OnIndicatorMoveStop()
   end
 end
 
+-- set position for interface from saved vars and check for anchor stocklist
 function Crafty:RestorePosition()
   Crafty.DB("Crafty: RestorePosition")
   if not Crafty.ankerSL then
@@ -151,6 +170,43 @@ function Crafty:RestorePosition()
   CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
 end
 
+-- calculate the autoheight for the watchlist, sets the global var
+function Crafty.CalculateHeightWL()
+  Crafty.DB("Crafty: CalculateHeightWL")
+  
+  local watchList = Crafty.activewatchList
+  local watchlistItems = table.getn(watchList)
+  
+  Crafty.autoHeightWL = 65+watchlistItems*25
+end
+
+-- sets the autoheight value to the xml element watchlist
+function Crafty.SetHeightWL()
+  if Crafty.autoHeightWLOpt then
+    Crafty.DB("Crafty: SetHeightWL")
+    Crafty.CalculateHeightWL()
+    local width = Crafty.masterWidth
+    local height = Crafty.autoHeightWL
+    
+    CraftyWatchList:SetWidth(width)
+    CraftyWatchList:SetHeight(height)
+  end
+end
+
+-- refreshes the autoheight or sets the masterheight for the watchlist (from settings)
+function Crafty.CheckAutoHeightWLOpt()
+  if Crafty.autoHeightWLOpt then
+    Crafty.SetHeightWL()
+  else
+    Crafty.SetMasterHeight()
+  end
+end
+
+----------------------------------------------------------------------------------------
+-- Listdatahandling
+----------------------------------------------------------------------------------------
+
+-- create datatype for scrollist stocklist
 function Crafty.CreateScrollListDataTypeSL()
   Crafty.DB("Crafty: CreateScrollListDataTypeSL")
   local control = CraftyStockListList
@@ -168,6 +224,7 @@ function Crafty.CreateScrollListDataTypeSL()
   --ZO_ScrollList_EnableSelection(control, selectTemplate, selectCallback)
 end
 
+-- create datatype for scrollist watchlist
 function Crafty.CreateScrollListDataTypeWL()
   Crafty.DB("Crafty: CreateScrollListDataTypeWL")
   local control = CraftyWatchListList
@@ -185,6 +242,7 @@ function Crafty.CreateScrollListDataTypeWL()
   --ZO_ScrollList_EnableSelection(control, selectTemplate, selectCallback)
 end
 
+-- set the active watchlist (from xml)
 function Crafty.SetActiveWatchList(arg)
   Crafty.DB("Crafty: SetActiveWatchList "..arg)
   local mydefcolor = ZO_ColorDef:New("CFDCBD")
@@ -218,6 +276,7 @@ function Crafty.SetActiveWatchList(arg)
   Crafty.Refresh()
 end
 
+-- set the global var for material type for the typelist
 function Crafty.SetTS(arg)
   Crafty.DB("Crafty: SetTS")
   local myTS = arg
@@ -225,6 +284,7 @@ function Crafty.SetTS(arg)
   Crafty.Refresh()
 end
 
+-- fill the stocklist with data, uses the global var from materialtype
 function Crafty.PopulateSL()
   Crafty.DB("Crafty: PopulateSL")
   local type = Crafty.filterTypeSL
@@ -247,6 +307,8 @@ function Crafty.PopulateSL()
   return stock
 end
 
+-- fill the watchlist with data, uses active watchlist and also calls
+-- refreshes the amounts, calling the autoheight value
 function Crafty.PopulateWL()
   local watchList = Crafty.activewatchList
   Crafty.DB("Crafty: PopulateWL "..table.getn(watchList))
@@ -265,6 +327,7 @@ function Crafty.PopulateWL()
   return stock
 end
 
+-- sorts the listdata, saves the data and commits the data to the scrollinglist stocklist
 function Crafty.UpdateScrollListSL(control, data, rowType)
   Crafty.DB("Crafty: UpdateScrollListSL "..table.getn(data))
   
@@ -292,6 +355,7 @@ function Crafty.UpdateScrollListSL(control, data, rowType)
   end
 end
 
+-- sorts the listdata, saves the data and commits the data to the scrollinglist watchlist
 function Crafty.UpdateScrollListWL(control, data, rowType)
   Crafty.DB("Crafty: UpdateScrollListWL "..table.getn(data))
 
@@ -321,6 +385,7 @@ function Crafty.UpdateScrollListWL(control, data, rowType)
   end
 end
 
+-- fills the xml rows with the data from the scrolllists
 function Crafty.LayoutRow(rowControl, data, scrollList)
   --d("Crafty: LayoutRow")
 
@@ -332,40 +397,17 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
   rowControl.amount:SetText(data.amount)  
 end
 
-function Crafty.CalculateHeightWL()
-  Crafty.DB("Crafty: CalculateHeightWL")
-  
-  local watchList = Crafty.activewatchList
-  local watchlistItems = table.getn(watchList)
-  
-  Crafty.autoHeightWL = 65+watchlistItems*25
-end
+----------------------------------------------------------------------------------------
+-- Listdatahandling dataupdates
+----------------------------------------------------------------------------------------
 
-function Crafty.SetHeightWL()
-  if Crafty.autoHeightWLOpt then
-    Crafty.DB("Crafty: SetHeightWL")
-    Crafty.CalculateHeightWL()
-    local width = Crafty.masterWidth
-    local height = Crafty.autoHeightWL
-    
-    CraftyWatchList:SetWidth(width)
-    CraftyWatchList:SetHeight(height)
-  end
-end
-
-function Crafty.CheckAutoHeightWLOpt()
-  if Crafty.autoHeightWLOpt then
-    Crafty.SetHeightWL()
-  else
-    Crafty.SetMasterHeight()
-  end
-end
-
+-- eventmanager target for several inventory change events
 function Crafty.InvChange()
   Crafty.DB("Crafty: InvChange")
   Crafty.Refresh()
 end
 
+-- refreshs the listdata
 function Crafty.Refresh()
   Crafty.DB("Crafty: Refresh")
 
@@ -378,6 +420,7 @@ function Crafty.Refresh()
   Crafty.UpdateScrollListWL(CraftyWatchListList, stockWL, typeIdWL)
 end
 
+-- refreshs the listdata and removes the savedvar for the undoitem (from xml)
 function Crafty.FullRefresh()
   Crafty.DB("Crafty: FullRefresh")
 
@@ -393,6 +436,7 @@ function Crafty.FullRefresh()
   Crafty.UpdateScrollListWL(CraftyWatchListList, stockWL, typeIdWL)
 end
 
+-- refreshs the watchlist amountdata
 function Crafty.RefreshWLAmounts()
   Crafty.DB("Crafty: RefreshWLAmounts")
   if table.getn(Crafty.activewatchList) ~= 0 then
@@ -407,9 +451,13 @@ function Crafty.RefreshWLAmounts()
       end
     end
   end
-
 end
 
+----------------------------------------------------------------------------------------
+-- Functions to call from events, xml (buttons) or settings
+----------------------------------------------------------------------------------------
+
+-- close or hide the interface (from settings)
 function Crafty.Check()
   Crafty.DB("Crafty: Check")
   if Crafty.showSL == true then
@@ -424,18 +472,21 @@ function Crafty.Check()
   end
 end
 
+-- open interface on vendor if set (called from eventmanager)
 function Crafty.CheckVendorOpen()
   if Crafty.vendorOpen then
     Crafty.OpenWL()
   end
 end
 
+-- close interface on vendor if set (called from eventmanager)
 function Crafty.CheckVendorClose()
   if Crafty.vendorOpen then
     Crafty.CloseWL()
   end
 end
 
+-- show or hide stocklist (from xml)
 function Crafty.ToggleSL()
   Crafty.DB("Crafty: ToggleSL")
   if Crafty.showSL then
@@ -445,12 +496,14 @@ function Crafty.ToggleSL()
   end
 end
 
+-- anker the stocklist to watchlist
 function Crafty.AnkerSL()
   Crafty.DB("Crafty: AnkerSL")
   CraftyStockList:ClearAnchors()
   CraftyStockList:SetAnchor(TOPRIGHT, CraftyWatchList, TOPLEFT, -4 ,0)
 end
 
+-- set anker on or off, also sets the texture
 function Crafty.ToggleAnkerSL()
   Crafty.DB("Crafty: ToggleAnkerSL")
   if Crafty.ankerSL then
@@ -473,27 +526,31 @@ function Crafty.ToggleAnkerSL()
   end
 end
 
-function Crafty.ToggleTS()
-  Crafty.DB("Crafty: ToggleTS")
-  if Crafty.showTS then
-    Crafty.CloseTS()
-  else
-    Crafty.OpenTS()
-  end
-end
+---- show or hide the typewindow (depricated)
+--function Crafty.ToggleTS()
+--  Crafty.DB("Crafty: ToggleTS")
+--  if Crafty.showTS then
+--    Crafty.CloseTS()
+--  else
+--    Crafty.OpenTS()
+--  end
+--end
 
+-- hide the typewindow
 function Crafty.CloseTS()
   Crafty.DB("Crafty: CloseTS")
   CraftyStockListType:SetHidden(true)
   Crafty.showTS = false
 end
 
+-- show the typewindow
 function Crafty.OpenTS()
   Crafty.DB("Crafty: OpenTS")
   CraftyStockListType:SetHidden(false)
   Crafty.showTS = true
 end
 
+-- close the stocklist and typewindow
 function Crafty.CloseSL()
   Crafty.DB("Crafty: CloseSL")
   CraftyStockList:SetHidden(true)
@@ -502,6 +559,7 @@ function Crafty.CloseSL()
   Crafty.CloseTS()
 end
 
+-- show the stocklist and typewindow
 function Crafty.OpenSL()
   Crafty.DB("Crafty: OpenSL")
   CraftyStockList:SetHidden(false)
@@ -510,6 +568,7 @@ function Crafty.OpenSL()
   Crafty.OpenTS()
 end
 
+-- close the watchlist, stocklist and typewindow
 function Crafty.CloseWL()
   Crafty.DB("Crafty: CloseWL")
   CraftyWatchList:SetHidden(true)
@@ -522,6 +581,7 @@ function Crafty.CloseWL()
   Crafty.CloseTS()
 end
 
+-- open the watchlist
 function Crafty.OpenWL()
   Crafty.DB("Crafty: OpenWL")
   CraftyWatchList:SetHidden(false)
@@ -529,24 +589,33 @@ function Crafty.OpenWL()
   Crafty.savedVariables.ShowWL = true
 end
 
-function Crafty.OnMouseEnterSL(control)
+---- not used yet
+--function Crafty.OnMouseEnterSL(control)
+--
+--
+--end
+--
+---- not used yet
+--function Crafty.OnMouseExitSL(control)
+--
+--
+--end
 
+----------------------------------------------------------------------------------------
+-- Functions for modifying the listdata (add items, remove, undo)
+----------------------------------------------------------------------------------------
 
-end
-
-function Crafty.OnMouseExitSL(control)
-
-
-end
-
+-- adds an item to the watchlist, function for calling from xml (stocklist)
 function Crafty.OnMouseUpSL(control, button, upInside)
   Crafty.AddItemToWatchList(control)
 end
 
+-- removes an item from the watchlist, function for calling from xml (watchlist)
 function Crafty.OnMouseUpWL(control, button, upInside)
   Crafty.RemoveItemFromWatchList(control)
 end
 
+-- adds an item to the watchlist, only if its not there, undoitem removed, updated icons on interface
 function Crafty.AddItemToWatchList(control)
   Crafty.DB("Crafty: AddItemToWatchList")
   local name = control.data.name
@@ -571,6 +640,7 @@ function Crafty.AddItemToWatchList(control)
   Crafty.Refresh()  
 end
 
+-- removes an item from the watchlist
 function Crafty.RemoveItemFromWatchList(control)
   Crafty.DB("Crafty: RemoveItemFromWatchList")
   local name=control.data.name
@@ -588,6 +658,7 @@ function Crafty.RemoveItemFromWatchList(control)
   Crafty.Refresh()
 end
 
+-- checks if there is an undoitem and sets the button in xml
 function Crafty.CheckUndo()
   Crafty.DB("Crafty: CheckUndo")
   if Crafty.undoRemove ~= nil then
@@ -597,6 +668,7 @@ function Crafty.CheckUndo()
   end
 end
 
+-- adds the item from the undovar, if its not allready there
 function Crafty.UndoRemove()
   Crafty.DB("Crafty: UndoRemove")
   local found = Crafty.CheckItemInWatchList(Crafty.undoRemove.name)
@@ -612,6 +684,7 @@ function Crafty.UndoRemove()
   Crafty.Refresh()
 end
 
+-- helper function to check if an item is in the list
 function Crafty.CheckItemInWatchList(control)
   Crafty.DB("Crafty: CheckItemInWatchList")
   local found = false
@@ -625,14 +698,18 @@ function Crafty.CheckItemInWatchList(control)
   return found
 end
 
--- DEBUG -------------------------------------------------------------
+----------------------------------------------------------------------------------------
+-- Debugfunctions
+----------------------------------------------------------------------------------------
 
+-- show debug message
 function Crafty.DB(message)
   if Crafty.db then
     d(message)
   end
 end
 
+-- for slashcommand
 function Crafty.ToggleDB()
   if Crafty.db then
     d("Crafty: Debugmode off")
@@ -643,6 +720,7 @@ function Crafty.ToggleDB()
   end
 end
 
+-- output complete watchlist
 function Crafty.DBPrintWatchList()
   local watchList = Crafty.watchList1
   if Crafty.db then
@@ -653,6 +731,10 @@ function Crafty.DBPrintWatchList()
   end
 end
 
+----------------------------------------------------------------------------------------
+-- Events
+----------------------------------------------------------------------------------------
+
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_ADD_ON_LOADED, Crafty.OnAddOnLoaded)
 
 --EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, Crafty.InvChange)
@@ -662,6 +744,10 @@ EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CLOSE_TRADING_HOUSE, Crafty.Ch
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_BUY_RECEIPT, Crafty.InvChange)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_LOOT_RECEIVED, Crafty.InvChange)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS , Crafty.InvChange)
+
+----------------------------------------------------------------------------------------
+-- Slash Commands
+----------------------------------------------------------------------------------------
 
 SLASH_COMMANDS["/crafty"] = function()  Crafty.Open() end
 SLASH_COMMANDS["/craftydb"] = function()  Crafty.ToggleDB() end

@@ -71,12 +71,12 @@
         <Button name="StockRow" virtual="true">
         	<Dimensions y="32" />
             <Anchor point="LEFT" relativeTo="$(parent)" />
-            <OnMouseEnter>
+            <!--OnMouseEnter>
                 Crafty.OnMouseEnterSL(self)
             </OnMouseEnter>
             <OnMouseExit>
                 Crafty.OnMouseExitSL(self)
-            </OnMouseExit>
+            </OnMouseExit-->
             <OnMouseUp>
                 Crafty.OnMouseUpSL(self, button, upInside)
             </OnMouseUp>

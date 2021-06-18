@@ -1,8 +1,8 @@
 ## Title: Crafty
 ## APIVersion: 100035
-## Version: 1.0
+## Version: 1.2b
 ## Author: rp12439
-## Description: Show a list of crafting stockitems
+## Description: CRAFTY Stocklist - The stock watchlist for your crafting profession
 ## SavedVariables: CraftySavedVariables
 ## DependsOn: LibAddonMenu-2.0
 
