@@ -1,0 +1,96 @@
+<GuiXml>
+    <Controls>
+        <TopLevelControl name="CraftyStockList" hidden="true" mouseEnabled="true" movable="true" clampedToScreen="true">
+            <Anchor point="BOTTOM" relativeTo="GuiRoot" relativePoint="BOTTOM" offsetX="0" offsetY="-128"/>
+            <OnMoveStop>
+        		Crafty.OnIndicatorMoveStop()
+			</OnMoveStop>
+            <Dimensions x="300" y="600" />
+            <Controls>
+            
+                <Backdrop name="$(parent)BG" inherits="ZO_ThinBackdrop" />
+                
+                <Button name="$(parent)ButtonClose" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="20" y="20" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="5" />
+					<Textures normal="esoui/art/buttons/decline_up.dds"
+						pressed="esoui/art/buttons/decline_down.dds"
+						mouseOver="esoui/art/buttons/decline_over.dds"/>
+					<OnClicked>
+						Crafty.CloseSL()
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)ButtonRrefresh" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="30" y="30" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonClose" relativePoint="TOPLEFT" offsetX="0" offsetY="-5" />
+					<Textures normal="esoui/art/help/help_tabicon_feedback_up.dds"
+						pressed="esoui/art/help/help_tabicon_feedback_down.dds"
+						mouseOver="esoui/art/help/help_tabicon_feedback_over.dds"/>
+					<OnClicked>
+						Crafty.FullRefresh()
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)ButtonToggleAnkerSL" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="15" y="15" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonRrefresh" relativePoint="TOPLEFT" offsetX="0" offsetY="8" />				
+					<Textures normal="esoui/art/miscellaneous/locked_up.dds"
+						pressed="esoui/art/miscellaneous/locked_down.dds"
+						mouseOver="esoui/art/miscellaneous/locked_over.dds"/>
+					<OnClicked>
+						Crafty.ToggleAnkerSL()
+					</OnClicked>
+				</Button>
+				<!--Button name="$(parent)ButtonSelectType" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="20" y="20" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonToggleAnkerSL" relativePoint="TOPLEFT" offsetX="-20" offsetY="-2" />				
+					<Textures normal="esoui\art\worldmap\map_indexicon_filters_up.dds"
+						pressed="esoui\art\worldmap\map_indexicon_filters_down.dds"
+						mouseOver="esoui\art\worldmap\map_indexicon_filters_over.dds"/>
+					<OnClicked>
+						Crafty.ToggleTS()
+					</OnClicked>
+				</Button-->
+                
+                <Label name="$(parent)Heading" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="STOCKLIST">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="10"/>
+                </Label>
+                	
+				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+					<Dimensions x="280" y="4"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Heading" relativePoint="BOTTOMLEFT" offsetY="10" />
+				</Texture>
+
+                <Control name="$(parent)List" inherits="ZO_ScrollList">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="BOTTOMLEFT" offsetY="5" />
+                    <Anchor point="BOTTOMRIGHT" offsetX="-10" offsetY="-10" />
+                </Control>
+                
+            </Controls>
+        </TopLevelControl>      
+        
+        <Button name="StockRow" virtual="true">
+        	<Dimensions y="32" />
+            <Anchor point="LEFT" relativeTo="$(parent)" />
+            <OnMouseEnter>
+                Crafty.OnMouseEnterSL(self)
+            </OnMouseEnter>
+            <OnMouseExit>
+                Crafty.OnMouseExitSL(self)
+            </OnMouseExit>
+            <OnMouseUp>
+                Crafty.OnMouseUpSL(self, button, upInside)
+            </OnMouseUp>
+            <Controls>
+                <Label name="$(parent)Name" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="LEFT">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" />
+                    <Dimensions x="205" y="32" />
+                </Label>
+                <Label name="$(parent)Amount" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="RIGHT">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Name" relativePoint="TOPRIGHT" />
+                    <Dimensions x="50" y="32" />
+                </Label>
+            </Controls>
+        </Button>
+        
+    </Controls>
+</GuiXml>
