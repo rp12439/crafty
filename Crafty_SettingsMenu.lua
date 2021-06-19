@@ -36,8 +36,8 @@ function Crafty.ControlSettings()
     }, 
     [3] = {
         type = "slider",
-        name = "Background transparency",
-        tooltip = "Set overall background transparency",
+        name = "Background opacity",
+        tooltip = "Set overall background opacity",
         min = 0,
         max = 1,
         step = 0.1, --(optional)

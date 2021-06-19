@@ -1,4 +1,3 @@
-
 ----------------------------------------------------------------------------------------
 -- Global vars and constants
 ----------------------------------------------------------------------------------------
@@ -101,6 +100,7 @@ function Crafty:Initialize()
   
   Crafty.SetMasterHeight()
   Crafty.SetMasterAlpha()
+  Crafty.SetTS(4)
   Crafty.SetActiveWatchList(Crafty.activewatchListID)
 end
 
@@ -139,13 +139,23 @@ end
 
 -- save position data after moving the interface (from xml)
 function Crafty.OnIndicatorMoveStop()
-  Crafty.DB("Crafty: OnIndicatorMoveStop")
+  Crafty.DB("Crafty: OnIndicatorMoveStop - WL"..Crafty.activewatchListID)
 
   Crafty.savedVariables.leftSL = CraftyStockList:GetLeft()
   Crafty.savedVariables.topSL = CraftyStockList:GetTop()
 
-  Crafty.savedVariables.leftWL = CraftyWatchList:GetLeft()
-  Crafty.savedVariables.topWL = CraftyWatchList:GetTop()
+  if Crafty.activewatchListID == 1 then
+    Crafty.savedVariables.leftWL1 = CraftyWatchList:GetLeft()
+    Crafty.savedVariables.topWL1 = CraftyWatchList:GetTop()
+  end
+  if Crafty.activewatchListID == 2 then
+    Crafty.savedVariables.leftWL2 = CraftyWatchList:GetLeft()
+    Crafty.savedVariables.topWL2 = CraftyWatchList:GetTop()
+  end
+  if Crafty.activewatchListID == 3 then
+    Crafty.savedVariables.leftWL3 = CraftyWatchList:GetLeft()
+    Crafty.savedVariables.topWL3 = CraftyWatchList:GetTop()
+  end
   
   if Crafty.ankerSL then
     Crafty.AnkerSL()
@@ -154,7 +164,10 @@ end
 
 -- set position for interface from saved vars and check for anchor stocklist
 function Crafty:RestorePosition()
-  Crafty.DB("Crafty: RestorePosition")
+  Crafty.DB("Crafty: RestorePosition - WL"..Crafty.activewatchListID)
+  
+  Crafty.RestoreWLPosition(Crafty.activewatchListID)
+  
   if not Crafty.ankerSL then
     local leftSL = Crafty.savedVariables.leftSL
     local topSL = Crafty.savedVariables.topSL
@@ -163,11 +176,29 @@ function Crafty:RestorePosition()
   else
     Crafty.AnkerSL()
   end
-  
-  local leftWL = Crafty.savedVariables.leftWL
-  local topWL = Crafty.savedVariables.topWL
-  CraftyWatchList:ClearAnchors()
-  CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+end
+
+-- restore saved position for specific watchlist
+function Crafty.RestoreWLPosition(arg)
+  Crafty.DB("Crafty: RestoreWLPosition - WL"..arg)
+  if arg == 1 then
+    local leftWL = Crafty.savedVariables.leftWL1
+    local topWL = Crafty.savedVariables.topWL1
+    CraftyWatchList:ClearAnchors()
+    CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+  end
+  if arg == 2 then
+    local leftWL = Crafty.savedVariables.leftWL2
+    local topWL = Crafty.savedVariables.topWL2
+    CraftyWatchList:ClearAnchors()
+    CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+  end
+  if arg == 3 then
+    local leftWL = Crafty.savedVariables.leftWL3
+    local topWL = Crafty.savedVariables.topWL3
+    CraftyWatchList:ClearAnchors()
+    CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+  end
 end
 
 -- calculate the autoheight for the watchlist, sets the global var
@@ -272,15 +303,42 @@ function Crafty.SetActiveWatchList(arg)
   
   Crafty.savedVariables.ActivewatchList = Crafty.activewatchList
   Crafty.savedVariables.ActivewatchListID = arg
+  Crafty.activewatchListID = arg
   
+  Crafty.RestoreWLPosition(arg)
   Crafty.Refresh()
 end
 
 -- set the global var for material type for the typelist
 function Crafty.SetTS(arg)
   Crafty.DB("Crafty: SetTS")
+  local myoldTS = Crafty.filterTypeSL
   local myTS = arg
   Crafty.filterTypeSL = myTS
+  
+  local mydefcolor = ZO_ColorDef:New("CFDCBD")
+
+  CraftyStockListTypeMatsLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeBlacksmithingLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeClothierLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeEnchantingLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeAlchemyLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeProvisioningLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeWoodworkingLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeJewelryLabel:SetColor(mydefcolor:UnpackRGBA())
+  
+  if         arg == 0 then CraftyStockListTypeMatsLabel:SetColor(1,1,1,1)
+      elseif arg == 1 then CraftyStockListTypeBlacksmithingLabel:SetColor(1,1,1,1)
+      elseif arg == 2 then CraftyStockListTypeClothierLabel:SetColor(1,1,1,1)
+      elseif arg == 3 then CraftyStockListTypeEnchantingLabel:SetColor(1,1,1,1)
+      elseif arg == 4 then CraftyStockListTypeAlchemyLabel:SetColor(1,1,1,1)
+      elseif arg == 5 then CraftyStockListTypeProvisioningLabel:SetColor(1,1,1,1)
+      elseif arg == 6 then CraftyStockListTypeWoodworkingLabel:SetColor(1,1,1,1)
+      elseif arg == 7 then CraftyStockListTypeJewelryLabel:SetColor(1,1,1,1)
+      else
+  end
+  
+  
   Crafty.Refresh()
 end
 
@@ -744,6 +802,8 @@ EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CLOSE_TRADING_HOUSE, Crafty.Ch
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_BUY_RECEIPT, Crafty.InvChange)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_LOOT_RECEIVED, Crafty.InvChange)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS , Crafty.InvChange)
+EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CRAFT_COMPLETED, Crafty.InvChange)
+
 
 ----------------------------------------------------------------------------------------
 -- Slash Commands
