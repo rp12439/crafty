@@ -515,14 +515,9 @@ end
 -- Functions to call from events, xml (buttons) or settings
 ----------------------------------------------------------------------------------------
 
--- close or hide the interface (from settings)
+-- close or hide the interface (from settings) this is not a toggle!
 function Crafty.Check()
   Crafty.DB("Crafty: Check")
-  if Crafty.showSL == true then
-      Crafty.OpenSL()
-  else 
-      Crafty.CloseSL()
-  end
   if Crafty.showWL == true then
       Crafty.OpenWL()
   else 
@@ -551,6 +546,16 @@ function Crafty.ToggleSL()
     Crafty.CloseSL()
   else
     Crafty.OpenSL()
+  end
+end
+
+-- show or hide watchlist (from keybinding)
+function Crafty.ToggleWL()
+  Crafty.DB("Crafty: ToggleWL")
+  if Crafty.showWL then
+    Crafty.CloseWL()
+  else
+    Crafty.OpenWL()
   end
 end
 
@@ -809,5 +814,5 @@ EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CRAFT_COMPLETED, Crafty.InvCha
 -- Slash Commands
 ----------------------------------------------------------------------------------------
 
-SLASH_COMMANDS["/crafty"] = function()  Crafty.Open() end
+SLASH_COMMANDS["/crafty"] = function()  Crafty.ToggleWL() end
 SLASH_COMMANDS["/craftydb"] = function()  Crafty.ToggleDB() end
