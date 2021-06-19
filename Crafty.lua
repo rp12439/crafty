@@ -8,11 +8,12 @@ Crafty.version = "V1.3b"
 Crafty.showSL = true
 Crafty.showWL = true
 Crafty.ankerSL = true
-Crafty.vendorOpen = true
+Crafty.vendorOpen = false
+Crafty.vendorOpen = false
 Crafty.showTS = false
 Crafty.undoRemove = nil
 Crafty.differentWLPositions = true
-Crafty.db = false
+Crafty.db = false7
 Crafty.filterTypeSL = 4
 Crafty.watchList1 = {}
 Crafty.watchList2 = {}
@@ -74,6 +75,9 @@ function Crafty:Initialize()
   end
   if Crafty.savedVariables.VendorOpen ~= nil then
     Crafty.vendorOpen = Crafty.savedVariables.VendorOpen
+  end
+  if Crafty.savedVariables.VendorOpen ~= nil then
+    Crafty.vendorClose = Crafty.savedVariables.VendorClose
   end
   if Crafty.savedVariables.VendorwatchListID ~= nil then
     Crafty.vendorwatchListID = Crafty.savedVariables.VendorwatchListID
@@ -547,20 +551,21 @@ end
 -- open interface on vendor if set (called from eventmanager)
 function Crafty.CheckVendorOpen()
   Crafty.DB("Crafty: CheckVendorOpen")
+  Crafty.DB(Crafty.vendorwatchListID)
   if Crafty.vendorOpen then
     Crafty.oldactivewatchListID = Crafty.activewatchListID
-    Crafty.SetActiveWatchList(Crafty.vendorwatchListID)
-    Crafty.OpenWL(Crafty.activeWatchList)
+    Crafty.OpenWL(Crafty.vendorwatchListID)
   end
 end
 
 -- close interface on vendor if set (called from eventmanager)
 function Crafty.CheckVendorClose()
   Crafty.DB("Crafty: CheckVendorClose")
-  if Crafty.vendorOpen then
-    --Crafty.CloseWL()
+  if Crafty.vendorClose then
+    Crafty.CloseWL()
     Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
-    Crafty.OpenWL(Crafty.activeWatchList)
+  else
+    Crafty.OpenWL(Crafty.oldactivewatchListID)
   end
 end
 
@@ -671,13 +676,13 @@ end
 
 -- open the watchlist
 function Crafty.OpenWL(arg)
-  Crafty.DB("Crafty: OpenWL")  
-  CraftyWatchList:SetHidden(false)
-  Crafty.showWL = true
-  Crafty.savedVariables.ShowWL = true
+  Crafty.DB("Crafty: OpenWL")
   if arg ~= nil then
     Crafty.SetActiveWatchList(arg)
   end
+  CraftyWatchList:SetHidden(false)
+  Crafty.showWL = true
+  Crafty.savedVariables.ShowWL = true
 end
 
 ---- not used yet

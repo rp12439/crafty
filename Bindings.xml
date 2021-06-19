@@ -16,6 +16,9 @@
 			<Action name="CRAFTY_STOCKLIST5">
 				<Down>Crafty.Refresh()</Down>
 			</Action>
+			<Action name="CRAFTY_STOCKLIST6">
+				<Down>Crafty.ToggleDB()</Down>
+			</Action>
 		</Category>
 	</Layer>
 </Bindings>

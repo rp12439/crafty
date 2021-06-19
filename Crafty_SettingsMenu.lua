@@ -30,35 +30,44 @@ function Crafty.ControlSettings()
     [2] = {
           type = "checkbox",
           name = "Open on guildvendor",
-          tooltip = "This setting will open and close the guildvendor watchlist when visiting a guildvendor",
+          tooltip = "This setting will open the guildvendor watchlist when visiting a guildvendor",
           getFunc = function() return Crafty.vendorOpen end,
           setFunc = function(value) Crafty.vendorOpen = value end,
-          width = "half",
+          width = "full",
     }, 
     [3] = {
         type = "dropdown",
         name = "Guildvendor watchlist",
-        tooltip = "Which watchlist to open on guildvendor open.",
-        choices = {"1", "2", "3"},
+        tooltip = "Which watchlist to open on guildvendor open",
+        choices = {1, 2, 3},
         getFunc = function() return Crafty.vendorwatchListID end,
         setFunc = function(value) Crafty.vendorwatchListID = value end,
-        width = "half",
+        width = "full",
     },
     [4] = {
+          type = "checkbox",
+          name = "Close after guildvendor",
+          tooltip = "This setting will close the watchlist when leaving a guildvendor, otherwise the previous opened watchlist will open.",
+          getFunc = function() return Crafty.vendorClose end,
+          setFunc = function(value) Crafty.vendorClose = value end,
+          width = "full",
+    }, 
+    
+    [5] = {
           type = "checkbox",
           name = "Autoheight watchlist",
           tooltip = "Automatically set the height of the watchlist",
           getFunc = function() return Crafty.autoHeightWLOpt end,
           setFunc = function(value) Crafty.autoHeightWLOpt = value Crafty.CheckAutoHeightWLOpt() end,
     }, 
-    [5] = {
+    [6] = {
           type = "checkbox",
           name = "Different watchlist positions",
           tooltip = "Save/restore position per watchlist",
           getFunc = function() return Crafty.differentWLPositions end,
           setFunc = function(value) Crafty.differentWLPositions = value end,
     }, 
-    [6] = {
+    [7] = {
         type = "slider",
         name = "Background opacity",
         tooltip = "Set overall background opacity",
@@ -70,7 +79,7 @@ function Crafty.ControlSettings()
         width = "full", --or "full" (optional)
         default = 0,  --(optional)
     },
-    [7] = {
+    [8] = {
         type = "slider",
         name = "Windowheight",
         tooltip = "Set overall window height",
@@ -90,7 +99,8 @@ function Crafty.ControlSettings()
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST2", "Show Watchlist 1")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST3", "Show Watchlist 2")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST4", "Show Watchlist 3")
-    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST5", "Reload Stockamounts")    
+    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST5", "Reload Stockamounts")
+    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST6", "Debugmode on/off")     
     
     -- Register the settingmenu
     LibAddonMenu2:RegisterAddonPanel("CraftySettings", panelData) 
