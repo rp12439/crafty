@@ -9,7 +9,7 @@ Crafty.showSL = true
 Crafty.showWL = true
 Crafty.ankerSL = true
 Crafty.vendorOpen = false
-Crafty.vendorOpen = false
+Crafty.vendorClose = false
 Crafty.showTS = false
 Crafty.undoRemove = nil
 Crafty.differentWLPositions = true
@@ -254,6 +254,7 @@ function Crafty.CheckAutoHeightWLOpt()
   else
     Crafty.SetMasterHeight()
   end
+  Crafty.savedVariables.AutoHeightWLOpt = Crafty.autoHeightWLOpt
 end
 
 ----------------------------------------------------------------------------------------
@@ -567,6 +568,30 @@ function Crafty.CheckVendorClose()
   else
     Crafty.OpenWL(Crafty.oldactivewatchListID)
   end
+end
+
+-- Save setting "Open on guildvendor"
+function Crafty.SavevendorOpen()
+  Crafty.DB("Crafty: SavevendorOpen")
+  Crafty.savedVariables.VendorOpen = Crafty.vendorOpen
+end
+
+-- Save setting "Close after guildvendor"
+function Crafty.SavevendorClose()
+  Crafty.DB("Crafty: SavevendorClose")
+  Crafty.savedVariables.VendorClose = Crafty.vendorClose
+end
+
+-- Save setting "Guildvendor watchlist"
+function Crafty.SavevendorwatchListID()
+  Crafty.DB("Crafty: SavevendorwatchListID")
+  Crafty.savedVariables.VendorwatchListID = Crafty.vendorwatchListID
+end
+
+-- Save setting "Different watchlist positions"
+function Crafty.savedifferentWLPositions()
+  Crafty.DB("Crafty: savedifferentWLPositions")
+  Crafty.savedVariables.SavedifferentWLPositions = Crafty.differentWLPositions
 end
 
 -- show or hide stocklist (from xml)
