@@ -22,6 +22,7 @@ Crafty.activewatchList = Crafty.watchList1
 Crafty.activewatchListID = 1
 Crafty.vendorwatchListID = 1
 Crafty.oldactivewatchListID = 1
+Crafty.oldshowWL = true
 Crafty.masterHeight = 600
 Crafty.masterWidth = 300
 Crafty.autoHeightWL = 600
@@ -550,24 +551,44 @@ function Crafty.Check()
 end
 
 -- open interface on vendor if set (called from eventmanager)
-function Crafty.CheckVendorOpen()
-  Crafty.DB("Crafty: CheckVendorOpen")
+function Crafty.EventCheckVendorOpen()
+  Crafty.DB("Crafty: EventCheckVendorOpen")
   Crafty.DB(Crafty.vendorwatchListID)
-  if Crafty.vendorOpen then
+  if Crafty.vendorOpen then -- open vendorwatchlist if setting is on / else do nothing
     Crafty.oldactivewatchListID = Crafty.activewatchListID
+    Crafty.oldshowWL = Crafty.showWL
     Crafty.OpenWL(Crafty.vendorwatchListID)
   end
 end
 
 -- close interface on vendor if set (called from eventmanager)
+function Crafty.EventCheckVendorClose()
+  Crafty.DB("Crafty: EventCheckVendorClose")
+  d(Crafty.oldshowWL)
+  if Crafty.vendorOpen then -- only do something if vendorOpen setting is on
+    if Crafty.vendorClose then -- close watchlist is on
+      Crafty.CloseWL() -- close watchlist
+      Crafty.SetActiveWatchList(Crafty.oldactivewatchListID) -- set active watchlist to previous in case user opens watchlist later
+    else -- close watchlist is off -> switch to previous watchlist but only if the previous was shown
+      if Crafty.oldshowWL then
+        Crafty.OpenWL(Crafty.oldactivewatchListID)
+      else -- close the watchlist cause the switch was not performed
+        Crafty.CloseWL()
+        Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
+      end
+    end
+  end 
+end
+
+-- Disable Setting "Close after guildvendor" if vendorOpen == false
 function Crafty.CheckVendorClose()
   Crafty.DB("Crafty: CheckVendorClose")
-  if Crafty.vendorClose then
-    Crafty.CloseWL()
-    Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
-  else
-    Crafty.OpenWL(Crafty.oldactivewatchListID)
+  if not Crafty.vendorOpen then
+    Crafty.vendorClose = false
+    Crafty.SavevendorClose()
+    return false
   end
+  return Crafty.vendorClose
 end
 
 -- Save setting "Open on guildvendor"
@@ -860,8 +881,8 @@ EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_ADD_ON_LOADED, Crafty.OnAddOnL
 
 --EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, Crafty.InvChange)
 
-EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_OPEN_TRADING_HOUSE, Crafty.CheckVendorOpen)
-EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CLOSE_TRADING_HOUSE, Crafty.CheckVendorClose)
+EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_OPEN_TRADING_HOUSE, Crafty.EventCheckVendorOpen)
+EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CLOSE_TRADING_HOUSE, Crafty.EventCheckVendorClose)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_BUY_RECEIPT, Crafty.InvChange)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_LOOT_RECEIVED, Crafty.InvChange)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS , Crafty.InvChange)
