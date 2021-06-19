@@ -4,7 +4,16 @@
 			<Action name="CRAFTY_STOCKLIST">
 				<Down>Crafty.showWL =  (not Crafty.showWL) Crafty.Check()</Down>
 			</Action>
-      		<Action name="CRAFTY_STOCKLIST2">
+			<Action name="CRAFTY_STOCKLIST2">
+				<Down>Crafty.OpenWL(1)</Down>
+			</Action>
+			<Action name="CRAFTY_STOCKLIST3">
+				<Down>Crafty.OpenWL(2)</Down>
+			</Action>
+			<Action name="CRAFTY_STOCKLIST4">
+				<Down>Crafty.OpenWL(3)</Down>
+			</Action>
+			<Action name="CRAFTY_STOCKLIST5">
 				<Down>Crafty.Refresh()</Down>
 			</Action>
 		</Category>

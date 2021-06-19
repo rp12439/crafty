@@ -4,20 +4,23 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
+Crafty.version = "V1.3b"
 Crafty.showSL = true
 Crafty.showWL = true
 Crafty.ankerSL = true
 Crafty.vendorOpen = true
 Crafty.showTS = false
 Crafty.undoRemove = nil
-Crafty.db = true
+Crafty.differentWLPositions = true
+Crafty.db = false
 Crafty.filterTypeSL = 4
-Crafty.version = 2
 Crafty.watchList1 = {}
 Crafty.watchList2 = {}
 Crafty.watchList3 = {}
 Crafty.activewatchList = Crafty.watchList1
 Crafty.activewatchListID = 1
+Crafty.vendorwatchListID = 1
+Crafty.oldactivewatchListID = 1
 Crafty.masterHeight = 600
 Crafty.masterWidth = 300
 Crafty.autoHeightWL = 600
@@ -51,7 +54,6 @@ function Crafty:Initialize()
   if Crafty.savedVariables.ShowWL ~= nil then
     Crafty.showWL = Crafty.savedVariables.ShowWL
   end
-  
   if Crafty.savedVariables.WatchList1 ~= nil then
     Crafty.watchList1 = Crafty.savedVariables.WatchList1
   end
@@ -67,11 +69,15 @@ function Crafty:Initialize()
   if Crafty.savedVariables.ActivewatchListID ~= nil then
     Crafty.activewatchListID = Crafty.savedVariables.ActivewatchListID
   end
-  
+  if Crafty.savedVariables.DifferentWLPositions ~= nil then
+    Crafty.differentWLPositions = Crafty.savedVariables.DifferentWLPositions
+  end
   if Crafty.savedVariables.VendorOpen ~= nil then
     Crafty.vendorOpen = Crafty.savedVariables.VendorOpen
   end
-  
+  if Crafty.savedVariables.VendorwatchListID ~= nil then
+    Crafty.vendorwatchListID = Crafty.savedVariables.VendorwatchListID
+  end
   if Crafty.savedVariables.MasterAlpha ~= nil then
     Crafty.masterAlpha = Crafty.savedVariables.MasterAlpha
   end
@@ -144,17 +150,22 @@ function Crafty.OnIndicatorMoveStop()
   Crafty.savedVariables.leftSL = CraftyStockList:GetLeft()
   Crafty.savedVariables.topSL = CraftyStockList:GetTop()
 
-  if Crafty.activewatchListID == 1 then
-    Crafty.savedVariables.leftWL1 = CraftyWatchList:GetLeft()
-    Crafty.savedVariables.topWL1 = CraftyWatchList:GetTop()
-  end
-  if Crafty.activewatchListID == 2 then
-    Crafty.savedVariables.leftWL2 = CraftyWatchList:GetLeft()
-    Crafty.savedVariables.topWL2 = CraftyWatchList:GetTop()
-  end
-  if Crafty.activewatchListID == 3 then
-    Crafty.savedVariables.leftWL3 = CraftyWatchList:GetLeft()
-    Crafty.savedVariables.topWL3 = CraftyWatchList:GetTop()
+  if Crafty.differentWLPositions then
+    if Crafty.activewatchListID == 1 then
+      Crafty.savedVariables.leftWL1 = CraftyWatchList:GetLeft()
+      Crafty.savedVariables.topWL1 = CraftyWatchList:GetTop()
+    end
+    if Crafty.activewatchListID == 2 then
+      Crafty.savedVariables.leftWL2 = CraftyWatchList:GetLeft()
+      Crafty.savedVariables.topWL2 = CraftyWatchList:GetTop()
+    end
+    if Crafty.activewatchListID == 3 then
+      Crafty.savedVariables.leftWL3 = CraftyWatchList:GetLeft()
+      Crafty.savedVariables.topWL3 = CraftyWatchList:GetTop()
+    end
+  else
+    Crafty.savedVariables.leftWL = CraftyWatchList:GetLeft()
+    Crafty.savedVariables.topWL = CraftyWatchList:GetTop()
   end
   
   if Crafty.ankerSL then
@@ -181,21 +192,29 @@ end
 -- restore saved position for specific watchlist
 function Crafty.RestoreWLPosition(arg)
   Crafty.DB("Crafty: RestoreWLPosition - WL"..arg)
-  if arg == 1 then
-    local leftWL = Crafty.savedVariables.leftWL1
-    local topWL = Crafty.savedVariables.topWL1
-    CraftyWatchList:ClearAnchors()
-    CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
-  end
-  if arg == 2 then
-    local leftWL = Crafty.savedVariables.leftWL2
-    local topWL = Crafty.savedVariables.topWL2
-    CraftyWatchList:ClearAnchors()
-    CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
-  end
-  if arg == 3 then
-    local leftWL = Crafty.savedVariables.leftWL3
-    local topWL = Crafty.savedVariables.topWL3
+  
+  if Crafty.differentWLPositions then
+    if arg == 1 then
+      local leftWL = Crafty.savedVariables.leftWL1
+      local topWL = Crafty.savedVariables.topWL1
+      CraftyWatchList:ClearAnchors()
+      CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+    end
+    if arg == 2 then
+      local leftWL = Crafty.savedVariables.leftWL2
+      local topWL = Crafty.savedVariables.topWL2
+      CraftyWatchList:ClearAnchors()
+      CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+    end
+    if arg == 3 then
+      local leftWL = Crafty.savedVariables.leftWL3
+      local topWL = Crafty.savedVariables.topWL3
+      CraftyWatchList:ClearAnchors()
+      CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+    end
+  else
+    local leftWL = Crafty.savedVariables.leftWL
+    local topWL = Crafty.savedVariables.topWL
     CraftyWatchList:ClearAnchors()
     CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
   end
@@ -527,15 +546,21 @@ end
 
 -- open interface on vendor if set (called from eventmanager)
 function Crafty.CheckVendorOpen()
+  Crafty.DB("Crafty: CheckVendorOpen")
   if Crafty.vendorOpen then
-    Crafty.OpenWL()
+    Crafty.oldactivewatchListID = Crafty.activewatchListID
+    Crafty.SetActiveWatchList(Crafty.vendorwatchListID)
+    Crafty.OpenWL(Crafty.activeWatchList)
   end
 end
 
 -- close interface on vendor if set (called from eventmanager)
 function Crafty.CheckVendorClose()
+  Crafty.DB("Crafty: CheckVendorClose")
   if Crafty.vendorOpen then
-    Crafty.CloseWL()
+    --Crafty.CloseWL()
+    Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
+    Crafty.OpenWL(Crafty.activeWatchList)
   end
 end
 
@@ -645,11 +670,14 @@ function Crafty.CloseWL()
 end
 
 -- open the watchlist
-function Crafty.OpenWL()
-  Crafty.DB("Crafty: OpenWL")
+function Crafty.OpenWL(arg)
+  Crafty.DB("Crafty: OpenWL")  
   CraftyWatchList:SetHidden(false)
   Crafty.showWL = true
   Crafty.savedVariables.ShowWL = true
+  if arg ~= nil then
+    Crafty.SetActiveWatchList(arg)
+  end
 end
 
 ---- not used yet
