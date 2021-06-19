@@ -45,16 +45,18 @@ function Crafty.ControlSettings()
         getFunc = function() return Crafty.vendorwatchListID end,
         setFunc = function(value) Crafty.vendorwatchListID = value Crafty.SavevendorwatchListID() end,
         width = "full",
-        default = 1
+        default = 1,
+        disabled = function() return not Crafty.vendorOpen end
     },
     [4] = {
           type = "checkbox",
           name = "Close after guildvendor",
-          tooltip = "This setting will close the watchlist when leaving a guildvendor, otherwise the previous opened watchlist will open.",
-          getFunc = function() return Crafty.vendorClose end,
-          setFunc = function(value) Crafty.vendorClose = value Crafty.SavevendorClose() end,
+          tooltip = "Open on guildvendor must be active! This setting will close the watchlist when leaving a guildvendor, otherwise the previous opened watchlist will open.",
+          getFunc = function() return Crafty.CheckVendorClose() end,
+          setFunc = function(value) Crafty.vendorClose = value Crafty.SavevendorOpen() end,
           width = "full",
-          default = false
+          default = false,
+          disabled = function() return not Crafty.vendorOpen end
     }, 
     [5] = {
           type = "checkbox",
