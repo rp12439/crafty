@@ -5,14 +5,14 @@
 Crafty = {}
 Crafty.name = "Crafty"
 Crafty.version = "V1.3b"
-Crafty.showSL = true
+Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
 Crafty.vendorOpen = false
 Crafty.vendorClose = false
 Crafty.showTS = false
 Crafty.undoRemove = nil
-Crafty.differentWLPositions = true
+Crafty.differentWLPositions = false
 Crafty.db = false7
 Crafty.filterTypeSL = 4
 Crafty.watchList1 = {}
@@ -27,7 +27,7 @@ Crafty.masterHeight = 600
 Crafty.masterWidth = 300
 Crafty.autoHeightWL = 600
 Crafty.autoHeightWLOpt = true
-Crafty.masterAlpha = 0
+Crafty.masterAlpha = 1
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -112,7 +112,9 @@ function Crafty:Initialize()
   Crafty.SetMasterHeight()
   Crafty.SetMasterAlpha()
   Crafty.SetTS(4)
+  
   Crafty.SetActiveWatchList(Crafty.activewatchListID)
+  
 end
 
 ----------------------------------------------------------------------------------------
@@ -181,9 +183,7 @@ end
 -- set position for interface from saved vars and check for anchor stocklist
 function Crafty:RestorePosition()
   Crafty.DB("Crafty: RestorePosition - WL"..Crafty.activewatchListID)
-  
-  Crafty.RestoreWLPosition(Crafty.activewatchListID)
-  
+   
   if not Crafty.ankerSL then
     local leftSL = Crafty.savedVariables.leftSL
     local topSL = Crafty.savedVariables.topSL
@@ -223,6 +223,13 @@ function Crafty.RestoreWLPosition(arg)
     CraftyWatchList:ClearAnchors()
     CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
   end
+  
+  if Crafty.savedVariables.leftWL == nil then -- do if it is the first start of addon without saved positions
+      CraftyWatchList:ClearAnchors()
+      CraftyWatchList:SetAnchor(CENTER, GuiRoot, CENTER, 0, 0)
+      Crafty.SetActiveWatchList(Crafty.activewatchListID)
+  end
+  
 end
 
 -- calculate the autoheight for the watchlist, sets the global var
