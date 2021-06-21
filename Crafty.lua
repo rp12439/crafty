@@ -532,8 +532,8 @@ function Crafty.RefreshWLAmounts()
   for i=1,table.getn(watchlist) do
     local name = watchlist[i].name
     local stockamount = Crafty.ReturnStockListItemAmount(name,stocklist)
-    Crafty.DB(name)
-    Crafty.DB(stockamount)
+    --Crafty.DB(name)
+    --Crafty.DB(stockamount)
     watchlist[i].amount = stockamount
     -- this amount can be 0 and will be set to 0
     -- at this point future actions can react to 0 amounts in watchlist
@@ -928,15 +928,16 @@ end
 
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_ADD_ON_LOADED, Crafty.OnAddOnLoaded)
 
--- Currently no amountupdates when transfering items to craftbag from inv and vice versa (manualtransfer)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, Crafty.InvChange)
+EVENT_MANAGER:AddFilterForEvent(Crafty.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_BAG_ID, BAG_VIRTUAL)
 
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_OPEN_TRADING_HOUSE, Crafty.EventCheckVendorOpen)
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CLOSE_TRADING_HOUSE, Crafty.EventCheckVendorClose)
-EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_BUY_RECEIPT, Crafty.InvChange)
-EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_LOOT_RECEIVED, Crafty.InvChange)
-EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS , Crafty.InvChange)
-EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CRAFT_COMPLETED, Crafty.InvChange)
+
+--EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_BUY_RECEIPT, Crafty.InvChange)
+--EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_LOOT_RECEIVED, Crafty.InvChange)
+--EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS , Crafty.InvChange)
+--EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CRAFT_COMPLETED, Crafty.InvChange)
 
 
 ----------------------------------------------------------------------------------------
