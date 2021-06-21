@@ -53,7 +53,7 @@ function Crafty.ControlSettings()
           name = "Close after guildvendor",
           tooltip = "Open on guildvendor must be active! This setting will close the watchlist when leaving a guildvendor, otherwise the previous opened watchlist will open.",
           getFunc = function() return Crafty.CheckVendorClose() end,
-          setFunc = function(value) Crafty.vendorClose = value Crafty.SavevendorOpen() end,
+          setFunc = function(value) Crafty.vendorClose = value Crafty.SavevendorClose() end,
           width = "full",
           default = false,
           disabled = function() return not Crafty.vendorOpen end
@@ -71,8 +71,8 @@ function Crafty.ControlSettings()
           name = "Different watchlist positions",
           tooltip = "Save/restore position per watchlist",
           getFunc = function() return Crafty.differentWLPositions end,
-          setFunc = function(value) Crafty.differentWLPositions = value Crafty.savedifferentWLPositions() end,
-          default = true
+          setFunc = function(value) Crafty.differentWLPositions = value Crafty.SavedifferentWLPositions() end,
+          default = false
     }, 
     [7] = {
         type = "slider",

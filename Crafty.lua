@@ -46,6 +46,8 @@ function Crafty:Initialize()
   Crafty.DB("Crafty: Initialize")
   
   self.savedVariables = ZO_SavedVars:NewCharacterIdSettings("CraftySavedVariables", 1, nil, {})
+  -- for later
+  -- self.savedVariables = ZO_SavedVars:NewAccountWide("CraftySavedVariables", 1, nil, {})
   
   if Crafty.savedVariables.AnkerSL ~= nil then
     Crafty.ankerSL = Crafty.savedVariables.AnkerSL
@@ -397,7 +399,7 @@ end
 -- refreshes the amounts, calling the autoheight value
 function Crafty.PopulateWL()
   local watchList = Crafty.activewatchList
-  Crafty.DB("Crafty: PopulateWL "..table.getn(watchList))
+  Crafty.DB("Crafty: PopulateWL Items:"..table.getn(watchList))
   Crafty.RefreshWLAmounts()
   local stock = {}
   --Crafty.DBPrintWatchList()
@@ -525,17 +527,16 @@ end
 -- refreshs the watchlist amountdata
 function Crafty.RefreshWLAmounts()
   Crafty.DB("Crafty: RefreshWLAmounts")
-  if table.getn(Crafty.activewatchList) ~= 0 then
-    for i=1,table.getn(Crafty.activewatchList) do
-      local name = Crafty.activewatchList[i].name
-      for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
-        if data ~= nil then
-          if GetItemName(BAG_VIRTUAL,data.slotIndex) == name then
-            Crafty.activewatchList[i].amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex)
-          end
-        end
-      end
-    end
+  local stocklist = Crafty.PopulateCompleteStock()
+  local watchlist = Crafty.activewatchList
+  for i=1,table.getn(watchlist) do
+    local name = watchlist[i].name
+    local stockamount = Crafty.ReturnStockListItemAmount(name,stocklist)
+    Crafty.DB(name)
+    Crafty.DB(stockamount)
+    watchlist[i].amount = stockamount
+    -- this amount can be 0 and will be set to 0
+    -- at this point future actions can react to 0 amounts in watchlist
   end
 end
 
@@ -546,7 +547,7 @@ end
 -- close or hide the interface (from settings) this is not a toggle!
 function Crafty.Check()
   Crafty.DB("Crafty: Check")
-  if Crafty.showWL == true then
+  if Crafty.showWL then
       Crafty.OpenWL()
   else 
       Crafty.CloseWL()
@@ -586,6 +587,7 @@ end
 -- Disable Setting "Close after guildvendor" if vendorOpen == false
 function Crafty.CheckVendorClose()
   Crafty.DB("Crafty: CheckVendorClose")
+  --Crafty.DB(Crafty.vendorClose)
   if not Crafty.vendorOpen then
     Crafty.vendorClose = false
     Crafty.SavevendorClose()
@@ -597,6 +599,7 @@ end
 -- Save setting "Open on guildvendor"
 function Crafty.SavevendorOpen()
   Crafty.DB("Crafty: SavevendorOpen")
+  --Crafty.DB(Crafty.vendorOpen)
   Crafty.savedVariables.VendorOpen = Crafty.vendorOpen
 end
 
@@ -613,7 +616,7 @@ function Crafty.SavevendorwatchListID()
 end
 
 -- Save setting "Different watchlist positions"
-function Crafty.savedifferentWLPositions()
+function Crafty.SavedifferentWLPositions()
   Crafty.DB("Crafty: savedifferentWLPositions")
   Crafty.savedVariables.SavedifferentWLPositions = Crafty.differentWLPositions
 end
@@ -728,10 +731,17 @@ function Crafty.OpenWL(arg)
   Crafty.DB("Crafty: OpenWL")
   if arg ~= nil then
     Crafty.SetActiveWatchList(arg)
+    -- in case that the stocklist is open and the ui reloaded. after reload this opens the
+    -- watchlist and the stocklist is still true but not visible.
+    -- stocklist button does not open the list in this case.
+    Crafty.showSL = false
+    Crafty.savedVariables.ShowSL = false 
   end
-  CraftyWatchList:SetHidden(false)
-  Crafty.showWL = true
-  Crafty.savedVariables.ShowWL = true
+    CraftyWatchList:SetHidden(false)
+    Crafty.showWL = true
+    Crafty.savedVariables.ShowWL = true
+    Crafty.showSL = false
+    Crafty.savedVariables.ShowSL = false 
 end
 
 ---- not used yet
@@ -829,7 +839,7 @@ function Crafty.UndoRemove()
   Crafty.Refresh()
 end
 
--- helper function to check if an item is in the list
+-- helper function to check if an item is in the watchlist (the name!)
 function Crafty.CheckItemInWatchList(control)
   Crafty.DB("Crafty: CheckItemInWatchList")
   local found = false
@@ -841,6 +851,42 @@ function Crafty.CheckItemInWatchList(control)
     end
   end
   return found
+end
+
+-- helper function to return stocklist item amount
+function Crafty.ReturnStockListItemAmount(itemname,stocklist)
+  Crafty.DB("Crafty: ReturnStockListItemAmount")
+  local amount = 0
+  for i=1,table.getn(stocklist) do
+    --Crafty.DB(stocklist[i].name)
+    if stocklist[i].name == itemname then
+      local amount = stocklist[i].amount
+      --Crafty.DB(amount)
+      return amount
+    end
+  end
+  --Crafty.DB(amount)
+  return amount
+end
+
+-- helper function to create a complete stocklist table
+function Crafty.PopulateCompleteStock()
+  Crafty.DB("Crafty: PopulateCompleteStock")
+  local cstock = {}
+  local stockcounter = 0
+
+  for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
+    if data ~= nil then
+      stockcounter = stockcounter + 1
+      cstock[stockcounter] = {
+        link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
+        name = GetItemName(BAG_VIRTUAL,data.slotIndex),
+        amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
+        cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
+      }
+    end
+  end
+  return cstock
 end
 
 ----------------------------------------------------------------------------------------
@@ -865,7 +911,7 @@ function Crafty.ToggleDB()
   end
 end
 
--- output complete watchlist
+-- output complete watchlist1
 function Crafty.DBPrintWatchList()
   local watchList = Crafty.watchList1
   if Crafty.db then
@@ -882,6 +928,7 @@ end
 
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_ADD_ON_LOADED, Crafty.OnAddOnLoaded)
 
+-- Currently no amountupdates when transfering items to craftbag from inv and vice versa (manualtransfer)
 --EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, Crafty.InvChange)
 
 EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_OPEN_TRADING_HOUSE, Crafty.EventCheckVendorOpen)
@@ -898,3 +945,4 @@ EVENT_MANAGER:RegisterForEvent(Crafty.name, EVENT_CRAFT_COMPLETED, Crafty.InvCha
 
 SLASH_COMMANDS["/crafty"] = function()  Crafty.ToggleWL() end
 SLASH_COMMANDS["/craftydb"] = function()  Crafty.ToggleDB() end
+--SLASH_COMMANDS["/craftytest"] = function()  Crafty.ReturnStockListItemAmount("silver dust") end

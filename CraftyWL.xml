@@ -1,7 +1,7 @@
 <GuiXml>
     <Controls>
         <TopLevelControl name="CraftyWatchList" mouseEnabled="true" movable="true" clampedToScreen="true">
-            <Anchor point="BOTTOM" relativeTo="GuiRoot" relativePoint="BOTTOM" offsetX="0" offsetY="-128"/>
+            <Anchor point="BOTTOM" relativeTo="GuiRoot" relativePoint="BOTTOM" offsetX="0" offsetY="-200"/>
             <OnMoveStop>
         		Crafty.OnIndicatorMoveStop()
 			</OnMoveStop>
