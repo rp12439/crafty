@@ -218,16 +218,12 @@ function Crafty.RestoreWLPosition(arg)
       CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
     end
   else
-    local leftWL = Crafty.savedVariables.leftWL
-    local topWL = Crafty.savedVariables.topWL
-    CraftyWatchList:ClearAnchors()
-    CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
-  end
-  
-  if Crafty.savedVariables.leftWL == nil then -- do if it is the first start of addon without saved positions
+    if Crafty.savedVariables.leftWL ~= nil then -- only if its not the first time wihout saved pos vars
+      local leftWL = Crafty.savedVariables.leftWL
+      local topWL = Crafty.savedVariables.topWL
       CraftyWatchList:ClearAnchors()
-      CraftyWatchList:SetAnchor(CENTER, GuiRoot, CENTER, 0, 0)
-      Crafty.SetActiveWatchList(Crafty.activewatchListID)
+      CraftyWatchList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftWL, topWL)
+    end
   end
   
 end
