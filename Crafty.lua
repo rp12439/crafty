@@ -568,7 +568,7 @@ end
 -- close interface on vendor if set (called from eventmanager)
 function Crafty.EventCheckVendorClose()
   Crafty.DB("Crafty: EventCheckVendorClose")
-  d(Crafty.oldshowWL)
+  --d(Crafty.oldshowWL)
   if Crafty.vendorOpen then -- only do something if vendorOpen setting is on
     if Crafty.vendorClose then -- close watchlist is on
       Crafty.CloseWL() -- close watchlist
@@ -618,7 +618,7 @@ end
 -- Save setting "Different watchlist positions"
 function Crafty.SavedifferentWLPositions()
   Crafty.DB("Crafty: savedifferentWLPositions")
-  Crafty.savedVariables.SavedifferentWLPositions = Crafty.differentWLPositions
+  Crafty.savedVariables.DifferentWLPositions = Crafty.differentWLPositions
 end
 
 -- show or hide stocklist (from xml)
