@@ -90,13 +90,22 @@ function Crafty.ControlSettings()
         type = "slider",
         name = "Windowheight",
         tooltip = "Set overall window height",
-        min = 260,
+        min = 290,
         max = 1000,
         step = 10, --(optional)
         getFunc = function() return Crafty.masterHeight end,
         setFunc = function(value) Crafty.masterHeight = value Crafty.SetMasterHeight() end,
         width = "full", --or "full" (optional)
         default = 600,  --(optional)
+    },
+    [9] = {
+        type = "checkbox",
+        name = "Accountwide settings",
+        tooltip = "Save same settings for all characters",
+        getFunc = function() return Crafty.accountWide end,
+        setFunc = function(value) Crafty.accountWide = value Crafty.SaveaccountWide() end,
+        default = false,
+        warning = "Will reload the UI!",
     },
     
   }

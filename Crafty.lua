@@ -14,7 +14,7 @@ Crafty.showTS = false
 Crafty.undoRemove = nil
 Crafty.differentWLPositions = false
 Crafty.db = false
-Crafty.filterTypeSL = 4
+Crafty.filterTypeSL = 1
 Crafty.watchList1 = {}
 Crafty.watchList2 = {}
 Crafty.watchList3 = {}
@@ -28,6 +28,7 @@ Crafty.masterWidth = 300
 Crafty.autoHeightWL = 600
 Crafty.autoHeightWLOpt = true
 Crafty.masterAlpha = 1
+Crafty.accountWide = false
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -44,10 +45,18 @@ end
 -- initialize saved vars, positions, listdata and settings
 function Crafty:Initialize()
   Crafty.DB("Crafty: Initialize")
+    
+  self.savedVariablesACC = ZO_SavedVars:NewAccountWide("CraftySavedVariablesACC", 1, nil, {})  
   
-  self.savedVariables = ZO_SavedVars:NewCharacterIdSettings("CraftySavedVariables", 1, nil, {})
-  -- for later
-  -- self.savedVariables = ZO_SavedVars:NewAccountWide("CraftySavedVariables", 1, nil, {})
+  if Crafty.savedVariablesACC.AccountWide ~= nil then
+    Crafty.accountWide = Crafty.savedVariablesACC.AccountWide
+  end  
+    
+  if not Crafty.accountWide then
+    self.savedVariables = ZO_SavedVars:NewCharacterIdSettings("CraftySavedVariables", 1, nil, {})
+  else
+    self.savedVariables = ZO_SavedVars:NewAccountWide("CraftySavedVariables", 1, nil, {})
+  end
   
   if Crafty.savedVariables.AnkerSL ~= nil then
     Crafty.ankerSL = Crafty.savedVariables.AnkerSL
@@ -93,7 +102,7 @@ function Crafty:Initialize()
   end
   if Crafty.savedVariables.AutoHeightWLOpt ~= nil then
     Crafty.autoHeightWLOpt = Crafty.savedVariables.AutoHeightWLOpt
-  end
+  end  
    
   Crafty:RestorePosition()
   Crafty.Check()
@@ -113,7 +122,7 @@ function Crafty:Initialize()
   
   Crafty.SetMasterHeight()
   Crafty.SetMasterAlpha()
-  Crafty.SetTS(4)
+  Crafty.SetTS(1)
   
   Crafty.SetActiveWatchList(Crafty.activewatchListID)
   
@@ -134,8 +143,8 @@ function Crafty.SetMasterHeight()
   CraftyWatchList:SetHeight(height)
   CraftyStockList:SetWidth(width)
   CraftyStockList:SetHeight(height)
-  CraftyStockListType:SetWidth(width-100)
-  CraftyStockListType:SetHeight(height)
+  --CraftyStockListType:SetWidth(width)
+  --CraftyStockListType:SetHeight(height)
   
   Crafty.savedVariables.MasterHeight = height
   Crafty.Refresh()
@@ -345,29 +354,26 @@ function Crafty.SetTS(arg)
   local myoldTS = Crafty.filterTypeSL
   local myTS = arg
   Crafty.filterTypeSL = myTS
-  
-  local mydefcolor = ZO_ColorDef:New("CFDCBD")
 
-  CraftyStockListTypeMatsLabel:SetColor(mydefcolor:UnpackRGBA())
-  CraftyStockListTypeBlacksmithingLabel:SetColor(mydefcolor:UnpackRGBA())
-  CraftyStockListTypeClothierLabel:SetColor(mydefcolor:UnpackRGBA())
-  CraftyStockListTypeEnchantingLabel:SetColor(mydefcolor:UnpackRGBA())
-  CraftyStockListTypeAlchemyLabel:SetColor(mydefcolor:UnpackRGBA())
-  CraftyStockListTypeProvisioningLabel:SetColor(mydefcolor:UnpackRGBA())
-  CraftyStockListTypeWoodworkingLabel:SetColor(mydefcolor:UnpackRGBA())
-  CraftyStockListTypeJewelryLabel:SetColor(mydefcolor:UnpackRGBA())
+  CraftyStockListTypeAlchemyIcon:SetState(0,false)
+  CraftyStockListTypeBlacksmithingIcon:SetState(0,false)
+  CraftyStockListTypeClothierIcon:SetState(0,false)
+  CraftyStockListTypeEnchantingIcon:SetState(0,false)
+  CraftyStockListTypeJewelryIcon:SetState(0,false)
+  CraftyStockListTypeProvisioningIcon:SetState(0,false)
+  CraftyStockListTypeWoodworkingIcon:SetState(0,false)
+  CraftyStockListTypeMatsIcon:SetState(0,false)
   
-  if         arg == 0 then CraftyStockListTypeMatsLabel:SetColor(1,1,1,1)
-      elseif arg == 1 then CraftyStockListTypeBlacksmithingLabel:SetColor(1,1,1,1)
-      elseif arg == 2 then CraftyStockListTypeClothierLabel:SetColor(1,1,1,1)
-      elseif arg == 3 then CraftyStockListTypeEnchantingLabel:SetColor(1,1,1,1)
-      elseif arg == 4 then CraftyStockListTypeAlchemyLabel:SetColor(1,1,1,1)
-      elseif arg == 5 then CraftyStockListTypeProvisioningLabel:SetColor(1,1,1,1)
-      elseif arg == 6 then CraftyStockListTypeWoodworkingLabel:SetColor(1,1,1,1)
-      elseif arg == 7 then CraftyStockListTypeJewelryLabel:SetColor(1,1,1,1)
+  if         arg == 0 then CraftyStockListTypeMatsIcon:SetState(1,false)
+      elseif arg == 1 then CraftyStockListTypeBlacksmithingIcon:SetState(1,false)
+      elseif arg == 2 then CraftyStockListTypeClothierIcon:SetState(1,false)
+      elseif arg == 3 then CraftyStockListTypeEnchantingIcon:SetState(1,false)
+      elseif arg == 4 then CraftyStockListTypeAlchemyIcon:SetState(1,false)
+      elseif arg == 5 then CraftyStockListTypeProvisioningIcon:SetState(1,false)
+      elseif arg == 6 then CraftyStockListTypeWoodworkingIcon:SetState(1,false)
+      elseif arg == 7 then CraftyStockListTypeJewelryIcon:SetState(1,false)
       else
   end
-  
   
   Crafty.Refresh()
 end
@@ -577,6 +583,7 @@ function Crafty.EventCheckVendorClose()
       Crafty.SetActiveWatchList(Crafty.oldactivewatchListID) -- set active watchlist to previous in case user opens watchlist later
     else -- close watchlist is off -> switch to previous watchlist but only if the previous was shown
       if Crafty.oldshowWL then
+        Crafty.CloseSL()
         Crafty.OpenWL(Crafty.oldactivewatchListID)
       else -- close the watchlist cause the switch was not performed
         Crafty.CloseWL()
@@ -623,6 +630,13 @@ function Crafty.SavedifferentWLPositions()
   Crafty.savedVariables.DifferentWLPositions = Crafty.differentWLPositions
 end
 
+-- Save setting "Accountwide settings"
+function Crafty.SaveaccountWide()
+  Crafty.DB("Crafty: SaveaccountWide")
+  Crafty.savedVariablesACC.AccountWide = Crafty.accountWide
+  ReloadUI("ingame")
+end
+
 -- show or hide stocklist (from xml)
 function Crafty.ToggleSL()
   Crafty.DB("Crafty: ToggleSL")
@@ -647,7 +661,7 @@ end
 function Crafty.AnkerSL()
   Crafty.DB("Crafty: AnkerSL")
   CraftyStockList:ClearAnchors()
-  CraftyStockList:SetAnchor(TOPRIGHT, CraftyWatchList, TOPLEFT, -4 ,0)
+  CraftyStockList:SetAnchor(TOPRIGHT, CraftyWatchList, TOPLEFT, -15 ,0)
 end
 
 -- set anker on or off, also sets the texture

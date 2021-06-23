@@ -4,6 +4,7 @@
 ## Author: rp12439
 ## Description: CRAFTY Stocklist - The stock watchlist for your crafting profession
 ## SavedVariables: CraftySavedVariables
+## SavedVariables: CraftySavedVariablesACC
 ## DependsOn: LibAddonMenu-2.0
 
 CraftyWL.xml

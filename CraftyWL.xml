@@ -8,7 +8,7 @@
             <Dimensions x="300" y="600" />
             <Controls>
             
-                <Backdrop name="$(parent)BG" inherits="ZO_ThinBackdrop" />
+                <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
                 
                 <Button name="$(parent)ButtonClose" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="20" y="20" />
@@ -20,19 +20,9 @@
 						Crafty.CloseWL()
 					</OnClicked>
 				</Button>
-				<Button name="$(parent)ButtonUndo" inherits="ZO_ButtonBehaviorClickSound" hidden="true">
-					<Dimensions x="25" y="25" />
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="27" />
-					<Textures normal="esoui\art\vendor\vendor_tabicon_buyback_up.dds"
-						pressed="esoui\art\vendor\vendor_tabicon_buyback_down.dds"
-						mouseOver="esoui\art\vendor\vendor_tabicon_buyback_over.dds"/>
-					<OnClicked>
-						Crafty.UndoRemove()
-					</OnClicked>
-				</Button>
 				<Button name="$(parent)ButtonSettings" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="30" y="30" />
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonClose" relativePoint="TOPLEFT" offsetX="0" offsetY="-5" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonClose" relativePoint="TOPLEFT" offsetX="2" offsetY="-5" />
 					<Textures
 						normal="esoui\art\chatwindow\chat_options_up.dds"
 						pressed="esoui\art\chatwindow\chat_options_down.dds"
@@ -42,19 +32,19 @@
 						Crafty.ShowSettings()
 					</OnClicked>
 				</Button>
-				<Button name="$(parent)ButtonRrefresh" inherits="ZO_ButtonBehaviorClickSound">
+				<!--Button name="$(parent)ButtonRrefresh" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="30" y="30" />
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonSettings" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonSettings" relativePoint="TOPLEFT" offsetX="0" offsetY=0" />
 					<Textures normal="esoui/art/help/help_tabicon_feedback_up.dds"
 						pressed="esoui/art/help/help_tabicon_feedback_down.dds"
 						mouseOver="esoui/art/help/help_tabicon_feedback_over.dds"/>
 					<OnClicked>
 						Crafty.FullRefresh()
 					</OnClicked>
-				</Button>
+				</Button-->
 				<Button name="$(parent)ButtonStockList" inherits="ZO_ButtonBehaviorClickSound">
-					<Dimensions x="30" y="30" />
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonRrefresh" relativePoint="TOPLEFT" offsetX="0" offsetY="-1" />
+					<Dimensions x="29" y="29" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonSettings" relativePoint="TOPLEFT" offsetX="5" offsetY="0" />
 					<Textures normal="esoui/art/buttons/plus_up.dds"
 						pressed="esoui/art/buttons/plus_down.dds"
 						mouseOver="esoui/art/buttons/plus_over.dds"/>
@@ -62,6 +52,17 @@
 						Crafty.ToggleSL()
 					</OnClicked>
 				</Button>
+							
+				<Button name="$(parent)ButtonUndo" inherits="ZO_ButtonBehaviorClickSound" hidden="true">
+					<Dimensions x="25" y="25" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="27" />
+					<Textures normal="esoui\art\vendor\vendor_tabicon_buyback_up.dds"
+						pressed="esoui\art\vendor\vendor_tabicon_buyback_down.dds"
+						mouseOver="esoui\art\vendor\vendor_tabicon_buyback_over.dds"/>
+					<OnClicked>
+						Crafty.UndoRemove()
+					</OnClicked>
+				</Button>	
 							
                 <Label name="$(parent)Heading" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="WATCHLIST">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="10"/>
@@ -93,7 +94,7 @@
 
                 <Control name="$(parent)List" inherits="ZO_ScrollList">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="BOTTOMLEFT" offsetY="5" />
-                    <Anchor point="BOTTOMRIGHT" offsetX="-10" offsetY="-10" />
+                    <Anchor point="BOTTOMRIGHT" offsetX="-5" offsetY="-10" />
                 </Control>
                 
             </Controls>
@@ -115,7 +116,7 @@
                     <Dimensions x="175" y="32" />
                 </Label>
                 <Label name="$(parent)Amount" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="RIGHT">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)Name" relativePoint="TOPRIGHT" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Name" relativePoint="TOPRIGHT" offsetX="-5"/>
                     <Dimensions x="50" y="32" />
                 </Label>
             </Controls>

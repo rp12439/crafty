@@ -14,7 +14,7 @@
 				<Down>Crafty.OpenWL(3)</Down>
 			</Action>
 			<Action name="CRAFTY_STOCKLIST5">
-				<Down>Crafty.Refresh()</Down>
+				<Down>Crafty.FullRefresh()</Down>
 			</Action>
 			<Action name="CRAFTY_STOCKLIST6">
 				<Down>Crafty.ToggleDB()</Down>

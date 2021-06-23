@@ -1,80 +1,91 @@
 <GuiXml>
     <Controls>
         <TopLevelControl name="CraftyStockListType" hidden="true" mouseEnabled="true" movable="false" clampedToScreen="true">
-            <Anchor point="TOPRIGHT" relativeTo="CraftyStockList" relativePoint="TOPLEFT" offsetX="-4" offsetY="0"/>
-            <Dimensions x="300" y="600" />
+            <Anchor point="TOPRIGHT" relativeTo="CraftyStockList" relativePoint="TOPLEFT" offsetX="-15" offsetY="0"/>
+            <Dimensions x="50" y="290" />
             <Controls>
             
-                <Backdrop name="$(parent)BG" inherits="ZO_ThinBackdrop" />
-                
-                <!--Button name="$(parent)ButtonClose" inherits="ZO_ButtonBehaviorClickSound">
-					<Dimensions x="20" y="20" />
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="5" />
-					<Textures normal="esoui/art/buttons/decline_up.dds"
-						pressed="esoui/art/buttons/decline_down.dds"
-						mouseOver="esoui/art/buttons/decline_over.dds"/>
+                <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
+				<Button name="$(parent)BlacksmithingIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOP" relativeTo="$(parent)" offsetX="0" offsetY="0" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_craftbag_blacksmithing_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_craftbag_blacksmithing_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_craftbag_blacksmithing_over.dds"/>
 					<OnClicked>
-						Crafty.CloseTS()
+						Crafty.SetTS(1)
 					</OnClicked>
-				</Button-->
-                
-                <Label name="$(parent)Heading" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="PROFESSION">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="10"/>
-                </Label>
-                
-				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
-					<Dimensions x="200" y="4"/>
-					<Anchor point="TOPLEFT" relativeTo="$(parent)Heading" relativePoint="BOTTOMLEFT" offsetX="-10" offsetY="10" />
-				</Texture>
-
-                <Label name="$(parent)AlchemyLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Alchemy">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="TOPLEFT" offsetX="10" offsetY="10"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(4)
-    				</OnMouseUp>
-                </Label>
-                <Label name="$(parent)BlacksmithingLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Blacksmithing">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)AlchemyLabel" relativePoint="TOPLEFT" offsetX="0" offsetY="25"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(1)
-    				</OnMouseUp>
-                </Label>
-                <Label name="$(parent)ClothierLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Clothier">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)BlacksmithingLabel" relativePoint="TOPLEFT" offsetX="0" offsetY="25"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(2)
-    				</OnMouseUp>
-                </Label>
-                <Label name="$(parent)EnchantingLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Enchanting">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)ClothierLabel" relativePoint="TOPLEFT" offsetX="0" offsetY="25"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(3)
-    				</OnMouseUp>
-                </Label>
-                <Label name="$(parent)JewelryLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Jewelry">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)EnchantingLabel" relativePoint="TOPLEFT" offsetX="0" offsetY="25"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(7)
-    				</OnMouseUp>
-                </Label>
-                <Label name="$(parent)ProvisioningLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Provisioning">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)JewelryLabel" relativePoint="TOPLEFT" offsetX="0" offsetY="25"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(5)
-    				</OnMouseUp>
-                </Label>
-                <Label name="$(parent)WoodworkingLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Woodworking">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)ProvisioningLabel" relativePoint="TOPLEFT" offsetX="0" offsetY="25"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(6)
-    				</OnMouseUp>
-                </Label>
-				<Label name="$(parent)MatsLabel" mouseEnabled="true" font="ZoFontWinH4" color="CFDCBD" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="Ingredient Material">
-                	<Anchor point="TOPLEFT" relativeTo="$(parent)WoodworkingLabel" relativePoint="TOPLEFT" offsetX="0" offsetY="25"/>
-                	<OnMouseUp>
-                		Crafty.SetTS(0)
-    				</OnMouseUp>
-                </Label>
+				</Button>
+				<Button name="$(parent)ClothierIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)BlacksmithingIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_craftbag_clothing_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_craftbag_clothing_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_craftbag_clothing_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(2)
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)EnchantingIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)ClothierIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_craftbag_enchanting_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_craftbag_enchanting_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_craftbag_enchanting_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(3)
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)AlchemyIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)EnchantingIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_craftbag_alchemy_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_craftbag_alchemy_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_craftbag_alchemy_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(4)
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)ProvisioningIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)AlchemyIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_craftbag_provisioning_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_craftbag_provisioning_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_craftbag_provisioning_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(5)
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)WoodworkingIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)ProvisioningIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_craftbag_woodworking_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_craftbag_woodworking_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_craftbag_woodworking_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(6)
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)JewelryIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)WoodworkingIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_craftbag_jewelrycrafting_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_craftbag_jewelrycrafting_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_craftbag_jewelrycrafting_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(7)
+					</OnClicked>
+				</Button>				
+				<Button name="$(parent)MatsIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)JewelryIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui\art\inventory\inventory_tabicon_crafting_up.dds"
+						pressed="esoui\art\inventory\inventory_tabicon_crafting_down.dds"
+						mouseOver="esoui\art\inventory\inventory_tabicon_crafting_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(0)
+					</OnClicked>
+				</Button>
             </Controls>
         </TopLevelControl>      
     </Controls>
