@@ -89,7 +89,6 @@
 				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
 					<Dimensions x="280" y="4"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)Heading" relativePoint="BOTTOMLEFT" offsetY="10" />
-					
 				</Texture>
 
                 <Control name="$(parent)List" inherits="ZO_ScrollList">
@@ -107,9 +106,13 @@
                 Crafty.OnMouseUpWL(self, button, upInside)
             </OnMouseUp>
             <Controls>
+            	<Texture name="$(parent)Icon" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+					<Dimensions x="25" y="25"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)" />
+				</Texture>
                 <Label name="$(parent)Name" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="LEFT">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" />
-                    <Dimensions x="205" y="32" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Icon"  relativePoint="TOPRIGHT" offsetX="10" />
+                    <Dimensions x="175" y="32" />
                 </Label>
                 <Label name="$(parent)Amount" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="RIGHT">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)Name" relativePoint="TOPRIGHT" />

@@ -237,7 +237,7 @@ function Crafty.CalculateHeightWL()
   local watchList = Crafty.activewatchList
   local watchlistItems = table.getn(watchList)
   
-  Crafty.autoHeightWL = 65+watchlistItems*25
+  Crafty.autoHeightWL = 65+watchlistItems*30
 end
 
 -- sets the autoheight value to the xml element watchlist
@@ -273,7 +273,7 @@ function Crafty.CreateScrollListDataTypeSL()
   local control = CraftyStockListList
   local typeId = 1
   local templateName = "StockRow"
-  local height = 25
+  local height = 30
   local setupFunction = Crafty.LayoutRow
   local hideCallback = nil
   local dataTypeSelectSound = nil
@@ -291,7 +291,7 @@ function Crafty.CreateScrollListDataTypeWL()
   local control = CraftyWatchListList
   local typeId = 2
   local templateName = "WatchRow"
-  local height = 25
+  local height = 30
   local setupFunction = Crafty.LayoutRow
   local hideCallback = nil
   local dataTypeSelectSound = nil
@@ -402,10 +402,9 @@ function Crafty.PopulateWL()
   Crafty.DB("Crafty: PopulateWL Items:"..table.getn(watchList))
   Crafty.RefreshWLAmounts()
   local stock = {}
-  --Crafty.DBPrintWatchList()
   for i=1,table.getn(watchList) do
     stock[i] = {
-       link = watchList[i].link,
+      link = watchList[i].link,
       name = watchList[i].name,
       amount = watchList[i].amount,
       cinfo = watchList[i].cinfo
@@ -478,9 +477,11 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
   --d("Crafty: LayoutRow")
 
   rowControl.data = data
+  rowControl.icon = GetControl(rowControl, "Icon")
   rowControl.name = GetControl(rowControl, "Name")
   rowControl.amount = GetControl(rowControl, "Amount")
   
+  rowControl.icon:SetTexture(GetItemLinkIcon(data.link))
   rowControl.name:SetText(data.link)
   rowControl.amount:SetText(data.amount)  
 end
@@ -492,6 +493,7 @@ end
 -- eventmanager target for several inventory change events
 function Crafty.InvChange()
   Crafty.DB("Crafty: InvChange")
+  Crafty.DB(quantity)
   Crafty.Refresh()
 end
 
@@ -884,6 +886,7 @@ function Crafty.PopulateCompleteStock()
         amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
         cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
       }
+      --Crafty.DB(cstock[stockcounter].icon) --working
     end
   end
   return cstock
