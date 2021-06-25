@@ -65,7 +65,7 @@
 				</Button>	
 							
                 <Label name="$(parent)Heading" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="WATCHLIST">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="10"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="5" offsetY="5"/>
                 </Label>
                 
                 <Label name="$(parent)WatchList1" mouseEnabled="true" color="CFDCBD" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="1">
@@ -89,12 +89,31 @@
 		
 				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
 					<Dimensions x="280" y="4"/>
-					<Anchor point="TOPLEFT" relativeTo="$(parent)Heading" relativePoint="BOTTOMLEFT" offsetY="10" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Heading" relativePoint="BOTTOMLEFT" offsetY="12" />
 				</Texture>
+				
+				<Button name="$(parent)SortName" inherits="ZO_ButtonBehaviorClickSound" hidden="false">
+					<Dimensions x="15" y="25" />
+					<Anchor point="CENTER" relativeTo="$(parent)Divider" relativePoint="CENTER" offsetX="-100" offsetY="-2" />
+					<Textures normal="esoui\art\miscellaneous\list_sortheader_icon_neutral.dds"
+						mouseOver="esoui\art\miscellaneous\list_sortheader_icon_over.dds"/>
+					<OnClicked>
+						Crafty.SortWLName()
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)SortAmount" inherits="ZO_ButtonBehaviorClickSound" hidden="false">
+					<Dimensions x="15" y="25" />
+					<Anchor point="CENTER" relativeTo="$(parent)Divider" relativePoint="CENTER" offsetX="100" offsetY="-2" />
+					<Textures normal="esoui\art\miscellaneous\list_sortheader_icon_neutral.dds"
+						mouseOver="esoui\art\miscellaneous\list_sortheader_icon_over.dds"/>
+					<OnClicked>
+						Crafty.SortWLAmount()
+					</OnClicked>
+				</Button>
 
                 <Control name="$(parent)List" inherits="ZO_ScrollList">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="BOTTOMLEFT" offsetY="5" />
-                    <Anchor point="BOTTOMRIGHT" offsetX="-5" offsetY="-10" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="BOTTOMLEFT" offsetY="10" />
+                    <Anchor point="BOTTOMRIGHT" offsetX="-5" offsetY="-5" />
                 </Control>
                 
             </Controls>

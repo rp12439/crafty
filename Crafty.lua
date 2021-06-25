@@ -4,7 +4,7 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
-Crafty.version = "v1.4"
+Crafty.version = "v1.5"
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
@@ -29,6 +29,12 @@ Crafty.autoHeightWL = 600
 Crafty.autoHeightWLOpt = true
 Crafty.masterAlpha = 1
 Crafty.accountWide = false
+Crafty.sortWLName = "down"
+Crafty.sortWLAmount = "down"
+Crafty.sortWL = "Name"
+Crafty.sortSLName = "down"
+Crafty.sortSLAmount = "down"
+Crafty.sortSL = "Name"
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -48,9 +54,7 @@ function Crafty:Initialize()
     
   self.savedVariablesACC = ZO_SavedVars:NewAccountWide("CraftySavedVariablesACC", 1, nil, {})  
   
-  if Crafty.savedVariablesACC.AccountWide ~= nil then
-    Crafty.accountWide = Crafty.savedVariablesACC.AccountWide
-  end  
+  if Crafty.savedVariablesACC.AccountWide ~= nil then Crafty.accountWide = Crafty.savedVariablesACC.AccountWide end  
     
   if not Crafty.accountWide then
     self.savedVariables = ZO_SavedVars:NewCharacterIdSettings("CraftySavedVariables", 1, nil, {})
@@ -58,51 +62,27 @@ function Crafty:Initialize()
     self.savedVariables = ZO_SavedVars:NewAccountWide("CraftySavedVariables", 1, nil, {})
   end
   
-  if Crafty.savedVariables.AnkerSL ~= nil then
-    Crafty.ankerSL = Crafty.savedVariables.AnkerSL
-  end
-  if Crafty.savedVariables.ShowSL ~= nil then
-    Crafty.showSL = Crafty.savedVariables.ShowSL
-  end
-  if Crafty.savedVariables.ShowWL ~= nil then
-    Crafty.showWL = Crafty.savedVariables.ShowWL
-  end
-  if Crafty.savedVariables.WatchList1 ~= nil then
-    Crafty.watchList1 = Crafty.savedVariables.WatchList1
-  end
-  if Crafty.savedVariables.WatchList2 ~= nil then
-    Crafty.watchList2 = Crafty.savedVariables.WatchList2
-  end
-  if Crafty.savedVariables.WatchList3 ~= nil then
-    Crafty.watchList3 = Crafty.savedVariables.WatchList3
-  end
-  if Crafty.savedVariables.ActivewatchList ~= nil then
-    Crafty.activewatchList = Crafty.savedVariables.ActivewatchList
-  end
-  if Crafty.savedVariables.ActivewatchListID ~= nil then
-    Crafty.activewatchListID = Crafty.savedVariables.ActivewatchListID
-  end
-  if Crafty.savedVariables.DifferentWLPositions ~= nil then
-    Crafty.differentWLPositions = Crafty.savedVariables.DifferentWLPositions
-  end
-  if Crafty.savedVariables.VendorOpen ~= nil then
-    Crafty.vendorOpen = Crafty.savedVariables.VendorOpen
-  end
-  if Crafty.savedVariables.VendorOpen ~= nil then
-    Crafty.vendorClose = Crafty.savedVariables.VendorClose
-  end
-  if Crafty.savedVariables.VendorwatchListID ~= nil then
-    Crafty.vendorwatchListID = Crafty.savedVariables.VendorwatchListID
-  end
-  if Crafty.savedVariables.MasterAlpha ~= nil then
-    Crafty.masterAlpha = Crafty.savedVariables.MasterAlpha
-  end
-  if Crafty.savedVariables.MasterHeight ~= nil then
-    Crafty.masterHeight = Crafty.savedVariables.MasterHeight
-  end
-  if Crafty.savedVariables.AutoHeightWLOpt ~= nil then
-    Crafty.autoHeightWLOpt = Crafty.savedVariables.AutoHeightWLOpt
-  end  
+  if Crafty.savedVariables.AnkerSL ~= nil then Crafty.ankerSL = Crafty.savedVariables.AnkerSL end
+  if Crafty.savedVariables.ShowSL ~= nil then Crafty.showSL = Crafty.savedVariables.ShowSL end
+  if Crafty.savedVariables.ShowWL ~= nil then Crafty.showWL = Crafty.savedVariables.ShowWL end
+  if Crafty.savedVariables.WatchList1 ~= nil then Crafty.watchList1 = Crafty.savedVariables.WatchList1 end
+  if Crafty.savedVariables.WatchList2 ~= nil then Crafty.watchList2 = Crafty.savedVariables.WatchList2 end
+  if Crafty.savedVariables.WatchList3 ~= nil then Crafty.watchList3 = Crafty.savedVariables.WatchList3 end
+  if Crafty.savedVariables.ActivewatchList ~= nil then Crafty.activewatchList = Crafty.savedVariables.ActivewatchList end
+  if Crafty.savedVariables.ActivewatchListID ~= nil then Crafty.activewatchListID = Crafty.savedVariables.ActivewatchListID end
+  if Crafty.savedVariables.DifferentWLPositions ~= nil then Crafty.differentWLPositions = Crafty.savedVariables.DifferentWLPositions end
+  if Crafty.savedVariables.VendorOpen ~= nil then Crafty.vendorOpen = Crafty.savedVariables.VendorOpen end
+  if Crafty.savedVariables.VendorClose ~= nil then Crafty.vendorClose = Crafty.savedVariables.VendorClose end
+  if Crafty.savedVariables.VendorwatchListID ~= nil then Crafty.vendorwatchListID = Crafty.savedVariables.VendorwatchListID end
+  if Crafty.savedVariables.MasterAlpha ~= nil then Crafty.masterAlpha = Crafty.savedVariables.MasterAlpha end
+  if Crafty.savedVariables.MasterHeight ~= nil then Crafty.masterHeight = Crafty.savedVariables.MasterHeight end
+  if Crafty.savedVariables.AutoHeightWLOpt ~= nil then Crafty.autoHeightWLOpt = Crafty.savedVariables.AutoHeightWLOpt end
+  if Crafty.savedVariables.SortWLName ~= nil then Crafty.sortWLName = Crafty.savedVariables.SortWLName end  
+  if Crafty.savedVariables.SortSLName ~= nil then Crafty.sortSLName = Crafty.savedVariables.SortSLName end  
+  if Crafty.savedVariables.SortWLAmount ~= nil then Crafty.sortWLAmount = Crafty.savedVariables.SortWLAmount end  
+  if Crafty.savedVariables.SortSLAmount ~= nil then Crafty.sortSLAmount = Crafty.savedVariables.SortSLAmount end  
+  if Crafty.savedVariables.SortWL ~= nil then Crafty.sortWL = Crafty.savedVariables.SortWL end  
+  if Crafty.savedVariables.SortSL ~= nil then Crafty.sortSL = Crafty.savedVariables.SortSL end 
    
   Crafty:RestorePosition()
   Crafty.Check()
@@ -125,7 +105,8 @@ function Crafty:Initialize()
   Crafty.SetTS(1)
   
   Crafty.SetActiveWatchList(Crafty.activewatchListID)
-  
+  Crafty.SortWLTexture()
+  Crafty.SortSLTexture()
 end
 
 ----------------------------------------------------------------------------------------
@@ -246,7 +227,7 @@ function Crafty.CalculateHeightWL()
   local watchList = Crafty.activewatchList
   local watchlistItems = table.getn(watchList)
   
-  Crafty.autoHeightWL = 65+watchlistItems*30
+  Crafty.autoHeightWL = 70+watchlistItems*30
 end
 
 -- sets the autoheight value to the xml element watchlist
@@ -434,7 +415,23 @@ function Crafty.UpdateScrollListSL(control, data, rowType)
     table.insert(dataList, entry)
   end
   
-  table.sort(dataList, function(a,b) return a.data.name < b.data.name end)
+  if Crafty.sortSL == "Name" then
+    if Crafty.sortSLName == "up" then
+      table.sort(dataList, function(a,b) return a.data.name < b.data.name end)
+    end
+    if Crafty.sortSLName == "down" then
+      table.sort(dataList, function(a,b) return a.data.name > b.data.name end)
+    end
+  end
+  if Crafty.sortSL == "Amount" then
+    if Crafty.sortSLAmount == "up" then
+      table.sort(dataList, function(a,b) return a.data.amount < b.data.amount end)
+    end
+    if Crafty.sortSLAmount == "down" then
+      table.sort(dataList, function(a,b) return a.data.amount > b.data.amount end)
+    end
+  end
+  
   ZO_ScrollList_Commit(control)
   
   if Crafty.activewatchList == Crafty.watchList1 then
@@ -461,11 +458,25 @@ function Crafty.UpdateScrollListWL(control, data, rowType)
     local entry = ZO_ScrollList_CreateDataEntry(rowType, value)
     table.insert(dataListWL, entry)
   end
-   
-  table.sort(dataListWL, function(a,b) return a.data.name < b.data.name end)
-  ZO_ScrollList_Commit(control)
   
-  --Crafty.DBPrintWatchList()
+  if Crafty.sortWL == "Name" then
+    if Crafty.sortWLName == "up" then
+      table.sort(dataListWL, function(a,b) return a.data.name < b.data.name end)
+    end
+    if Crafty.sortWLName == "down" then
+      table.sort(dataListWL, function(a,b) return a.data.name > b.data.name end)
+    end
+  end
+  if Crafty.sortWL == "Amount" then
+    if Crafty.sortWLAmount == "up" then
+      table.sort(dataListWL, function(a,b) return a.data.amount < b.data.amount end)
+    end
+    if Crafty.sortWLAmount == "down" then
+      table.sort(dataListWL, function(a,b) return a.data.amount > b.data.amount end)
+    end
+  end
+
+  ZO_ScrollList_Commit(control)
   
   if Crafty.activewatchList == Crafty.watchList1 then
     Crafty.savedVariables.WatchList1 = Crafty.activewatchList
@@ -635,6 +646,118 @@ function Crafty.SaveaccountWide()
   Crafty.DB("Crafty: SaveaccountWide")
   Crafty.savedVariablesACC.AccountWide = Crafty.accountWide
   ReloadUI("ingame")
+end
+
+-- Sort WL Initial (set texture)
+function Crafty.SortWLTexture()
+  Crafty.DB("Crafty: SortWLTexture")
+  if Crafty.sortWL == "Name" then
+    if Crafty.sortWLName == "up" then
+      CraftyWatchListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+    else
+      CraftyWatchListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+    end
+  else
+    if Crafty.sortWLAmount == "up" then
+      CraftyWatchListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+    else
+      CraftyWatchListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+    end
+  end
+end
+
+-- Sort WL Name
+function Crafty.SortWLName()
+  Crafty.DB("Crafty: SortWLName")
+  Crafty.sortWL = "Name"
+  Crafty.sortWLAmount = "down"
+  CraftyWatchListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_neutral.dds")
+  if Crafty.sortWLName == "up" then
+    Crafty.sortWLName = "down"
+    CraftyWatchListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+  else
+    Crafty.sortWLName = "up"
+    CraftyWatchListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+  end
+  Crafty.savedVariables.SortWL = Crafty.sortWL
+  Crafty.savedVariables.SortWLName = Crafty.sortWLName
+  Crafty.savedVariables.SortWLAmount = Crafty.sortWLAmount
+  Crafty.Refresh()
+end
+
+-- Sort WL Amount
+function Crafty.SortWLAmount()
+  Crafty.DB("Crafty: SortWLAmount")
+  Crafty.sortWL = "Amount"
+  Crafty.sortWLName = "down"
+  CraftyWatchListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_neutral.dds")
+  if Crafty.sortWLAmount == "up" then
+    Crafty.sortWLAmount = "down"
+    CraftyWatchListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+  else
+    Crafty.sortWLAmount = "up"
+    CraftyWatchListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+  end
+  Crafty.savedVariables.SortWL = Crafty.sortWL
+  Crafty.savedVariables.SortWLAmount = Crafty.sortWLAmount
+  Crafty.savedVariables.SortWLName = Crafty.sortWLName
+  Crafty.Refresh()
+end
+
+-- Sort SL Initial (set texture)
+function Crafty.SortSLTexture()
+  Crafty.DB("Crafty: SortSLTexture")
+  if Crafty.sortSL == "Name" then
+    if Crafty.sortSLName == "up" then
+      CraftyStockListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+    else
+      CraftyStockListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+    end
+  else
+    if Crafty.sortSLAmount == "up" then
+      CraftyStockListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+    else
+      CraftyStockListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+    end
+  end
+end
+
+-- Sort SL Name
+function Crafty.SortSLName()
+  Crafty.DB("Crafty: SortSLName")
+  Crafty.sortSL = "Name"
+  Crafty.sortSLAmount = "down"
+  CraftyStockListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_neutral.dds")
+  if Crafty.sortSLName == "up" then
+    Crafty.sortSLName = "down"
+    CraftyStockListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+  else
+    Crafty.sortSLName = "up"
+    CraftyStockListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+  end
+  Crafty.savedVariables.SortSL = Crafty.sortSL
+  Crafty.savedVariables.SortSLName = Crafty.sortSLName
+  Crafty.savedVariables.SortSLAmount = Crafty.sortSLAmount
+  Crafty.Refresh()
+end
+
+-- Sort SL Amount
+function Crafty.SortSLAmount()
+  Crafty.DB("Crafty: SortSLAmount")
+  Crafty.sortSL = "Amount"
+  Crafty.sortSLName = "down"
+  CraftyStockListSortName:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_neutral.dds")
+  if Crafty.sortSLAmount == "up" then
+    Crafty.sortSLAmount = "down"
+    CraftyStockListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
+  else
+    Crafty.sortSLAmount = "up"
+    CraftyStockListSortAmount:SetNormalTexture("esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
+  end
+  Crafty.savedVariables.SortSL = Crafty.sortSL
+  Crafty.savedVariables.SortSLAmount = Crafty.sortSLAmount
+  Crafty.savedVariables.SortSLName = Crafty.sortSLName
+  Crafty.Refresh()
 end
 
 -- show or hide stocklist (from xml)
