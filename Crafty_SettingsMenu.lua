@@ -105,7 +105,7 @@ function Crafty.ControlSettings()
         getFunc = function() return Crafty.accountWide end,
         setFunc = function(value) Crafty.accountWide = value Crafty.SaveaccountWide() end,
         default = false,
-        warning = "Will reload the UI!",
+        requiresReload = true
     },
     
   }

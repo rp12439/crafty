@@ -52,7 +52,7 @@
 				</Button-->
                 
                 <Label name="$(parent)Heading" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="STOCKLIST">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="5"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="5" offsetY="5"/>
                 </Label>
                 	
 				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
@@ -90,12 +90,12 @@
         <Button name="StockRow" virtual="true">
         	<Dimensions y="32" />
             <Anchor point="LEFT" relativeTo="$(parent)" />
-            <!--OnMouseEnter>
+            <OnMouseEnter>
                 Crafty.OnMouseEnterSL(self)
             </OnMouseEnter>
             <OnMouseExit>
                 Crafty.OnMouseExitSL(self)
-            </OnMouseExit-->
+            </OnMouseExit>
             <OnMouseUp>
                 Crafty.OnMouseUpSL(self, button, upInside)
             </OnMouseUp>

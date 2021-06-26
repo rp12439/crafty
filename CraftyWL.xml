@@ -122,6 +122,12 @@
         <Button name="WatchRow" virtual="true">
         	<Dimensions y="32" />
             <Anchor point="LEFT" relativeTo="$(parent)" />
+            <OnMouseEnter>
+                Crafty.OnMouseEnterWL(self)
+            </OnMouseEnter>
+            <OnMouseExit>
+                Crafty.OnMouseExitWL(self)
+            </OnMouseExit>
             <OnMouseUp>
                 Crafty.OnMouseUpWL(self, button, upInside)
             </OnMouseUp>

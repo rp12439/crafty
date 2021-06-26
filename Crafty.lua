@@ -138,6 +138,7 @@ function Crafty.SetMasterAlpha()
   CraftyWatchListBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListTypeBG:SetAlpha(Crafty.masterAlpha)
+  CraftyStockListTooltipBG:SetAlpha(Crafty.masterAlpha)
   
   Crafty.savedVariables.MasterAlpha = Crafty.masterAlpha
 end
@@ -645,7 +646,7 @@ end
 function Crafty.SaveaccountWide()
   Crafty.DB("Crafty: SaveaccountWide")
   Crafty.savedVariablesACC.AccountWide = Crafty.accountWide
-  ReloadUI("ingame")
+  --ReloadUI("ingame")
 end
 
 -- Sort WL Initial (set texture)
@@ -883,17 +884,46 @@ function Crafty.OpenWL(arg)
     Crafty.savedVariables.ShowSL = false 
 end
 
----- not used yet
---function Crafty.OnMouseEnterSL(control)
---
---
---end
---
----- not used yet
---function Crafty.OnMouseExitSL(control)
---
---
---end
+-- OnMouseEnter watchlist row
+function Crafty.OnMouseEnterWL(control)
+  Crafty.DB("Crafty: OnMouseEnterWL")
+  CraftyStockListTooltip:SetHidden(false)
+  if not Crafty.showSL then
+    CraftyStockListTooltip:ClearAnchors()
+    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -20, 0)
+  else
+    CraftyStockListTooltip:ClearAnchors()
+    CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+  end
+  local itemType = GetString("SI_ITEMTYPE", GetItemLinkItemType(control.data.link))
+  local filterType = GetString("SI_ITEMFILTERTYPE", GetItemLinkFilterTypeInfo(control.data.link)) -- all Materials
+ 
+  CraftyStockListTooltipItemLink:SetText(itemType)
+end
+
+-- OnMouseExit watchlist row
+function Crafty.OnMouseExitWL(control)
+  Crafty.DB("Crafty: OnMouseExitWL")
+  CraftyStockListTooltip:SetHidden(true)
+end
+
+-- OnMouseEnter stocklist row
+function Crafty.OnMouseEnterSL(control)
+  Crafty.DB("Crafty: OnMouseEnterSL")
+  CraftyStockListTooltip:SetHidden(false)
+  CraftyStockListTooltip:ClearAnchors()
+  CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -20, 0)
+  
+  local itemType = GetString("SI_ITEMTYPE", GetItemLinkItemType(control.data.link))
+  
+  CraftyStockListTooltipItemLink:SetText(itemType)
+end
+
+-- OnMouseExit stocklist row
+function Crafty.OnMouseExitSL(control)
+  Crafty.DB("Crafty: OnMouseExitSL")
+  CraftyStockListTooltip:SetHidden(true)
+end
 
 ----------------------------------------------------------------------------------------
 -- Functions for modifying the listdata (add items, remove, undo)
