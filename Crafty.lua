@@ -35,6 +35,9 @@ Crafty.sortWL = "Name"
 Crafty.sortSLName = "down"
 Crafty.sortSLAmount = "down"
 Crafty.sortSL = "Name"
+Crafty.minModeWL1 = false
+Crafty.minModeWL2 = false
+Crafty.minModeWL3 = false
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -83,6 +86,9 @@ function Crafty:Initialize()
   if Crafty.savedVariables.SortSLAmount ~= nil then Crafty.sortSLAmount = Crafty.savedVariables.SortSLAmount end  
   if Crafty.savedVariables.SortWL ~= nil then Crafty.sortWL = Crafty.savedVariables.SortWL end  
   if Crafty.savedVariables.SortSL ~= nil then Crafty.sortSL = Crafty.savedVariables.SortSL end 
+  if Crafty.savedVariables.MinModeWL1 ~= nil then Crafty.minModeWL1 = Crafty.savedVariables.MinModeWL1 end 
+  if Crafty.savedVariables.MinModeWL2 ~= nil then Crafty.minModeWL2 = Crafty.savedVariables.MinModeWL2 end 
+  if Crafty.savedVariables.MinModeWL3 ~= nil then Crafty.minModeWL3 = Crafty.savedVariables.MinModeWL3 end 
    
   Crafty:RestorePosition()
   Crafty.Check()
@@ -107,6 +113,7 @@ function Crafty:Initialize()
   Crafty.SetActiveWatchList(Crafty.activewatchListID)
   Crafty.SortWLTexture()
   Crafty.SortSLTexture()
+  
 end
 
 ----------------------------------------------------------------------------------------
@@ -182,9 +189,86 @@ function Crafty:RestorePosition()
     local topSL = Crafty.savedVariables.topSL
     CraftyStockList:ClearAnchors()
     CraftyStockList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftSL, topSL)
+    CraftyStockListButtonToggleAnkerSL:SetNormalTexture("esoui/art/miscellaneous/unlocked_up.dds")
+    CraftyStockListButtonToggleAnkerSL:SetMouseOverTexture("esoui/art/miscellaneous/unlocked_over.dds")
+    CraftyStockListButtonToggleAnkerSL:SetPressedTexture("esoui/art/miscellaneous/unlocked_down.dds")
   else
     Crafty.AnkerSL()
   end
+end
+
+function Crafty.ToggleMinMode()
+  Crafty.DB("Crafty: ToggleMinMode - WL:"..Crafty.activewatchListID)
+  local wl = Crafty.activewatchListID
+
+  if wl == 1 then
+    if Crafty.minModeWL1 then
+      Crafty.minModeWL1 = false
+      Crafty.savedVariables.MinModeWL1 = Crafty.minModeWL1
+      Crafty.EndMinMode()
+    else
+      Crafty.minModeWL1 = true
+      Crafty.savedVariables.MinModeWL1 = Crafty.minModeWL1
+      Crafty.SetMinMode()
+    end
+  end
+    if wl == 2 then
+    if Crafty.minModeWL2 then
+      Crafty.minModeWL2 = false
+      Crafty.savedVariables.MinModeWL2 = Crafty.minModeWL2
+      Crafty.EndMinMode()
+    else
+      Crafty.minModeWL2 = true
+      Crafty.savedVariables.MinModeWL2 = Crafty.minModeWL2
+      Crafty.SetMinMode()
+    end
+  end
+    if wl == 3 then
+    if Crafty.minModeWL3 then
+      Crafty.minModeWL3 = false
+      Crafty.savedVariables.MinModeWL3 = Crafty.minModeWL3
+      Crafty.EndMinMode()
+    else
+      Crafty.minModeWL3 = true
+      Crafty.savedVariables.MinModeWL3 = Crafty.minModeWL3
+      Crafty.SetMinMode()
+    end
+  end
+  Crafty.Refresh()
+end
+
+function Crafty.SetMinMode()
+  Crafty.DB("Crafty: SetMinMode - WL:"..Crafty.activewatchListID)
+  CraftyWatchListWatchList1:SetHidden(true)
+  CraftyWatchListWatchList2:SetHidden(true)
+  CraftyWatchListWatchList3:SetHidden(true)
+  CraftyWatchListButtonClose:SetHidden(true)
+  CraftyWatchListButtonSettings:SetHidden(true)
+  CraftyWatchListButtonStockList:SetHidden(true)
+  CraftyWatchListDivider:SetHidden(true)
+  CraftyWatchListSortName:SetHidden(true)
+  CraftyWatchListSortAmount:SetHidden(true)
+  CraftyWatchList:SetWidth(115)
+  
+  CraftyWatchListList:SetAnchor(TOPLEFT, CraftyWatchList, TOPLEFT, 10, 10)
+  Crafty.SetHeightWL()
+end
+
+function Crafty.EndMinMode()
+  Crafty.DB("Crafty: EndMinMode - WL:"..Crafty.activewatchListID)
+  CraftyWatchListWatchList1:SetHidden(false)
+  CraftyWatchListWatchList2:SetHidden(false)
+  CraftyWatchListWatchList3:SetHidden(false)
+  CraftyWatchListButtonClose:SetHidden(false)
+  CraftyWatchListButtonSettings:SetHidden(false)
+  CraftyWatchListButtonStockList:SetHidden(false)
+  CraftyWatchListDivider:SetHidden(false)
+  CraftyWatchListSortName:SetHidden(false)
+  CraftyWatchListSortAmount:SetHidden(false)
+  CraftyWatchList:SetWidth(300)
+
+  CraftyWatchListList:SetAnchor(TOPLEFT, CraftyWatchListDivider, BOTTOMLEFT, 0, 10)
+  Crafty.SetHeightWL()
 end
 
 -- restore saved position for specific watchlist
@@ -224,11 +308,20 @@ end
 -- calculate the autoheight for the watchlist, sets the global var
 function Crafty.CalculateHeightWL()
   Crafty.DB("Crafty: CalculateHeightWL")
-  
   local watchList = Crafty.activewatchList
   local watchlistItems = table.getn(watchList)
+  local watchListID = Crafty.activewatchListID
+  local minmode = false
   
-  Crafty.autoHeightWL = 70+watchlistItems*30
+  if watchListID == 1 then minmode = Crafty.minModeWL1 end
+  if watchListID == 2 then minmode = Crafty.minModeWL2 end
+  if watchListID == 3 then minmode = Crafty.minModeWL3 end
+  
+  if minmode then
+    Crafty.autoHeightWL = 20+watchlistItems*30
+  else
+    Crafty.autoHeightWL = 70+watchlistItems*30
+  end
 end
 
 -- sets the autoheight value to the xml element watchlist
@@ -236,10 +329,10 @@ function Crafty.SetHeightWL()
   if Crafty.autoHeightWLOpt then
     Crafty.DB("Crafty: SetHeightWL")
     Crafty.CalculateHeightWL()
-    local width = Crafty.masterWidth
+    --local width = Crafty.masterWidth
     local height = Crafty.autoHeightWL
     
-    CraftyWatchList:SetWidth(width)
+    --CraftyWatchList:SetWidth(width)
     CraftyWatchList:SetHeight(height)
   end
 end
@@ -296,7 +389,7 @@ end
 
 -- set the active watchlist (from xml)
 function Crafty.SetActiveWatchList(arg)
-  Crafty.DB("Crafty: SetActiveWatchList "..arg)
+  Crafty.DB("Crafty: SetActiveWatchList: "..arg)
   local mydefcolor = ZO_ColorDef:New("CFDCBD")
   
   CraftyWatchListWatchList1:SetColor(mydefcolor:UnpackRGBA())
@@ -307,19 +400,23 @@ function Crafty.SetActiveWatchList(arg)
   CraftyWatchListWatchList3:SetFont("ZoFontWinH4")
   
   if arg == 1 then
+    Crafty.DB(Crafty.minModeWL1)
     CraftyWatchListWatchList1:SetColor(1,1,1)
     CraftyWatchListWatchList1:SetFont("ZoFontWinH4")
     Crafty.activewatchList = Crafty.watchList1
+    if Crafty.minModeWL1 then Crafty.SetMinMode() else Crafty.EndMinMode() end
   end
   if arg == 2 then
     CraftyWatchListWatchList2:SetColor(1,1,1)
     CraftyWatchListWatchList2:SetFont("ZoFontWinH4")
     Crafty.activewatchList = Crafty.watchList2
+    if Crafty.minModeWL2 then Crafty.SetMinMode() else Crafty.EndMinMode() end
   end
   if arg == 3 then
     CraftyWatchListWatchList3:SetColor(1,1,1)
     CraftyWatchListWatchList3:SetFont("ZoFontWinH4")
     Crafty.activewatchList = Crafty.watchList3
+    if Crafty.minModeWL3 then Crafty.SetMinMode() else Crafty.EndMinMode() end
   end
   
   Crafty.savedVariables.ActivewatchList = Crafty.activewatchList
@@ -492,8 +589,8 @@ end
 
 -- fills the xml rows with the data from the scrolllists
 function Crafty.LayoutRow(rowControl, data, scrollList)
-  --d("Crafty: LayoutRow")
-
+  Crafty.DB("Crafty: LayoutRow")
+  
   rowControl.data = data
   rowControl.icon = GetControl(rowControl, "Icon")
   rowControl.name = GetControl(rowControl, "Name")
@@ -501,7 +598,18 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
   
   rowControl.icon:SetTexture(GetItemLinkIcon(data.link))
   rowControl.name:SetText(data.link)
-  rowControl.amount:SetText(data.amount)  
+  rowControl.amount:SetText(data.amount)
+    
+  rowControl.name:SetHidden(false)
+  rowControl.name:SetWidth(175)
+  
+  -- change appearance for minMode
+  if scrollList == CraftyWatchListList then
+    if Crafty.activewatchListID == 1 and Crafty.minModeWL1 then rowControl.name:SetHidden(true) rowControl.name:SetWidth(1) end
+    if Crafty.activewatchListID == 2 and Crafty.minModeWL2 then rowControl.name:SetHidden(true) rowControl.name:SetWidth(1) end
+    if Crafty.activewatchListID == 3 and Crafty.minModeWL3 then rowControl.name:SetHidden(true) rowControl.name:SetWidth(1) end
+  end
+  
 end
 
 ----------------------------------------------------------------------------------------
@@ -864,6 +972,8 @@ function Crafty.CloseWL()
   Crafty.savedVariables.ShowSL = false
   Crafty.CloseSL()
   Crafty.CloseTS()
+  Crafty.undoRemove = nil
+  Crafty.CheckUndo()
 end
 
 -- open the watchlist
@@ -886,42 +996,80 @@ end
 
 -- OnMouseEnter watchlist row
 function Crafty.OnMouseEnterWL(control)
-  Crafty.DB("Crafty: OnMouseEnterWL")
+  --Crafty.DB("Crafty: OnMouseEnterWL")
   CraftyStockListTooltip:SetHidden(false)
-  if not Crafty.showSL then
+  CraftyStockListTooltip:SetHeight(500)
+  if not Crafty.showSL or not Crafty.ankerSL then
     CraftyStockListTooltip:ClearAnchors()
-    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -20, 0)
+    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   else
     CraftyStockListTooltip:ClearAnchors()
     CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
   end
-  local itemType = GetString("SI_ITEMTYPE", GetItemLinkItemType(control.data.link))
-  local filterType = GetString("SI_ITEMFILTERTYPE", GetItemLinkFilterTypeInfo(control.data.link)) -- all Materials
+  
+  local itemIcon = GetItemLinkIcon(control.data.link)
+  CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
+  
+  local itemLink = control.data.link
+  CraftyStockListTooltipItemLink:SetText(itemLink)
  
-  CraftyStockListTooltipItemLink:SetText(itemType)
+  local traitText = ""
+  if GetItemLinkTraitType(control.data.link) ~= 0 then
+    local traitType = GetString("SI_ITEMTRAITTYPE", GetItemLinkTraitType(control.data.link))
+    traitText =" ("..traitType..")"
+  end
+  local itemType = GetString("SI_ITEMTYPE", GetItemLinkItemType(control.data.link))
+  CraftyStockListTooltipItemType:SetText(itemType..traitText)
+  
+  local itemFlavor = GetItemLinkFlavorText(control.data.link)
+  CraftyStockListTooltipItemFlavor:SetText(itemFlavor)
+  
+  local itemFlavorTextHeight = CraftyStockListTooltipItemFlavor:GetTextHeight()
+  
+  CraftyStockListTooltip:SetHeight(110+itemFlavorTextHeight)
+  
 end
 
 -- OnMouseExit watchlist row
 function Crafty.OnMouseExitWL(control)
-  Crafty.DB("Crafty: OnMouseExitWL")
+  --Crafty.DB("Crafty: OnMouseExitWL")
   CraftyStockListTooltip:SetHidden(true)
 end
 
--- OnMouseEnter stocklist row
+-- OnMouseEnter stocklist row (in case that this can be different from watchlist)
 function Crafty.OnMouseEnterSL(control)
-  Crafty.DB("Crafty: OnMouseEnterSL")
+  --Crafty.DB("Crafty: OnMouseEnterSL")
   CraftyStockListTooltip:SetHidden(false)
+  CraftyStockListTooltip:SetHeight(500)
   CraftyStockListTooltip:ClearAnchors()
-  CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -20, 0)
+  CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   
+  local itemIcon = GetItemLinkIcon(control.data.link)
+  CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
+  
+  local itemLink = control.data.link
+  CraftyStockListTooltipItemLink:SetText(itemLink)
+  
+  local traitText = ""
+  if GetItemLinkTraitType(control.data.link) ~= 0 then
+    local traitType = GetString("SI_ITEMTRAITTYPE", GetItemLinkTraitType(control.data.link))
+    traitText =" ("..traitType..")"
+  end
   local itemType = GetString("SI_ITEMTYPE", GetItemLinkItemType(control.data.link))
+  CraftyStockListTooltipItemType:SetText(itemType..traitText)
   
-  CraftyStockListTooltipItemLink:SetText(itemType)
+  local itemFlavor = GetItemLinkFlavorText(control.data.link)
+  CraftyStockListTooltipItemFlavor:SetText(itemFlavor)
+  
+  local itemFlavorTextHeight = CraftyStockListTooltipItemFlavor:GetTextHeight()
+  
+  CraftyStockListTooltip:SetHeight(110+itemFlavorTextHeight)
+  
 end
 
--- OnMouseExit stocklist row
+-- OnMouseExit stocklist row (in case that this can be different from watchlist)
 function Crafty.OnMouseExitSL(control)
-  Crafty.DB("Crafty: OnMouseExitSL")
+  --Crafty.DB("Crafty: OnMouseExitSL")
   CraftyStockListTooltip:SetHidden(true)
 end
 
