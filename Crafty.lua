@@ -121,6 +121,10 @@ function Crafty:Initialize()
     Crafty.SortSLTexture()
     Crafty.CloseWL()
   end
+  
+  if Crafty.showWL and Crafty.showSL then
+    Crafty.OpenSL()
+  end
  
   
 end
@@ -434,10 +438,7 @@ function Crafty.SetActiveWatchList(arg)
   
   Crafty.showWL = true
   Crafty.savedVariables.ShowWL = true
-  
-  if Crafty.showWL then
-    CraftyWatchList:SetHidden(false)
-  end
+  CraftyWatchList:SetHidden(false)
   
   Crafty.RestoreWLPosition(arg)
   Crafty.Refresh()
