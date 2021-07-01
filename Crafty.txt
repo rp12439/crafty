@@ -7,10 +7,10 @@
 ## SavedVariables: CraftySavedVariablesACC
 ## DependsOn: LibAddonMenu-2.0
 
+Crafty.lua
+Crafty_SettingsMenu.lua
 CraftyWL.xml
 CraftySL.xml
 CraftyTS.xml
 CraftyTT.xml
-Crafty.lua
-Crafty_SettingsMenu.lua
 Bindings.xml

@@ -38,7 +38,6 @@ Crafty.sortSL = "Name"
 Crafty.minModeWL1 = false
 Crafty.minModeWL2 = false
 Crafty.minModeWL3 = false
-Crafty.toolTip = true
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -89,10 +88,10 @@ function Crafty:Initialize()
   if Crafty.savedVariables.SortSL ~= nil then Crafty.sortSL = Crafty.savedVariables.SortSL end 
   if Crafty.savedVariables.MinModeWL1 ~= nil then Crafty.minModeWL1 = Crafty.savedVariables.MinModeWL1 end 
   if Crafty.savedVariables.MinModeWL2 ~= nil then Crafty.minModeWL2 = Crafty.savedVariables.MinModeWL2 end 
-  if Crafty.savedVariables.MinModeWL3 ~= nil then Crafty.minModeWL3 = Crafty.savedVariables.MinModeWL3 end
-  if Crafty.savedVariables.ToolTip ~= nil then Crafty.toolTip = Crafty.savedVariables.ToolTip end 
+  if Crafty.savedVariables.MinModeWL3 ~= nil then Crafty.minModeWL3 = Crafty.savedVariables.MinModeWL3 end 
    
   Crafty:RestorePosition()
+  Crafty.Check()
   Crafty.ControlSettings()
   
   Crafty.CreateScrollListDataTypeSL()
@@ -109,19 +108,11 @@ function Crafty:Initialize()
   
   Crafty.SetMasterHeight()
   Crafty.SetMasterAlpha()
-  Crafty.SetTS(1) 
+  Crafty.SetTS(1)
   
-  if Crafty.showWL then
-    Crafty.SetActiveWatchList(Crafty.activewatchListID)
-    Crafty.SortWLTexture()
-    Crafty.SortSLTexture()
-  else
-    Crafty.SetActiveWatchList(Crafty.activewatchListID)
-    Crafty.SortWLTexture()
-    Crafty.SortSLTexture()
-    Crafty.CloseWL()
-  end
- 
+  Crafty.SetActiveWatchList(Crafty.activewatchListID)
+  Crafty.SortWLTexture()
+  Crafty.SortSLTexture()
   
 end
 
@@ -432,13 +423,6 @@ function Crafty.SetActiveWatchList(arg)
   Crafty.savedVariables.ActivewatchListID = arg
   Crafty.activewatchListID = arg
   
-  Crafty.showWL = true
-  Crafty.savedVariables.ShowWL = true
-  
-  if Crafty.showWL then
-    CraftyWatchList:SetHidden(false)
-  end
-  
   Crafty.RestoreWLPosition(arg)
   Crafty.Refresh()
 end
@@ -688,16 +672,13 @@ end
 -- Functions to call from events, xml (buttons) or settings
 ----------------------------------------------------------------------------------------
 
--- close or hide the watchlist
-function Crafty.ToogleWL()
+-- close or hide the interface (from settings) this is not a toggle!
+function Crafty.Check()
+  Crafty.DB("Crafty: Check")
   if Crafty.showWL then
-    Crafty.showWL = false
-    Crafty.savedVariables.ShowWL = false
-    Crafty.CloseWL()
-  else
-    Crafty.showWL = true
-    Crafty.savedVariables.ShowWL = true
-    Crafty.OpenWL()
+      Crafty.OpenWL()
+  else 
+      Crafty.CloseWL()
   end
 end
 
@@ -708,7 +689,7 @@ function Crafty.EventCheckVendorOpen()
   if Crafty.vendorOpen then -- open vendorwatchlist if setting is on / else do nothing
     Crafty.oldactivewatchListID = Crafty.activewatchListID
     Crafty.oldshowWL = Crafty.showWL
-    Crafty.SetActiveWatchList(Crafty.vendorwatchListID)
+    Crafty.OpenWL(Crafty.vendorwatchListID)
   end
 end
 
@@ -718,15 +699,15 @@ function Crafty.EventCheckVendorClose()
   --d(Crafty.oldshowWL)
   if Crafty.vendorOpen then -- only do something if vendorOpen setting is on
     if Crafty.vendorClose then -- close watchlist is on
+      Crafty.CloseWL() -- close watchlist
       Crafty.SetActiveWatchList(Crafty.oldactivewatchListID) -- set active watchlist to previous in case user opens watchlist later
-      Crafty.CloseWL()
     else -- close watchlist is off -> switch to previous watchlist but only if the previous was shown
       if Crafty.oldshowWL then
         Crafty.CloseSL()
-        Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
+        Crafty.OpenWL(Crafty.oldactivewatchListID)
       else -- close the watchlist cause the switch was not performed
-        Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
         Crafty.CloseWL()
+        Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
       end
     end
   end 
@@ -774,24 +755,6 @@ function Crafty.SaveaccountWide()
   Crafty.DB("Crafty: SaveaccountWide")
   Crafty.savedVariablesACC.AccountWide = Crafty.accountWide
   --ReloadUI("ingame")
-end
-
--- Save setting "Enable tooltip"
-function Crafty.SavetoolTip()
-  Crafty.DB("Crafty: SavetoolTip")
-  Crafty.savedVariables.ToolTip = Crafty.toolTip
-  --ReloadUI("ingame")
-end
-
--- Save setting "Enable tooltip"
-function Crafty.SaveShowwatchlist()
-  Crafty.DB("Crafty: SaveShowwatchlist")
-  Crafty.savedVariables.ShowWL = Crafty.showWL
-  if Crafty.showWL then
-    Crafty.OpenWL()
-  else
-    Crafty.CloseWL()
-  end
 end
 
 -- Sort WL Initial (set texture)
@@ -1014,13 +977,16 @@ function Crafty.CloseWL()
 end
 
 -- open the watchlist
-function Crafty.OpenWL()
+function Crafty.OpenWL(arg)
   Crafty.DB("Crafty: OpenWL")
-  CraftyWatchList:SetHidden(false)
-  Crafty.showWL = true
-  Crafty.savedVariables.ShowWL = true
-  Crafty.showSL = false
-  Crafty.savedVariables.ShowSL = false 
+  if arg ~= nil then
+    Crafty.SetActiveWatchList(arg)
+  end
+    CraftyWatchList:SetHidden(false)
+    Crafty.showWL = true
+    Crafty.savedVariables.ShowWL = true
+    Crafty.showSL = false
+    Crafty.savedVariables.ShowSL = false 
 end
 
 -- show ToolTip
@@ -1048,12 +1014,12 @@ function Crafty.OnMouseEnter(control)
     CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   end
 
-  local myHeight = 130
+  local myHeight = 120
   local itemIcon
   local itemLink
   local traitText
   local traitType
-  local traitTypeText =""
+  local traitTypeText
   local traitTypeDesc
   local itemType
   local itemTypeSpec
@@ -1066,14 +1032,12 @@ function Crafty.OnMouseEnter(control)
   itemLink = control.data.link
   if GetItemLinkTraitType(control.data.link) ~= 0 then
     traitType, traitTypeDesc =  GetItemLinkTraitInfo(control.data.link)
-    traitTypeText = GetString("SI_ITEMTRAITTYPE", traitType).."\n("..traitTypeDesc..")\n"
+    traitTypeText = GetString("SI_ITEMTRAITTYPE", traitType).."\n"..traitTypeDesc
   end
   itemType, itemTypeSpec = GetItemLinkItemType(control.data.link)
   itemTypeSpecText = GetString("SI_SPECIALIZEDITEMTYPE", itemTypeSpec)
-  if GetItemLinkCraftingSkillType(itemLink) ~= 3 then
-    itemFlavor = GetItemLinkFlavorText(control.data.link)
-  end
-  
+  itemFlavor = GetItemLinkFlavorText(control.data.link)
+
   CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
   CraftyStockListTooltipItemLink:SetText(itemLink)
   CraftyStockListTooltipItemType:SetText(itemTypeSpecText)
@@ -1082,7 +1046,17 @@ function Crafty.OnMouseEnter(control)
   
   traitTypeTextHeight = CraftyStockListTooltipTraitTypeText:GetTextHeight()
   itemFlavorTextHeight = CraftyStockListTooltipItemFlavor:GetTextHeight()
-  CraftyStockListTooltip:SetHeight(myHeight+traitTypeTextHeight+itemFlavorTextHeight)
+  
+  CraftyStockListTooltipTraitTypeText:ClearAnchors()
+  CraftyStockListTooltipTraitTypeText:SetAnchor(TOPLEFT, CraftyStockListTooltipDivider, BOTTOMLEFT, 15, 0)
+  CraftyStockListTooltipTraitTypeText:SetAnchor(BOTTOMRIGHT, CraftyStockListTooltip, RIGHT, -15, 0)
+  
+  CraftyStockListTooltipItemFlavor:ClearAnchors()
+  CraftyStockListTooltipItemFlavor:SetAnchor(TOPLEFT, CraftyStockListTooltipTraitTypeText, BOTTOMLEFT, 0, 0)
+  CraftyStockListTooltipItemFlavor:SetAnchor(BOTTOMRIGHT, CraftyStockListTooltip, RIGHT, -15, 0)
+  
+  --CraftyStockListTooltip:SetHeight(myHeight+traitTypeTextHeight+itemFlavorTextHeight)
+
 end
 
 -- hide Tooltip

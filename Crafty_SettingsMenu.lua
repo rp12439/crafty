@@ -25,7 +25,7 @@ function Crafty.ControlSettings()
           name = "Show watchlist",
           tooltip = "This setting will open or close the watchlist",
           getFunc = function() return Crafty.showWL end,
-          setFunc = function(value) Crafty.showWL = value Crafty.Check() end,
+          setFunc = function(value) Crafty.showWL = value Crafty.SaveShowwatchlist() end,
           default = true
     }, 
     [2] = {
@@ -99,6 +99,14 @@ function Crafty.ControlSettings()
         default = 600,  --(optional)
     },
     [9] = {
+        type = "checkbox",
+        name = "Enable tooltips",
+        tooltip = "Enable or disable tooltips",
+        getFunc = function() return Crafty.toolTip end,
+        setFunc = function(value) Crafty.toolTip = value Crafty.SavetoolTip() end,
+        default = true,
+    },
+    [10] = {
         type = "checkbox",
         name = "Accountwide settings",
         tooltip = "Save same settings for all characters",

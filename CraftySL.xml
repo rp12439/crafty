@@ -71,10 +71,10 @@
         	<Dimensions y="32" />
             <Anchor point="LEFT" relativeTo="$(parent)" />
             <OnMouseEnter>
-                Crafty.OnMouseEnter(self)
+                if Crafty.toolTip then Crafty.OnMouseEnter(self) end
             </OnMouseEnter>
             <OnMouseExit>
-                Crafty.OnMouseExit(self)
+                if Crafty.toolTip then Crafty.OnMouseExit(self) end
             </OnMouseExit>
             <OnMouseUp>
                 Crafty.OnMouseUpSL(self, button, upInside)
