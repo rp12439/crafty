@@ -981,11 +981,6 @@ function Crafty.OpenWL(arg)
   Crafty.DB("Crafty: OpenWL")
   if arg ~= nil then
     Crafty.SetActiveWatchList(arg)
-    -- in case that the stocklist is open and the ui reloaded. after reload this opens the
-    -- watchlist and the stocklist is still true but not visible.
-    -- stocklist button does not open the list in this case.
-    Crafty.showSL = false
-    Crafty.savedVariables.ShowSL = false 
   end
     CraftyWatchList:SetHidden(false)
     Crafty.showWL = true
@@ -994,82 +989,79 @@ function Crafty.OpenWL(arg)
     Crafty.savedVariables.ShowSL = false 
 end
 
--- OnMouseEnter watchlist row
-function Crafty.OnMouseEnterWL(control)
+-- show ToolTip
+function Crafty.OnMouseEnter(control)
   --Crafty.DB("Crafty: OnMouseEnterWL")
+  
   CraftyStockListTooltip:SetHidden(false)
-  CraftyStockListTooltip:SetHeight(500)
-  if not Crafty.showSL or not Crafty.ankerSL then
-    CraftyStockListTooltip:ClearAnchors()
-    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
-  else
-    CraftyStockListTooltip:ClearAnchors()
-    CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
-  end
-  
-  local itemIcon = GetItemLinkIcon(control.data.link)
-  CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
-  
-  local itemLink = control.data.link
-  CraftyStockListTooltipItemLink:SetText(itemLink)
- 
-  local traitText = ""
-  if GetItemLinkTraitType(control.data.link) ~= 0 then
-    local traitType = GetString("SI_ITEMTRAITTYPE", GetItemLinkTraitType(control.data.link))
-    traitText =" ("..traitType..")"
-  end
-  local itemType = GetString("SI_ITEMTYPE", GetItemLinkItemType(control.data.link))
-  CraftyStockListTooltipItemType:SetText(itemType..traitText)
-  
-  local itemFlavor = GetItemLinkFlavorText(control.data.link)
-  CraftyStockListTooltipItemFlavor:SetText(itemFlavor)
-  
-  local itemFlavorTextHeight = CraftyStockListTooltipItemFlavor:GetTextHeight()
-  
-  CraftyStockListTooltip:SetHeight(110+itemFlavorTextHeight)
-  
-end
-
--- OnMouseExit watchlist row
-function Crafty.OnMouseExitWL(control)
-  --Crafty.DB("Crafty: OnMouseExitWL")
-  CraftyStockListTooltip:SetHidden(true)
-end
-
--- OnMouseEnter stocklist row (in case that this can be different from watchlist)
-function Crafty.OnMouseEnterSL(control)
-  --Crafty.DB("Crafty: OnMouseEnterSL")
-  CraftyStockListTooltip:SetHidden(false)
-  CraftyStockListTooltip:SetHeight(500)
+  --CraftyStockListTooltip:SetHeight(500)
   CraftyStockListTooltip:ClearAnchors()
-  CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   
-  local itemIcon = GetItemLinkIcon(control.data.link)
-  CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
-  
-  local itemLink = control.data.link
-  CraftyStockListTooltipItemLink:SetText(itemLink)
-  
-  local traitText = ""
-  if GetItemLinkTraitType(control.data.link) ~= 0 then
-    local traitType = GetString("SI_ITEMTRAITTYPE", GetItemLinkTraitType(control.data.link))
-    traitText =" ("..traitType..")"
+  -- position the tooltip
+  local controlName = control:GetParent():GetName()   
+  if controlName == "CraftyWatchListListContents" then
+    -- its the watchlist
+    if Crafty.showSL then -- stocklist is open
+      if Crafty.ankerSL then -- stocklist is open and docked!
+        CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+      else -- not docked
+        CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
+      end
+    else -- stocklist not open
+      CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
+    end
+  else -- its the stocklist
+    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   end
-  local itemType = GetString("SI_ITEMTYPE", GetItemLinkItemType(control.data.link))
-  CraftyStockListTooltipItemType:SetText(itemType..traitText)
+
+  local myHeight = 120
+  local itemIcon
+  local itemLink
+  local traitText
+  local traitType
+  local traitTypeText
+  local traitTypeDesc
+  local itemType
+  local itemTypeSpec
+  local itemTypeSpecText
+  local itemFlavor
+  local traitTypeTextHeight = 0
+  local itemFlavorTextHeight = 0
   
-  local itemFlavor = GetItemLinkFlavorText(control.data.link)
+  itemIcon = GetItemLinkIcon(control.data.link)
+  itemLink = control.data.link
+  if GetItemLinkTraitType(control.data.link) ~= 0 then
+    traitType, traitTypeDesc =  GetItemLinkTraitInfo(control.data.link)
+    traitTypeText = GetString("SI_ITEMTRAITTYPE", traitType).."\n"..traitTypeDesc
+  end
+  itemType, itemTypeSpec = GetItemLinkItemType(control.data.link)
+  itemTypeSpecText = GetString("SI_SPECIALIZEDITEMTYPE", itemTypeSpec)
+  itemFlavor = GetItemLinkFlavorText(control.data.link)
+
+  CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
+  CraftyStockListTooltipItemLink:SetText(itemLink)
+  CraftyStockListTooltipItemType:SetText(itemTypeSpecText)
+  CraftyStockListTooltipTraitTypeText:SetText(traitTypeText)
   CraftyStockListTooltipItemFlavor:SetText(itemFlavor)
   
-  local itemFlavorTextHeight = CraftyStockListTooltipItemFlavor:GetTextHeight()
+  traitTypeTextHeight = CraftyStockListTooltipTraitTypeText:GetTextHeight()
+  itemFlavorTextHeight = CraftyStockListTooltipItemFlavor:GetTextHeight()
   
-  CraftyStockListTooltip:SetHeight(110+itemFlavorTextHeight)
+  CraftyStockListTooltipTraitTypeText:ClearAnchors()
+  CraftyStockListTooltipTraitTypeText:SetAnchor(TOPLEFT, CraftyStockListTooltipDivider, BOTTOMLEFT, 15, 0)
+  CraftyStockListTooltipTraitTypeText:SetAnchor(BOTTOMRIGHT, CraftyStockListTooltip, RIGHT, -15, 0)
   
+  CraftyStockListTooltipItemFlavor:ClearAnchors()
+  CraftyStockListTooltipItemFlavor:SetAnchor(TOPLEFT, CraftyStockListTooltipTraitTypeText, BOTTOMLEFT, 0, 0)
+  CraftyStockListTooltipItemFlavor:SetAnchor(BOTTOMRIGHT, CraftyStockListTooltip, RIGHT, -15, 0)
+  
+  --CraftyStockListTooltip:SetHeight(myHeight+traitTypeTextHeight+itemFlavorTextHeight)
+
 end
 
--- OnMouseExit stocklist row (in case that this can be different from watchlist)
-function Crafty.OnMouseExitSL(control)
-  --Crafty.DB("Crafty: OnMouseExitSL")
+-- hide Tooltip
+function Crafty.OnMouseExit(control)
+  --Crafty.DB("Crafty: OnMouseExitWL")
   CraftyStockListTooltip:SetHidden(true)
 end
 

@@ -122,10 +122,10 @@
         	<Dimensions y="32" />
             <Anchor point="LEFT" relativeTo="$(parent)" />
             <OnMouseEnter>
-                Crafty.OnMouseEnterWL(self)
+                Crafty.OnMouseEnter(self)
             </OnMouseEnter>
             <OnMouseExit>
-                Crafty.OnMouseExitWL(self)
+                Crafty.OnMouseExit(self)
             </OnMouseExit>
             <OnMouseUp>
                 Crafty.OnMouseUpWL(self, button, upInside)
