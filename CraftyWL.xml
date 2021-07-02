@@ -122,10 +122,10 @@
         	<Dimensions y="32" />
             <Anchor point="LEFT" relativeTo="$(parent)" />
             <OnMouseEnter>
-                if Crafty.toolTip then Crafty.OnMouseEnter(self) end
+                if Crafty.toolTip then Crafty.ShowTooltip(self) end
             </OnMouseEnter>
             <OnMouseExit>
-                if Crafty.toolTip then Crafty.OnMouseExit(self) end
+                if Crafty.toolTip then Crafty.HideTooltip(self) end
             </OnMouseExit>
             <OnMouseUp>
                 Crafty.OnMouseUpWL(self, button, upInside)

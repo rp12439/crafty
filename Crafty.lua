@@ -39,6 +39,7 @@ Crafty.minModeWL1 = false
 Crafty.minModeWL2 = false
 Crafty.minModeWL3 = false
 Crafty.toolTip = true
+Crafty.myStyles = {}
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -126,6 +127,7 @@ function Crafty:Initialize()
     Crafty.OpenSL()
   end
  
+  Crafty.BuildStyleTable()
   
 end
 
@@ -1024,12 +1026,25 @@ function Crafty.OpenWL()
   Crafty.savedVariables.ShowSL = false 
 end
 
+-- for future use build a style table (tooltip)
+function Crafty.BuildStyleTable()
+  Crafty.DB("Crafty: BuildStyleTable")
+  for i=1,  GetNumValidItemStyles() do
+    Crafty.myStyles[i] = GetItemStyleName(i)
+  end
+end
+
+-- return name of style from id
+function Crafty.ReturnStyle(arg)
+  --Crafty.DB("Crafty: ReturnStyle")  
+  return Crafty.myStyles[arg]
+end
+
 -- show ToolTip
-function Crafty.OnMouseEnter(control)
+function Crafty.ShowTooltip(control)
   --Crafty.DB("Crafty: OnMouseEnterWL")
   
   CraftyStockListTooltip:SetHidden(false)
-  --CraftyStockListTooltip:SetHeight(500)
   CraftyStockListTooltip:ClearAnchors()
   
   -- position the tooltip
@@ -1060,21 +1075,36 @@ function Crafty.OnMouseEnter(control)
   local itemTypeSpec
   local itemTypeSpecText
   local itemFlavor
+  local itemStyle
+  local itemCraftingType
   local traitTypeTextHeight = 0
   local itemFlavorTextHeight = 0
+  local icon,sellPrice,meetsUsageRequirement,equipType,itemStyleId = GetItemLinkInfo(control.data.link)
   
   itemIcon = GetItemLinkIcon(control.data.link)
   itemLink = control.data.link
+  itemStyle = Crafty.ReturnStyle(itemStyleId)
+  itemCraftingType = GetItemLinkCraftingSkillType(itemLink)
+  
+  
   if GetItemLinkTraitType(control.data.link) ~= 0 then
     traitType, traitTypeDesc =  GetItemLinkTraitInfo(control.data.link)
-    traitTypeText = GetString("SI_ITEMTRAITTYPE", traitType).."\n("..traitTypeDesc..")\n"
+    traitTypeText = string.format("|cFFFFFF%s|r", GetString("SI_ITEMTRAITTYPE", traitType)).."\n("..traitTypeDesc..")\n"
   end
   itemType, itemTypeSpec = GetItemLinkItemType(control.data.link)
   itemTypeSpecText = GetString("SI_SPECIALIZEDITEMTYPE", itemTypeSpec)
-  if GetItemLinkCraftingSkillType(itemLink) ~= 3 then
-    itemFlavor = GetItemLinkFlavorText(control.data.link)
-  end
+  itemFlavor = GetItemLinkFlavorText(control.data.link)
   
+  if itemTypeSpecText == "Style Material" then -- its a style material
+    if itemStyle ~= nil then
+      itemFlavor = "An ingredient for crafting in the "..string.format("|cFFFFFF%s|r", itemStyle).." style." 
+    end
+  end
+    
+  if itemCraftingType == 3 then -- its a rune (enchanting)
+    itemFlavor = ""
+  end
+
   CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
   CraftyStockListTooltipItemLink:SetText(itemLink)
   CraftyStockListTooltipItemType:SetText(itemTypeSpecText)
@@ -1087,7 +1117,7 @@ function Crafty.OnMouseEnter(control)
 end
 
 -- hide Tooltip
-function Crafty.OnMouseExit(control)
+function Crafty.HideTooltip(control)
   --Crafty.DB("Crafty: OnMouseExitWL")
   CraftyStockListTooltip:SetHidden(true)
 end
