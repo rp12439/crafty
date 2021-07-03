@@ -1,0 +1,73 @@
+<GuiXml>
+    <Controls>
+    
+        <TopLevelControl name="CraftyStockListHistory" hidden="true" mouseEnabled="true" movable="true" clampedToScreen="true">
+            <Dimensions x="370" y="300" />
+            <Anchor point="BOTTOM" relativeTo="GuiRoot" relativePoint="BOTTOM" offsetX="0" offsetY="-200"/>
+            <OnMoveStop>
+        		Crafty.OnIndicatorMoveStop()
+			</OnMoveStop>
+            <Controls>
+                <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
+                
+                <Label name="$(parent)Heading" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="LOOTHISTORY">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="5" offsetY="5"/>
+                </Label>
+                
+                <Button name="$(parent)ButtonClose" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="20" y="20" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="5" />
+					<Textures normal="esoui/art/buttons/decline_up.dds"
+						pressed="esoui/art/buttons/decline_down.dds"
+						mouseOver="esoui/art/buttons/decline_over.dds"/>
+					<OnClicked>
+						Crafty.CloseLH()
+					</OnClicked>
+				</Button>
+                
+				<Control name="$(parent)List" inherits="ZO_ScrollList">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Heading" relativePoint="BOTTOMLEFT" offsetY="10" />
+                    <Anchor point="BOTTOMRIGHT" offsetX="-5" offsetY="-10" />
+                </Control>
+                
+            </Controls>
+        </TopLevelControl>
+        
+        <Button name="HistoryRow" virtual="true">
+        	<Dimensions y="32" />
+            <Anchor point="LEFT" relativeTo="$(parent)" />
+            <OnMouseEnter>
+                if Crafty.toolTip then Crafty.ShowTooltip(self) end
+            </OnMouseEnter>
+            <OnMouseExit>
+                if Crafty.toolTip then Crafty.HideTooltip(self) end
+            </OnMouseExit>
+            <OnMouseUp>
+             
+            </OnMouseUp>
+            <Controls>
+            	<Label name="$(parent)Time" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="LEFT">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" offsetX="10" />
+                    <Dimensions x="80" y="32" />
+                </Label>
+            	<Texture name="$(parent)Icon" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+					<Dimensions x="25" y="25"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Time" relativePoint="TOPRIGHT"/>
+				</Texture>
+                <Label name="$(parent)Name" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="LEFT">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Icon" relativePoint="TOPRIGHT" offsetX="10" />
+                    <Dimensions x="120" y="32" />
+                </Label>
+                <Label name="$(parent)Amount" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="RIGHT">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Name" relativePoint="TOPRIGHT" offsetX="0"/>
+                    <Dimensions x="30" y="32" />
+                </Label>
+                <Label name="$(parent)StockAmount" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="RIGHT">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Amount" relativePoint="TOPRIGHT" offsetX="0"/>
+                    <Dimensions x="50" y="32" />
+                </Label>
+            </Controls>
+        </Button>
+        
+    </Controls>
+</GuiXml>

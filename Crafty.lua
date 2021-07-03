@@ -11,6 +11,7 @@ Crafty.ankerSL = true
 Crafty.vendorOpen = false
 Crafty.vendorClose = false
 Crafty.showTS = false
+Crafty.showLH = false
 Crafty.undoRemove = nil
 Crafty.differentWLPositions = false
 Crafty.db = false
@@ -27,6 +28,7 @@ Crafty.masterHeight = 600
 Crafty.masterWidth = 300
 Crafty.autoHeightWL = 600
 Crafty.autoHeightWLOpt = true
+Crafty.loothistoryHeight = 300
 Crafty.masterAlpha = 1
 Crafty.accountWide = false
 Crafty.sortWLName = "down"
@@ -40,6 +42,7 @@ Crafty.minModeWL2 = false
 Crafty.minModeWL3 = false
 Crafty.toolTip = true
 Crafty.myStyles = {}
+Crafty.lootHistory = {}
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -70,6 +73,7 @@ function Crafty:Initialize()
   if Crafty.savedVariables.AnkerSL ~= nil then Crafty.ankerSL = Crafty.savedVariables.AnkerSL end
   if Crafty.savedVariables.ShowSL ~= nil then Crafty.showSL = Crafty.savedVariables.ShowSL end
   if Crafty.savedVariables.ShowWL ~= nil then Crafty.showWL = Crafty.savedVariables.ShowWL end
+  if Crafty.savedVariables.ShowLH ~= nil then Crafty.showLH = Crafty.savedVariables.ShowLH end
   if Crafty.savedVariables.WatchList1 ~= nil then Crafty.watchList1 = Crafty.savedVariables.WatchList1 end
   if Crafty.savedVariables.WatchList2 ~= nil then Crafty.watchList2 = Crafty.savedVariables.WatchList2 end
   if Crafty.savedVariables.WatchList3 ~= nil then Crafty.watchList3 = Crafty.savedVariables.WatchList3 end
@@ -81,6 +85,7 @@ function Crafty:Initialize()
   if Crafty.savedVariables.VendorwatchListID ~= nil then Crafty.vendorwatchListID = Crafty.savedVariables.VendorwatchListID end
   if Crafty.savedVariables.MasterAlpha ~= nil then Crafty.masterAlpha = Crafty.savedVariables.MasterAlpha end
   if Crafty.savedVariables.MasterHeight ~= nil then Crafty.masterHeight = Crafty.savedVariables.MasterHeight end
+  if Crafty.savedVariables.LoothistoryHeight ~= nil then Crafty.loothistoryHeight = Crafty.savedVariables.LoothistoryHeight end
   if Crafty.savedVariables.AutoHeightWLOpt ~= nil then Crafty.autoHeightWLOpt = Crafty.savedVariables.AutoHeightWLOpt end
   if Crafty.savedVariables.SortWLName ~= nil then Crafty.sortWLName = Crafty.savedVariables.SortWLName end  
   if Crafty.savedVariables.SortSLName ~= nil then Crafty.sortSLName = Crafty.savedVariables.SortSLName end  
@@ -108,7 +113,15 @@ function Crafty:Initialize()
     Crafty.UpdateScrollListWL(CraftyWatchListList, stockWL, typeIdWL)
   end
   
+  Crafty.CreateScrollListDataTypeLH()
+  local stockLH = Crafty.PopulateLH()
+  local typeIdLH = 3
+  if table.getn(stockLH) ~= 0 then
+    Crafty.UpdateScrollListLH(CraftyStockListHistoryList, stockLH, typeIdLH)
+  end
+  
   Crafty.SetMasterHeight()
+  Crafty.SetLoothistoryHeight()
   Crafty.SetMasterAlpha()
   Crafty.SetTS(1) 
   
@@ -125,6 +138,12 @@ function Crafty:Initialize()
   
   if Crafty.showWL and Crafty.showSL then
     Crafty.OpenSL()
+  end
+ 
+  if Crafty.showLH then
+    Crafty.OpenLH()
+  else
+    Crafty.CloseLH()
   end
  
   Crafty.BuildStyleTable()
@@ -153,6 +172,16 @@ function Crafty.SetMasterHeight()
   Crafty.Refresh()
 end
 
+function Crafty.SetLoothistoryHeight()
+  Crafty.DB("Crafty: SetLoothistoryHeight")
+  
+  local height = Crafty.loothistoryHeight
+  CraftyStockListHistory:SetHeight(height)
+  
+  Crafty.savedVariables.LoothistoryHeight = height
+  Crafty.Refresh()
+end
+
 -- set overall backgroundalpha (from settings)
 function Crafty.SetMasterAlpha()
   Crafty.DB("Crafty: SetMasterAlpha")
@@ -161,6 +190,7 @@ function Crafty.SetMasterAlpha()
   CraftyStockListBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListTypeBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListTooltipBG:SetAlpha(Crafty.masterAlpha)
+  CraftyStockListHistoryBG:SetAlpha(Crafty.masterAlpha)
   
   Crafty.savedVariables.MasterAlpha = Crafty.masterAlpha
 end
@@ -171,6 +201,9 @@ function Crafty.OnIndicatorMoveStop()
 
   Crafty.savedVariables.leftSL = CraftyStockList:GetLeft()
   Crafty.savedVariables.topSL = CraftyStockList:GetTop()
+  
+  Crafty.savedVariables.leftLH = CraftyStockListHistory:GetLeft()
+  Crafty.savedVariables.topLH = CraftyStockListHistory:GetTop()
 
   if Crafty.differentWLPositions then
     if Crafty.activewatchListID == 1 then
@@ -198,6 +231,11 @@ end
 -- set position for interface from saved vars and check for anchor stocklist
 function Crafty:RestorePosition()
   Crafty.DB("Crafty: RestorePosition - WL"..Crafty.activewatchListID)
+   
+  local leftLH = Crafty.savedVariables.leftLH
+  local topLH = Crafty.savedVariables.topLH
+  CraftyStockListHistory:ClearAnchors()
+  CraftyStockListHistory:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftLH, topLH) 
    
   if not Crafty.ankerSL then
     local leftSL = Crafty.savedVariables.leftSL
@@ -260,6 +298,7 @@ function Crafty.SetMinMode()
   CraftyWatchListButtonClose:SetHidden(true)
   CraftyWatchListButtonSettings:SetHidden(true)
   CraftyWatchListButtonStockList:SetHidden(true)
+  CraftyWatchListButtonLootHistory:SetHidden(true)
   CraftyWatchListDivider:SetHidden(true)
   CraftyWatchListSortName:SetHidden(true)
   CraftyWatchListSortAmount:SetHidden(true)
@@ -277,6 +316,7 @@ function Crafty.EndMinMode()
   CraftyWatchListButtonClose:SetHidden(false)
   CraftyWatchListButtonSettings:SetHidden(false)
   CraftyWatchListButtonStockList:SetHidden(false)
+  CraftyWatchListButtonLootHistory:SetHidden(false)
   CraftyWatchListDivider:SetHidden(false)
   CraftyWatchListSortName:SetHidden(false)
   CraftyWatchListSortAmount:SetHidden(false)
@@ -392,6 +432,23 @@ function Crafty.CreateScrollListDataTypeWL()
   local templateName = "WatchRow"
   local height = 30
   local setupFunction = Crafty.LayoutRow
+  local hideCallback = nil
+  local dataTypeSelectSound = nil
+  local resetControlCallback = nil
+  --local selectTemplate = "ZO_ThinListHighlight"
+  --local selectCallback = Crafty.OnMouseUp
+  
+  ZO_ScrollList_AddDataType(control, typeId, templateName, height, setupFunction, hideCallback, dataTypeSelectSound, resetControlCallback)
+  --ZO_ScrollList_EnableSelection(control, selectTemplate, selectCallback)
+end
+
+function Crafty.CreateScrollListDataTypeLH()
+  Crafty.DB("Crafty: CreateScrollListDataTypeLH")
+  local control = CraftyStockListHistoryList
+  local typeId = 3
+  local templateName = "HistoryRow"
+  local height = 30
+  local setupFunction = Crafty.LayoutRowLH
   local hideCallback = nil
   local dataTypeSelectSound = nil
   local resetControlCallback = nil
@@ -518,6 +575,21 @@ function Crafty.PopulateWL()
   return stock
 end
 
+function Crafty.PopulateLH()
+  local history = Crafty.lootHistory
+  Crafty.DB("Crafty: PopulateLH Items:"..table.getn(history))
+  local stock = {}
+  for i=1,table.getn(history) do
+    stock[i] = {
+      link = history[i].link,
+      amount = history[i].amount,
+      time = history[i].time,
+      stockamount = history[i].stockamount
+    }
+  end
+  return stock
+end
+
 -- sorts the listdata, saves the data and commits the data to the scrollinglist stocklist
 function Crafty.UpdateScrollListSL(control, data, rowType)
   Crafty.DB("Crafty: UpdateScrollListSL "..table.getn(data))
@@ -606,6 +678,22 @@ function Crafty.UpdateScrollListWL(control, data, rowType)
   end
 end
 
+function Crafty.UpdateScrollListLH(control, data, rowType)
+  Crafty.DB("Crafty: UpdateScrollListLH "..table.getn(data))
+  
+  local dataCopyLH = ZO_DeepTableCopy(data)
+  local dataListLH  = ZO_ScrollList_GetDataList(control)
+  
+  ZO_ScrollList_Clear(control)
+  
+  for key, value in ipairs(dataCopyLH) do
+    local entry = ZO_ScrollList_CreateDataEntry(rowType, value)
+    table.insert(dataListLH, entry)
+  end
+  
+  ZO_ScrollList_Commit(control)
+end
+
 -- fills the xml rows with the data from the scrolllists
 function Crafty.LayoutRow(rowControl, data, scrollList)
   Crafty.DB("Crafty: LayoutRow")
@@ -631,16 +719,39 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
   
 end
 
+function Crafty.LayoutRowLH(rowControl, data, scrollList)
+  Crafty.DB("Crafty: LayoutRowLH")
+
+  rowControl.data = data
+  rowControl.time = GetControl(rowControl, "Time")
+  rowControl.icon = GetControl(rowControl, "Icon")
+  rowControl.name = GetControl(rowControl, "Name")
+  rowControl.amount = GetControl(rowControl, "Amount")
+  rowControl.stockamount = GetControl(rowControl, "StockAmount")
+  
+  rowControl.time:SetText(data.time)
+  rowControl.icon:SetTexture(GetItemLinkIcon(data.link))
+  rowControl.name:SetText(data.link)
+  rowControl.amount:SetText(data.amount)
+  rowControl.stockamount:SetText(data.stockamount)
+     
+  rowControl.name:SetHidden(false)
+  --rowControl.name:SetWidth(175)
+end
+
 ----------------------------------------------------------------------------------------
 -- Listdatahandling dataupdates
 ----------------------------------------------------------------------------------------
 
 -- eventmanager target for several inventory change events
-function Crafty.InvChange()
-  Crafty.DB("Crafty: InvChange")
-  Crafty.DB(quantity)
+function Crafty.InvChange(eventCode, bagId, slotIndex, isNewItem, itemSoundCategory, updateReason, stackCountChange)
+  local link = GetItemLink(bagId, slotIndex)
+  Crafty.DB("Crafty: InvChange - "..link.." *"..stackCountChange)
+  if stackCountChange >0 then
+    Crafty.AddItemToHistory(link,stackCountChange)
+  end
   Crafty.Refresh()
-end
+end 
 
 -- refreshs the listdata
 function Crafty.Refresh()
@@ -653,6 +764,10 @@ function Crafty.Refresh()
   local typeIdWL = 2
   local stockWL = Crafty.PopulateWL()
   Crafty.UpdateScrollListWL(CraftyWatchListList, stockWL, typeIdWL)
+  
+  local typeIdLH = 3
+  local stockLH = Crafty.PopulateLH()
+  Crafty.UpdateScrollListLH(CraftyStockListHistoryList, stockLH, typeIdLH)
 end
 
 -- refreshs the listdata and removes the savedvar for the undoitem (from xml)
@@ -669,6 +784,10 @@ function Crafty.FullRefresh()
   local typeIdWL = 2
   local stockWL = Crafty.PopulateWL()
   Crafty.UpdateScrollListWL(CraftyWatchListList, stockWL, typeIdWL)
+  
+  local typeIdLH = 3
+  local stockLH = Crafty.PopulateLH()
+  Crafty.UpdateScrollListLH(CraftyStockListHistoryList, stockLH, typeIdLH)
 end
 
 -- refreshs the watchlist amountdata
@@ -929,6 +1048,16 @@ function Crafty.ToggleWL()
   end
 end
 
+-- show or hide loothistory (from keybinding)
+function Crafty.ToggleLH()
+  Crafty.DB("Crafty: ToggleLH")
+  if Crafty.showLH then
+    Crafty.CloseLH()
+  else
+    Crafty.OpenLH()
+  end
+end
+
 -- anker the stocklist to watchlist
 function Crafty.AnkerSL()
   Crafty.DB("Crafty: AnkerSL")
@@ -1026,6 +1155,22 @@ function Crafty.OpenWL()
   Crafty.savedVariables.ShowSL = false 
 end
 
+-- close loothistory
+function Crafty.CloseLH()
+  Crafty.DB("Crafty: CloseLH")
+  CraftyStockListHistory:SetHidden(true)
+  Crafty.showLH = false
+  Crafty.savedVariables.ShowLH = false
+end
+
+-- open loothistory
+function Crafty.OpenLH()
+  Crafty.DB("Crafty: OpenLH")
+  CraftyStockListHistory:SetHidden(false)
+  Crafty.showLH = true
+  Crafty.savedVariables.ShowLH = true 
+end
+
 -- for future use build a style table (tooltip)
 function Crafty.BuildStyleTable()
   Crafty.DB("Crafty: BuildStyleTable")
@@ -1061,6 +1206,10 @@ function Crafty.ShowTooltip(control)
       CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
     end
   else -- its the stocklist
+    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
+  end
+  
+  if controlName == "CraftyStockListHistoryListContents" then
     CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   end
 
@@ -1177,6 +1326,39 @@ function Crafty.RemoveItemFromWatchList(control)
   end
   --Crafty.DBPrintWatchList()
   Crafty.Refresh()
+end
+
+-- add an item to the history
+function Crafty.AddItemToHistory(mylink,stackCountChange)
+  Crafty.DB("Crafty: AddItemToHistory - "..mylink.." *"..stackCountChange)
+  
+  local stocklist = Crafty.PopulateCompleteStock()
+  local myName = GetItemLinkName(mylink)
+  local stockAmount = Crafty.ReturnStockListItemAmount(myName,stocklist)
+  
+  local myTable = Crafty.lootHistory
+  local mylootHistory = {}
+  mylootHistory[1] =
+  {
+    link = mylink,
+    amount = stackCountChange,
+    stockamount = stockAmount,
+    time = ZO_FormatClockTime()
+  }
+  table.insert(myTable,1,mylootHistory[1])
+  Crafty.ReturnHistory()
+end
+
+-- return the history
+function Crafty.ReturnHistory()
+  Crafty.DB("Crafty: ReturnHistory")
+  local historyN = table.getn(Crafty.lootHistory)
+  for i=1,historyN do
+    local myLink = Crafty.lootHistory[i].link
+    local myAmount = Crafty.lootHistory[i].amount
+    local myTime = Crafty.lootHistory[i].time
+    Crafty.DB(myTime.."-["..i.."]: "..myLink.." * "..myAmount)
+  end
 end
 
 -- checks if there is an undoitem and sets the button in xml

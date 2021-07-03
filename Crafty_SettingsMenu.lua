@@ -99,6 +99,18 @@ function Crafty.ControlSettings()
         default = 600,  --(optional)
     },
     [9] = {
+        type = "slider",
+        name = "Loothistory height",
+        tooltip = "Set loothistory window height",
+        min = 100,
+        max = 1000,
+        step = 10, --(optional)
+        getFunc = function() return Crafty.loothistoryHeight end,
+        setFunc = function(value) Crafty.loothistoryHeight = value Crafty.SetLoothistoryHeight() end,
+        width = "full", --or "full" (optional)
+        default = 300,  --(optional)
+    },
+    [10] = {
         type = "checkbox",
         name = "Enable tooltips",
         tooltip = "Enable or disable tooltips",
@@ -106,7 +118,7 @@ function Crafty.ControlSettings()
         setFunc = function(value) Crafty.toolTip = value Crafty.SavetoolTip() end,
         default = true,
     },
-    [10] = {
+    [11] = {
         type = "checkbox",
         name = "Accountwide settings",
         tooltip = "Save same settings for all characters",
@@ -123,8 +135,9 @@ function Crafty.ControlSettings()
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST2", "Show Watchlist 1")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST3", "Show Watchlist 2")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST4", "Show Watchlist 3")
-    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST5", "Reload Stockamounts")
-    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST6", "Debugmode on/off")     
+    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST5", "Show/Hide Loothistory")
+    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST6", "Reload Stockamounts")
+    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST7", "Debugmode on/off")     
     
     -- Register the settingmenu
     LibAddonMenu2:RegisterAddonPanel("CraftySettings", panelData) 
