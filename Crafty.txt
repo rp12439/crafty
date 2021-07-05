@@ -13,5 +13,4 @@ CraftyWL.xml
 CraftySL.xml
 CraftyTS.xml
 CraftyTT.xml
-CraftyLH.xml
 Bindings.xml

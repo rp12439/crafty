@@ -9,7 +9,9 @@
             <Controls>
             
                 <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
-            
+                                
+                                
+                                
                 <Button name="$(parent)MinMode" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="20" y="20" />
 					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="-10" />
@@ -70,16 +72,6 @@
 						mouseOver="esoui/art/buttons/plus_over.dds"/>
 					<OnClicked>
 						Crafty.ToggleSL()
-					</OnClicked>
-				</Button>
-				<Button name="$(parent)ButtonLootHistory" inherits="ZO_ButtonBehaviorClickSound">
-					<Dimensions x="29" y="29" />
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonStockList" relativePoint="TOPLEFT" offsetX="5" offsetY="0" />
-					<Textures normal="esoui\art\campaign\campaign_tabicon_history_up.dds"
-						pressed="esoui\art\campaign\campaign_tabicon_history_down.dds"
-						mouseOver="esoui\art\campaign\campaign_tabicon_history_over.dds"/>
-					<OnClicked>
-						Crafty.ToggleLH()
 					</OnClicked>
 				</Button>
 						
