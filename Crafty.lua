@@ -31,10 +31,10 @@ Crafty.autoHeightWLOpt = true
 Crafty.loothistoryHeight = 300
 Crafty.masterAlpha = 1
 Crafty.accountWide = false
-Crafty.sortWLName = "down"
+Crafty.sortWLName = "up"
 Crafty.sortWLAmount = "down"
 Crafty.sortWL = "Name"
-Crafty.sortSLName = "down"
+Crafty.sortSLName = "up"
 Crafty.sortSLAmount = "down"
 Crafty.sortSL = "Name"
 Crafty.minModeWL1 = false
@@ -43,6 +43,7 @@ Crafty.minModeWL3 = false
 Crafty.toolTip = true
 Crafty.myStyles = {}
 Crafty.lootHistory = {}
+Crafty.historyAmount = 0
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -96,7 +97,9 @@ function Crafty:Initialize()
   if Crafty.savedVariables.MinModeWL1 ~= nil then Crafty.minModeWL1 = Crafty.savedVariables.MinModeWL1 end 
   if Crafty.savedVariables.MinModeWL2 ~= nil then Crafty.minModeWL2 = Crafty.savedVariables.MinModeWL2 end 
   if Crafty.savedVariables.MinModeWL3 ~= nil then Crafty.minModeWL3 = Crafty.savedVariables.MinModeWL3 end
-  if Crafty.savedVariables.ToolTip ~= nil then Crafty.toolTip = Crafty.savedVariables.ToolTip end 
+  if Crafty.savedVariables.ToolTip ~= nil then Crafty.toolTip = Crafty.savedVariables.ToolTip end
+  if Crafty.savedVariables.LootHistory ~= nil then Crafty.lootHistory = Crafty.savedVariables.LootHistory end
+  if Crafty.savedVariables.HistoryAmount ~= nil then Crafty.historyAmount = Crafty.savedVariables.HistoryAmount end    
    
   Crafty:RestorePosition()
   Crafty.ControlSettings()
@@ -147,6 +150,8 @@ function Crafty:Initialize()
   end
  
   Crafty.BuildStyleTable()
+  CraftyStockListHistoryHistoryAmount:SetText(Crafty.historyAmount)
+  Crafty.CheckHistoryEmpty()
   
 end
 
@@ -243,7 +248,6 @@ function Crafty:RestorePosition()
     CraftyStockList:ClearAnchors()
     CraftyStockList:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, leftSL, topSL)
     CraftyStockListButtonToggleAnkerSL:SetNormalTexture("esoui/art/miscellaneous/unlocked_up.dds")
-    CraftyStockListButtonToggleAnkerSL:SetMouseOverTexture("esoui/art/miscellaneous/unlocked_over.dds")
     CraftyStockListButtonToggleAnkerSL:SetPressedTexture("esoui/art/miscellaneous/unlocked_down.dds")
   else
     Crafty.AnkerSL()
@@ -1074,7 +1078,6 @@ function Crafty.ToggleAnkerSL()
     
     CraftyStockListButtonToggleAnkerSL:SetNormalTexture("esoui/art/miscellaneous/unlocked_up.dds")
     CraftyStockListButtonToggleAnkerSL:SetMouseOverTexture("esoui/art/miscellaneous/unlocked_over.dds")
-    CraftyStockListButtonToggleAnkerSL:SetPressedTexture("esoui/art/miscellaneous/unlocked_down.dds")
 
   else
     Crafty.ankerSL = true
@@ -1082,7 +1085,6 @@ function Crafty.ToggleAnkerSL()
     
     CraftyStockListButtonToggleAnkerSL:SetNormalTexture("esoui/art/miscellaneous/locked_up.dds")
     CraftyStockListButtonToggleAnkerSL:SetMouseOverTexture("esoui/art/miscellaneous/locked_over.dds")
-    CraftyStockListButtonToggleAnkerSL:SetPressedTexture("esoui/art/miscellaneous/locked_down.dds")
     
     Crafty.AnkerSL()
   end
@@ -1253,6 +1255,33 @@ function Crafty.ShowTooltip(control)
   if itemCraftingType == 3 then -- its a rune (enchanting)
     itemFlavor = ""
   end
+  
+    if       itemCraftingType == 0 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_crafting_up.dds")
+      elseif itemCraftingType == 1 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_blacksmithing_up.dds")
+      elseif itemCraftingType == 2 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_clothing_up.dds")
+      elseif itemCraftingType == 3 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_enchanting_up.dds")
+      elseif itemCraftingType == 4 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_alchemy_up.dds")
+      elseif itemCraftingType == 5 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_provisioning_up.dds")
+      elseif itemCraftingType == 6 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_woodworking_up.dds")
+      elseif itemCraftingType == 7 then CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_jewelrycrafting_up.dds")
+      else
+  end
+  
+  if itemTypeSpecText == "Style Material" then
+    CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_stylematerial_up.dds")
+  end
+  if itemTypeSpecText == "Armor Trait" or itemTypeSpecText == "Weapon Trait" or itemTypeSpecText == "Jewelry Trait" then
+    CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_itemtrait_up.dds")
+  end
+  if itemTypeSpecText == "Lure" then
+    CraftyStockListTooltipItemProf:SetTexture("esoui/art/inventory/inventory_tabicon_craftbag_fishing_up.dds")
+  end
+  if itemTypeSpecText == "Furnishing Material" then
+    CraftyStockListTooltipItemProf:SetTexture("EsoUI/Art/Inventory/inventory_tabIcon_furnishing_material_up.dds")
+  end
+  if itemTypeSpecText == "Raw Material" or itemTypeSpecText == "Raw Trait" then
+    CraftyStockListTooltipItemProf:SetTexture("EsoUI/Art/TradingHouse/Tradinghouse_Materials_Style_RawMats_up.dds")
+  end
 
   CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
   CraftyStockListTooltipItemLink:SetText(itemLink)
@@ -1304,7 +1333,7 @@ function Crafty.AddItemToWatchList(control)
       Crafty.undoRemove = nil
       Crafty.CheckUndo()
   end
-  
+    
   Crafty.DB("Crafty: Added "..name.." at #"..table.getn(watchList))
   --Crafty.DBPrintWatchList()
   Crafty.Refresh()  
@@ -1332,6 +1361,8 @@ end
 function Crafty.AddItemToHistory(mylink,stackCountChange)
   Crafty.DB("Crafty: AddItemToHistory - "..mylink.." *"..stackCountChange)
   
+  Crafty.historyAmount = Crafty.historyAmount + stackCountChange
+  
   local stocklist = Crafty.PopulateCompleteStock()
   local myName = GetItemLinkName(mylink)
   local stockAmount = Crafty.ReturnStockListItemAmount(myName,stocklist)
@@ -1346,10 +1377,46 @@ function Crafty.AddItemToHistory(mylink,stackCountChange)
     time = ZO_FormatClockTime()
   }
   table.insert(myTable,1,mylootHistory[1])
-  Crafty.ReturnHistory()
+  
+  CraftyStockListHistoryHistoryAmount:SetText(Crafty.historyAmount)
+  
+  Crafty.savedVariables.LootHistory = myTable
+  Crafty.savedVariables.HistoryAmount = Crafty.historyAmount
+  
+  if table.getn(myTable) >= 500 then
+    Crafty.DB("Crafty: Dropped history table n >= 500")
+    Crafty.ResetHistory()
+  end
+  
+  Crafty.CheckHistoryEmpty()
+  --Crafty.ReturnHistory()
 end
 
--- return the history
+-- Clear the History
+function Crafty.ResetHistory()
+  Crafty.DB("Crafty: ResetHistory")
+  
+  Crafty.lootHistory = {}
+  Crafty.historyAmount = 0
+  
+  Crafty.savedVariables.LootHistory = Crafty.lootHistory
+  Crafty.savedVariables.HistoryAmount = Crafty.historyAmount
+  CraftyStockListHistoryHistoryAmount:SetText(Crafty.historyAmount)
+  
+  Crafty.CheckHistoryEmpty()
+  Crafty.Refresh()
+end
+
+function Crafty.CheckHistoryEmpty()
+  Crafty.DB("Crafty: HistoryEmpty")
+  if Crafty.historyAmount == 0 then
+    CraftyStockListHistoryEmptyLogo:SetHidden(false)
+  else
+    CraftyStockListHistoryEmptyLogo:SetHidden(true)
+  end
+end
+
+-- return the history -- only for debugging
 function Crafty.ReturnHistory()
   Crafty.DB("Crafty: ReturnHistory")
   local historyN = table.getn(Crafty.lootHistory)

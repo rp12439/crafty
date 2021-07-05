@@ -18,7 +18,6 @@
 					<Dimensions x="20" y="20" />
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="5" />
 					<Textures normal="esoui/art/buttons/decline_up.dds"
-						pressed="esoui/art/buttons/decline_down.dds"
 						mouseOver="esoui/art/buttons/decline_over.dds"/>
 					<OnClicked>
 						Crafty.CloseSL()
@@ -28,7 +27,6 @@
 					<Dimensions x="15" y="15" />
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonClose" relativePoint="TOPLEFT" offsetX="-5" offsetY="2" />				
 					<Textures normal="esoui/art/miscellaneous/locked_up.dds"
-						pressed="esoui/art/miscellaneous/locked_down.dds"
 						mouseOver="esoui/art/miscellaneous/locked_over.dds"/>
 					<OnClicked>
 						Crafty.ToggleAnkerSL()

@@ -14,7 +14,6 @@
 					<Dimensions x="20" y="20" />
 					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="-10" />
 					<Textures normal="esoui/art/buttons/minus_up.dds"
-						pressed="esoui/art/buttons/minus_down.dds"
 						mouseOver="esoui/art/buttons/minus_over.dds"/>
 					<OnClicked>
 						Crafty.ToggleMinMode()
@@ -44,7 +43,6 @@
 					<Dimensions x="20" y="20" />
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="5" />
 					<Textures normal="esoui/art/buttons/decline_up.dds"
-						pressed="esoui/art/buttons/decline_down.dds"
 						mouseOver="esoui/art/buttons/decline_over.dds"/>
 					<OnClicked>
 						Crafty.CloseWL()
@@ -55,7 +53,6 @@
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonClose" relativePoint="TOPLEFT" offsetX="2" offsetY="-5" />
 					<Textures
 						normal="esoui\art\chatwindow\chat_options_up.dds"
-						pressed="esoui\art\chatwindow\chat_options_down.dds"
 						mouseOver="esoui\art\chatwindow\chat_options_over.dds"
 					/>
 					<OnClicked>
@@ -66,7 +63,6 @@
 					<Dimensions x="29" y="29" />
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonSettings" relativePoint="TOPLEFT" offsetX="5" offsetY="0" />
 					<Textures normal="esoui/art/buttons/plus_up.dds"
-						pressed="esoui/art/buttons/plus_down.dds"
 						mouseOver="esoui/art/buttons/plus_over.dds"/>
 					<OnClicked>
 						Crafty.ToggleSL()
@@ -76,7 +72,6 @@
 					<Dimensions x="29" y="29" />
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)ButtonStockList" relativePoint="TOPLEFT" offsetX="5" offsetY="0" />
 					<Textures normal="esoui\art\campaign\campaign_tabicon_history_up.dds"
-						pressed="esoui\art\campaign\campaign_tabicon_history_down.dds"
 						mouseOver="esoui\art\campaign\campaign_tabicon_history_over.dds"/>
 					<OnClicked>
 						Crafty.ToggleLH()
@@ -87,7 +82,6 @@
 					<Dimensions x="25" y="25" />
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="-5" />
 					<Textures normal="esoui\art\vendor\vendor_tabicon_buyback_up.dds"
-						pressed="esoui\art\vendor\vendor_tabicon_buyback_down.dds"
 						mouseOver="esoui\art\vendor\vendor_tabicon_buyback_over.dds"/>
 					<OnClicked>
 						Crafty.UndoRemove()
