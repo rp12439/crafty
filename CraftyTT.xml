@@ -1,0 +1,36 @@
+<GuiXml>
+    <Controls>
+        <TopLevelControl name="CraftyStockListTooltip" hidden="true" mouseEnabled="true" movable="false" clampedToScreen="true">
+            <DimensionConstraints minX="300" minY="0" maxX="300" maxY="500" />
+            <Controls>
+                <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
+                <Texture name="$(parent)ItemIcon" textureFile="" tier="HIGH">
+					<Dimensions x="50" y="50"/>
+					<Anchor point="CENTER" relativeTo="$(parent)" relativePoint="TOP" offsetY="-10" />
+				</Texture>
+                <Label name="$(parent)ItemLink" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="">
+                    <Anchor point="TOP" relativeTo="$(parent)ItemIcon" relativePoint="BOTTOM" offsetX="0" offsetY="10"/>
+                </Label>
+				<Label name="$(parent)ItemType" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="">
+                    <Anchor point="TOP" relativeTo="$(parent)ItemLink" relativePoint="BOTTOM" offsetX="0" offsetY="5"/>
+                </Label>
+
+                <Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+					<Dimensions x="300" y="4"/>
+					<Anchor point="CENTER" relativeTo="$(parent)ItemType" relativePoint="BOTTOM" offsetY="10" />
+				</Texture>
+
+				<Label name="$(parent)TraitTypeText" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="TOP" text="">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="TOPLEFT" offsetX="15" offsetY="20"/>
+                    <DimensionConstraints minX="270" minY="0" maxX="270" maxY="500" />
+                </Label>
+
+                <Label name="$(parent)ItemFlavor" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="TOP" text="">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)TraitTypeText" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0"/>
+                	<DimensionConstraints minX="270" minY="0" maxX="270" maxY="500" />
+                </Label>
+
+            </Controls>
+        </TopLevelControl>
+    </Controls>
+</GuiXml>
