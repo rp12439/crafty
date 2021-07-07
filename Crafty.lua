@@ -24,6 +24,7 @@ Crafty.activewatchListID = 1
 Crafty.vendorwatchListID = 1
 Crafty.oldactivewatchListID = 1
 Crafty.oldshowWL = true
+Crafty.oldshowLH = true
 Crafty.masterHeight = 600
 Crafty.masterWidth = 300
 Crafty.autoHeightWL = 600
@@ -834,7 +835,9 @@ function Crafty.EventCheckVendorOpen()
   if Crafty.vendorOpen then -- open vendorwatchlist if setting is on / else do nothing
     Crafty.oldactivewatchListID = Crafty.activewatchListID
     Crafty.oldshowWL = Crafty.showWL
+    Crafty.oldshowLH = Crafty.showLH
     Crafty.SetActiveWatchList(Crafty.vendorwatchListID)
+    CraftyStockListHistory:SetHidden(true)
   end
 end
 
@@ -854,6 +857,9 @@ function Crafty.EventCheckVendorClose()
         Crafty.SetActiveWatchList(Crafty.oldactivewatchListID)
         Crafty.CloseWL()
       end
+    end
+    if Crafty.oldshowLH then
+      CraftyStockListHistory:SetHidden(false)
     end
   end 
 end
@@ -1369,13 +1375,16 @@ function Crafty.AddItemToHistory(mylink,stackCountChange)
   
   local myTable = Crafty.lootHistory
   local mylootHistory = {}
-  mylootHistory[1] =
+  local myTime = ZO_FormatClockTime()
+  
+  mylootHistory[1] = 
   {
     link = mylink,
     amount = stackCountChange,
     stockamount = stockAmount,
-    time = ZO_FormatClockTime()
+    time = myTime
   }
+
   table.insert(myTable,1,mylootHistory[1])
   
   CraftyStockListHistoryHistoryAmount:SetText(Crafty.historyAmount)

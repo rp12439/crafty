@@ -15,8 +15,8 @@
                 </Label>
                 
                 <Label name="$(parent)HistoryAmount" font="ZoFontGameLargeBold" color="FFFFFF" wrapMode="ELLIPSIS" horizontalAlignment="RIGHT" verticalAlignment="CENTER" text="0">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="250" offsetY="5"/>
-                	<Dimensions x="30"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="230" offsetY="5"/>
+                	<Dimensions x="50"/>
                 </Label>
                 
                 <Button name="$(parent)ButtonClose" inherits="ZO_ButtonBehaviorClickSound">
