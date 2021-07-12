@@ -12,6 +12,9 @@
 					<Dimensions x="40" y="40"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
 				</Texture>
+				<Label name="$(parent)ItemThreshold" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="RIGHT" text="9999">
+                    <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-5" offsetY="5"/>
+                </Label>
                 <Label name="$(parent)ItemLink" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="">
                     <Anchor point="TOP" relativeTo="$(parent)ItemIcon" relativePoint="BOTTOM" offsetX="0" offsetY="10"/>
                 </Label>

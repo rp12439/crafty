@@ -45,6 +45,8 @@ Crafty.toolTip = true
 Crafty.myStyles = {}
 Crafty.lootHistory = {}
 Crafty.historyAmount = 0
+Crafty.thresholdTable = {}
+Crafty.thresholdItem = nil
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -100,7 +102,8 @@ function Crafty:Initialize()
   if Crafty.savedVariables.MinModeWL3 ~= nil then Crafty.minModeWL3 = Crafty.savedVariables.MinModeWL3 end
   if Crafty.savedVariables.ToolTip ~= nil then Crafty.toolTip = Crafty.savedVariables.ToolTip end
   if Crafty.savedVariables.LootHistory ~= nil then Crafty.lootHistory = Crafty.savedVariables.LootHistory end
-  if Crafty.savedVariables.HistoryAmount ~= nil then Crafty.historyAmount = Crafty.savedVariables.HistoryAmount end    
+  if Crafty.savedVariables.HistoryAmount ~= nil then Crafty.historyAmount = Crafty.savedVariables.HistoryAmount end
+  if Crafty.savedVariables.ThresholdTable ~= nil then Crafty.thresholdTable = Crafty.savedVariables.ThresholdTable end       
    
   Crafty:RestorePosition()
   Crafty.ControlSettings()
@@ -197,6 +200,7 @@ function Crafty.SetMasterAlpha()
   CraftyStockListTypeBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListTooltipBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListHistoryBG:SetAlpha(Crafty.masterAlpha)
+  CraftyStockListThresholdBG:SetAlpha(Crafty.masterAlpha)
   
   Crafty.savedVariables.MasterAlpha = Crafty.masterAlpha
 end
@@ -707,10 +711,21 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
   rowControl.icon = GetControl(rowControl, "Icon")
   rowControl.name = GetControl(rowControl, "Name")
   rowControl.amount = GetControl(rowControl, "Amount")
-  
+
   rowControl.icon:SetTexture(GetItemLinkIcon(data.link))
   rowControl.name:SetText(data.link)
-  rowControl.amount:SetText(data.amount)
+  
+  local myThreshold = Crafty.ReturnThreshold(data.name)
+  
+  if myThreshold ~= nil then
+    if data.amount < myThreshold then 
+      rowControl.amount:SetText(string.format("|cff4040%s|r", data.amount))
+    else
+      rowControl.amount:SetText(string.format("|cb7ffa1%s|r", data.amount))
+    end
+  else
+    rowControl.amount:SetText(data.amount)
+  end
     
   rowControl.name:SetHidden(false)
   rowControl.name:SetWidth(175)
@@ -1127,6 +1142,7 @@ function Crafty.CloseSL()
   Crafty.showSL = false
   Crafty.savedVariables.ShowSL = false
   Crafty.CloseTS()
+  Crafty.CloseTH()
 end
 
 -- show the stocklist and typewindow
@@ -1151,6 +1167,7 @@ function Crafty.CloseWL()
   Crafty.CloseTS()
   Crafty.undoRemove = nil
   Crafty.CheckUndo()
+  Crafty.CloseTH()
 end
 
 -- open the watchlist
@@ -1178,6 +1195,28 @@ function Crafty.OpenLH()
   Crafty.showLH = true
   Crafty.savedVariables.ShowLH = true 
 end
+
+function Crafty.OpenTH(control)
+  Crafty.DB("Crafty: OpenTH")
+
+  Crafty.thresholdItem = control
+  local parent = control:GetParent():GetParent():GetParent()
+  local itemLink = control.data.link
+  local itemName = control.data.name
+  local myAmount = Crafty.ReturnThreshold(itemName)
+
+  CraftyStockListThresholdItemLink:SetText("Threshold for "..itemLink)
+  CraftyStockListThresholdThresholdAmountThresholdAmountText:SetText(myAmount)
+  
+  CraftyStockListThreshold:SetAnchor(BOTTOMLEFT, parent, TOPLEFT, 0, -50)
+  CraftyStockListThreshold:SetHidden(false)
+end
+
+function Crafty.CloseTH()
+  Crafty.DB("Crafty: CloseTH")
+  CraftyStockListThreshold:SetHidden(true)
+end
+
 
 -- for future use build a style table (tooltip)
 function Crafty.BuildStyleTable()
@@ -1220,6 +1259,10 @@ function Crafty.ShowTooltip(control)
   if controlName == "CraftyStockListHistoryListContents" then
     CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   end
+  
+  -- display threshold for the item
+  local myThreshold = Crafty.ReturnThreshold(control.data.name)
+  if myThreshold == nil then myThreshold = "" end
 
   local myHeight = 130
   local itemIcon
@@ -1288,13 +1331,15 @@ function Crafty.ShowTooltip(control)
   if itemTypeSpecText == "Raw Material" or itemTypeSpecText == "Raw Trait" then
     CraftyStockListTooltipItemProf:SetTexture("EsoUI/Art/TradingHouse/Tradinghouse_Materials_Style_RawMats_up.dds")
   end
+   
+  CraftyStockListTooltipItemThreshold:SetText(myThreshold)
 
   CraftyStockListTooltipItemIcon:SetTexture(itemIcon)
   CraftyStockListTooltipItemLink:SetText(itemLink)
   CraftyStockListTooltipItemType:SetText(itemTypeSpecText)
   CraftyStockListTooltipTraitTypeText:SetText(traitTypeText)
   CraftyStockListTooltipItemFlavor:SetText(itemFlavor)
-  
+
   traitTypeTextHeight = CraftyStockListTooltipTraitTypeText:GetTextHeight()
   itemFlavorTextHeight = CraftyStockListTooltipItemFlavor:GetTextHeight()
   CraftyStockListTooltip:SetHeight(myHeight+traitTypeTextHeight+itemFlavorTextHeight)
@@ -1306,18 +1351,29 @@ function Crafty.HideTooltip(control)
   CraftyStockListTooltip:SetHidden(true)
 end
 
+
 ----------------------------------------------------------------------------------------
 -- Functions for modifying the listdata (add items, remove, undo)
 ----------------------------------------------------------------------------------------
 
 -- adds an item to the watchlist, function for calling from xml (stocklist)
 function Crafty.OnMouseUpSL(control, button, upInside)
-  Crafty.AddItemToWatchList(control)
+  Crafty.DB("Crafty: OnMouseUpSL")
+  if button == 1 then
+    Crafty.AddItemToWatchList(control)
+  else
+    Crafty.OpenTH(control)
+  end
 end
 
 -- removes an item from the watchlist, function for calling from xml (watchlist)
 function Crafty.OnMouseUpWL(control, button, upInside)
-  Crafty.RemoveItemFromWatchList(control)
+  Crafty.DB("Crafty: OnMouseUpWL")
+  if button == 1 then
+    Crafty.RemoveItemFromWatchList(control)
+  else
+    Crafty.OpenTH(control)
+  end
 end
 
 -- adds an item to the watchlist, only if its not there, undoitem removed, updated icons on interface
@@ -1435,6 +1491,94 @@ function Crafty.ReturnHistory()
     local myTime = Crafty.lootHistory[i].time
     Crafty.DB(myTime.."-["..i.."]: "..myLink.." * "..myAmount)
   end
+end
+
+-- set thresholdamount for item
+function Crafty.SetThreshold()
+  
+  local myAmount = CraftyStockListThresholdThresholdAmountThresholdAmountText:GetText()
+  local myAmountNumber = tonumber(myAmount)
+  local myTable = Crafty.thresholdTable
+  local myItem = Crafty.thresholdItem
+  local myLink = myItem.data.link
+  local myName = myItem.data.name
+  local myThreshold = {}
+  local newItem = true
+  
+  Crafty.DB("Crafty: SetThreshold Item:"..myName)
+  
+  if type(myAmountNumber) ~= "number" then
+    return
+  end
+  
+  myThreshold[1] = 
+  {
+    link = myLink,
+    amount = myAmount,
+    name = myName
+  }
+
+  if table.getn(myTable) ~= 0 then
+    for i=1,table.getn(myTable) do
+      if myTable[i].name == myName then
+        table.remove(myTable, i)
+        break
+      end
+    end
+  end
+
+  table.insert(myTable,1,myThreshold[1])
+    
+  Crafty.savedVariables.ThresholdTable = Crafty.thresholdTable
+  --Crafty.DebugThreshold()
+  Crafty.CloseTH()
+  Crafty.Refresh()
+end
+
+-- return thresholdamount for item
+function Crafty.ReturnThreshold(itemName)
+  --Crafty.DB("Crafty: ReturnThreshold: "..itemName)
+  local myTable = Crafty.thresholdTable
+  
+  for i=1,table.getn(myTable) do
+    if myTable[i].name == itemName then
+      --Crafty.DB(myTable[i].amount)
+      return tonumber(myTable[i].amount)
+    end
+  end
+  
+end
+
+-- delete thresholdamount for item
+function Crafty.DeleteThreshold()
+  Crafty.DB("Crafty: DeleteThreshold: "..Crafty.thresholdItem.data.name)
+
+  local myTable = Crafty.thresholdTable
+  local myItem = Crafty.thresholdItem
+  local myName = myItem.data.name
+  
+  for i=1,table.getn(myTable) do
+    if myTable[i].name == myName then
+      table.remove(myTable, i)
+      break
+    end
+  end
+  
+  Crafty.savedVariables.ThresholdTable = Crafty.thresholdTable
+  --Crafty.DebugThreshold()
+  Crafty.CloseTH()
+  Crafty.Refresh()
+end
+
+function Crafty.DebugThreshold()
+  local myTable = Crafty.thresholdTable
+  local myItem = Crafty.thresholdItem
+  local myName = myItem.data.name
+  
+  for i=1,table.getn(myTable) do
+     Crafty.DB("Threshold["..i.."]:"..myTable[i].name..":"..myTable[i].amount)
+  end
+
 end
 
 -- checks if there is an undoitem and sets the button in xml

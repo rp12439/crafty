@@ -78,7 +78,7 @@
                 Crafty.OnMouseUpSL(self, button, upInside)
             </OnMouseUp>
             <Controls>
-            	<Texture name="$(parent)Icon" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+            	<Texture name="$(parent)Icon" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds">
 					<Dimensions x="25" y="25"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)"/>
 				</Texture>
