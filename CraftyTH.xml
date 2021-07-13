@@ -25,7 +25,7 @@
                     <Dimensions x="80" />
                     <Anchor point="TOPLEFT" relativeTo="$(parent)ItemLink" relativePoint="BOTTOMLEFT" offsetY="10" />
                     <Controls>
-                        <EditBox name="$(parent)ThresholdAmountText" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" maxInputCharacters="6"/>
+                        <EditBox name="$(parent)ThresholdAmountText" textType="NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" maxInputCharacters="6"/>
                     </Controls>
                 </Backdrop>
                 
