@@ -18,6 +18,27 @@
 					<OnClicked>
 						Crafty.ToggleMinMode()
 					</OnClicked>
+					<OnMouseEnter>
+						ZO_Tooltips_ShowTextTooltip(self, TOP, "Toggle minimized mode")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
+				</Button>
+				<Button name="$(parent)ThresholdMode" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="22" y="22" />
+					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)MinMode" relativePoint="BOTTOMRIGHT" offsetX="5" offsetY="0" />
+					<Textures normal="/esoui/art/treeicons/tutorial_idexicon_charprogression_up.dds"
+						mouseOver="/esoui/art/treeicons/tutorial_idexicon_charprogression_over.dds"/>
+					<OnClicked>
+						Crafty.ToggleThresholdMode()
+					</OnClicked>
+					<OnMouseEnter>
+						ZO_Tooltips_ShowTextTooltip(self, TOP, "Toggle threshold mode")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				
                 <Label name="$(parent)WatchList1" mouseEnabled="true" color="CFDCBD" font="ZoFontWinH4" wrapMode="ELLIPSIS" horizontalAlignment="LEFT" text="1">
@@ -86,6 +107,12 @@
 					<OnClicked>
 						Crafty.UndoRemove()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.UndoTooltip(self)
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>	
 		
 				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">

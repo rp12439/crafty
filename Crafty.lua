@@ -47,6 +47,10 @@ Crafty.lootHistory = {}
 Crafty.historyAmount = 0
 Crafty.thresholdTable = {}
 Crafty.thresholdItem = nil
+Crafty.thresholdFilter1 = false
+Crafty.thresholdFilter2 = false
+Crafty.thresholdFilter3 = false
+Crafty.activewatchListThresholdFilter = false
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -103,7 +107,11 @@ function Crafty:Initialize()
   if Crafty.savedVariables.ToolTip ~= nil then Crafty.toolTip = Crafty.savedVariables.ToolTip end
   if Crafty.savedVariables.LootHistory ~= nil then Crafty.lootHistory = Crafty.savedVariables.LootHistory end
   if Crafty.savedVariables.HistoryAmount ~= nil then Crafty.historyAmount = Crafty.savedVariables.HistoryAmount end
-  if Crafty.savedVariables.ThresholdTable ~= nil then Crafty.thresholdTable = Crafty.savedVariables.ThresholdTable end       
+  if Crafty.savedVariables.ThresholdTable ~= nil then Crafty.thresholdTable = Crafty.savedVariables.ThresholdTable end
+  if Crafty.savedVariables.ThresholdFilter1 ~= nil then Crafty.thresholdFilter1 = Crafty.savedVariables.ThresholdFilter1 end
+  if Crafty.savedVariables.ThresholdFilter2 ~= nil then Crafty.thresholdFilter2 = Crafty.savedVariables.ThresholdFilter2 end  
+  if Crafty.savedVariables.ThresholdFilter3 ~= nil then Crafty.thresholdFilter3 = Crafty.savedVariables.ThresholdFilter3 end
+  if Crafty.savedVariables.ActivewatchListThresholdFilter ~= nil then Crafty.activewatchListThresholdFilter = Crafty.savedVariables.ActivewatchListThresholdFilter end            
    
   Crafty:RestorePosition()
   Crafty.ControlSettings()
@@ -314,6 +322,8 @@ function Crafty.SetMinMode()
   CraftyWatchList:SetWidth(115)
   
   CraftyWatchListList:SetAnchor(TOPLEFT, CraftyWatchList, TOPLEFT, 10, 10)
+  --CraftyWatchListMinMode:SetNormalTexture("esoui/art/buttons/minus_down.dds")
+
   Crafty.SetHeightWL()
 end
 
@@ -332,7 +342,63 @@ function Crafty.EndMinMode()
   CraftyWatchList:SetWidth(300)
 
   CraftyWatchListList:SetAnchor(TOPLEFT, CraftyWatchListDivider, BOTTOMLEFT, 0, 10)
+  --CraftyWatchListMinMode:SetNormalTexture("esoui/art/buttons/minus_up.dds")
   Crafty.SetHeightWL()
+end
+
+function Crafty.ToggleThresholdMode()
+  Crafty.DB("Crafty: ToggleThresholdMode - WL:"..Crafty.activewatchListID)
+  local wl = Crafty.activewatchListID
+
+  if wl == 1 then
+    if Crafty.thresholdFilter1 then
+      Crafty.thresholdFilter1 = false
+      Crafty.savedVariables.ThresholdFilter1 = Crafty.thresholdFilter1
+    else
+      Crafty.thresholdFilter1 = true
+      Crafty.savedVariables.ThresholdFilter1 = Crafty.thresholdFilter1
+    end
+  end
+    if wl == 2 then
+    if Crafty.thresholdFilter2 then
+      Crafty.thresholdFilter2 = false
+      Crafty.savedVariables.ThresholdFilter2 = Crafty.thresholdFilter2
+    else
+      Crafty.thresholdFilter2 = true
+      Crafty.savedVariables.ThresholdFilter2 = Crafty.thresholdFilter2
+    end
+  end
+    if wl == 3 then
+    if Crafty.thresholdFilter3 then
+      Crafty.thresholdFilter3 = false
+      Crafty.savedVariables.ThresholdFilter3 = Crafty.thresholdFilter3
+    else
+      Crafty.thresholdFilter3 = true
+      Crafty.savedVariables.ThresholdFilter3 = Crafty.thresholdFilter3
+    end
+  end
+  
+  Crafty.SetThresholdMode()
+  Crafty.Refresh()
+  
+end
+
+function Crafty.SetThresholdMode()
+  Crafty.DB("Crafty: SetThresholdMode - WL:"..Crafty.activewatchListID)
+  
+  local wl = Crafty.activewatchListID
+  if wl == 1 then Crafty.activewatchListThresholdFilter = Crafty.thresholdFilter1 end
+  if wl == 2 then Crafty.activewatchListThresholdFilter = Crafty.thresholdFilter2 end
+  if wl == 3 then Crafty.activewatchListThresholdFilter = Crafty.thresholdFilter3 end
+  
+  Crafty.savedVariables.ActivewatchListThresholdFilter = Crafty.activewatchListThresholdFilter
+
+  if Crafty.activewatchListThresholdFilter then
+    CraftyWatchListThresholdMode:SetNormalTexture("/esoui/art/treeicons/tutorial_idexicon_charprogression_down.dds")
+  else
+    CraftyWatchListThresholdMode:SetNormalTexture("/esoui/art/treeicons/tutorial_idexicon_charprogression_up.dds")
+  end
+
 end
 
 -- restore saved position for specific watchlist
@@ -370,10 +436,11 @@ function Crafty.RestoreWLPosition(arg)
 end
 
 -- calculate the autoheight for the watchlist, sets the global var
-function Crafty.CalculateHeightWL()
+function Crafty.CalculateHeightWL(arg)
   Crafty.DB("Crafty: CalculateHeightWL")
   local watchList = Crafty.activewatchList
   local watchlistItems = table.getn(watchList)
+  if arg ~= nil then watchlistItems = arg end
   local watchListID = Crafty.activewatchListID
   local minmode = false
   
@@ -389,10 +456,10 @@ function Crafty.CalculateHeightWL()
 end
 
 -- sets the autoheight value to the xml element watchlist
-function Crafty.SetHeightWL()
+function Crafty.SetHeightWL(arg)
   if Crafty.autoHeightWLOpt then
     Crafty.DB("Crafty: SetHeightWL")
-    Crafty.CalculateHeightWL()
+    Crafty.CalculateHeightWL(arg)
     --local width = Crafty.masterWidth
     local height = Crafty.autoHeightWL
     
@@ -404,9 +471,11 @@ end
 -- refreshes the autoheight or sets the masterheight for the watchlist (from settings)
 function Crafty.CheckAutoHeightWLOpt()
   if Crafty.autoHeightWLOpt then
-    Crafty.SetHeightWL()
+    Crafty.Refresh()
+    --Crafty.SetHeightWL()
   else
     Crafty.SetMasterHeight()
+    Crafty.Refresh()
   end
   Crafty.savedVariables.AutoHeightWLOpt = Crafty.autoHeightWLOpt
 end
@@ -501,6 +570,7 @@ function Crafty.SetActiveWatchList(arg)
   end
   
   Crafty.savedVariables.ActivewatchList = Crafty.activewatchList
+  Crafty.savedVariables.ActivewatchListThresholdFilter = Crafty.activewatchListThresholdFilter
   Crafty.savedVariables.ActivewatchListID = arg
   Crafty.activewatchListID = arg
   
@@ -508,6 +578,7 @@ function Crafty.SetActiveWatchList(arg)
   Crafty.savedVariables.ShowWL = true
   CraftyWatchList:SetHidden(false)
   
+  Crafty.SetThresholdMode()
   Crafty.RestoreWLPosition(arg)
   Crafty.Refresh()
 end
@@ -569,18 +640,43 @@ end
 -- refreshes the amounts, calling the autoheight value
 function Crafty.PopulateWL()
   local watchList = Crafty.activewatchList
+  local thresholdfilter = Crafty.activewatchListThresholdFilter
+  
   Crafty.DB("Crafty: PopulateWL Items:"..table.getn(watchList))
   Crafty.RefreshWLAmounts()
   local stock = {}
-  for i=1,table.getn(watchList) do
-    stock[i] = {
-      link = watchList[i].link,
-      name = watchList[i].name,
-      amount = watchList[i].amount,
-      cinfo = watchList[i].cinfo
-    }
+  local mj = 1
+  
+  if thresholdfilter then 
+    for i=1, table.getn(watchList) do
+      --Crafty.DB(watchList[i].amount.." < "..Crafty.ReturnThreshold(watchList[i].name))
+      
+      if Crafty.ReturnThreshold(watchList[i].name) == nil or watchList[i].amount < Crafty.ReturnThreshold(watchList[i].name) then
+        stock[mj] = {
+          link = watchList[i].link,
+          name = watchList[i].name,
+          amount = watchList[i].amount,
+          cinfo = watchList[i].cinfo
+        }
+        --Crafty.DB(mj.."-"..stock[mj].name)
+        mj = mj+1
+      end
+    end
+
+  else
+    for i=1,table.getn(watchList) do
+        stock[i] = {
+          link = watchList[i].link,
+          name = watchList[i].name,
+          amount = watchList[i].amount,
+          cinfo = watchList[i].cinfo
+        }
+    end
   end
-  Crafty.SetHeightWL()
+  
+  Crafty.DB(table.getn(stock))
+  
+  Crafty.SetHeightWL(table.getn(stock))
   return stock
 end
 
@@ -685,6 +781,7 @@ function Crafty.UpdateScrollListWL(control, data, rowType)
   if Crafty.activewatchList == Crafty.watchList3 then
     Crafty.savedVariables.WatchList3 = Crafty.activewatchList
   end
+  
 end
 
 function Crafty.UpdateScrollListLH(control, data, rowType)
@@ -1238,6 +1335,7 @@ function Crafty.ShowTooltip(control)
   
   CraftyStockListTooltip:SetHidden(false)
   CraftyStockListTooltip:ClearAnchors()
+  CraftyStockListTooltipThresholdIcon:SetHidden(false)
   
   -- position the tooltip
   local controlName = control:GetParent():GetName()   
@@ -1262,7 +1360,10 @@ function Crafty.ShowTooltip(control)
   
   -- display threshold for the item
   local myThreshold = Crafty.ReturnThreshold(control.data.name)
-  if myThreshold == nil then myThreshold = "" end
+  if myThreshold == nil then
+    myThreshold = ""
+    CraftyStockListTooltipThresholdIcon:SetHidden(true)
+  end
 
   local myHeight = 130
   local itemIcon
@@ -1497,7 +1598,6 @@ end
 function Crafty.SetThreshold()
   
   local myAmount = CraftyStockListThresholdThresholdAmountThresholdAmountText:GetText()
-  local myAmountNumber = tonumber(myAmount)
   local myTable = Crafty.thresholdTable
   local myItem = Crafty.thresholdItem
   local myLink = myItem.data.link
@@ -1506,10 +1606,6 @@ function Crafty.SetThreshold()
   local newItem = true
   
   Crafty.DB("Crafty: SetThreshold Item:"..myName)
-  
-  if type(myAmountNumber) ~= "number" then
-    return
-  end
   
   myThreshold[1] = 
   {
@@ -1605,6 +1701,14 @@ function Crafty.UndoRemove()
   Crafty.undoRemove = nil
   Crafty.CheckUndo()
   Crafty.Refresh()
+end
+
+function Crafty.UndoTooltip(control)
+  Crafty.DB("Crafty: UndoTooltip")
+  
+  if Crafty.undoRemove ~= nil then
+    ZO_Tooltips_ShowTextTooltip(control, TOP, "Insert: "..Crafty.undoRemove.link)
+  end
 end
 
 -- helper function to check if an item is in the watchlist (the name!)
