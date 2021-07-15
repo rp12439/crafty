@@ -206,9 +206,9 @@ function Crafty.SetMasterAlpha()
   CraftyWatchListBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListTypeBG:SetAlpha(Crafty.masterAlpha)
-  CraftyStockListTooltipBG:SetAlpha(Crafty.masterAlpha)
+  --CraftyStockListTooltipBG:SetAlpha(Crafty.masterAlpha)
   CraftyStockListHistoryBG:SetAlpha(Crafty.masterAlpha)
-  CraftyStockListThresholdBG:SetAlpha(Crafty.masterAlpha)
+  --CraftyStockListThresholdBG:SetAlpha(Crafty.masterAlpha)
   
   Crafty.savedVariables.MasterAlpha = Crafty.masterAlpha
 end
@@ -1329,6 +1329,31 @@ function Crafty.ReturnStyle(arg)
   return Crafty.myStyles[arg]
 end
 
+-- return the windowposition left
+function Crafty.ReturnXLPosition(control)
+--Crafty.DB("Crafty: ReturnXLPosition")
+  local myXLPos
+  myXLPos = control:GetLeft()
+  return myXLPos
+end
+
+-- return the windowposition right
+function Crafty.ReturnXRPosition(control)
+--Crafty.DB("Crafty: ReturnXRPosition")
+  local myXRPos
+  myXRPos = control:GetRight()
+  return myXRPos
+end
+
+-- return true/false of minmode for active watchlist
+function Crafty.ReturnMinMode()
+--Crafty.DB("Crafty: ReturnMinMode")
+  local wl = Crafty.activewatchListID
+  if wl == 1 then return Crafty.minModeWL1 end
+  if wl == 2 then return Crafty.minModeWL2 end
+  if wl == 3 then return Crafty.minModeWL3 end
+end
+
 -- show ToolTip
 function Crafty.ShowTooltip(control)
   --Crafty.DB("Crafty: OnMouseEnterWL")
@@ -1336,26 +1361,63 @@ function Crafty.ShowTooltip(control)
   CraftyStockListTooltip:SetHidden(false)
   CraftyStockListTooltip:ClearAnchors()
   CraftyStockListTooltipThresholdIcon:SetHidden(false)
+  local controlTopLevel = control:GetParent():GetParent():GetParent()
+  local myXLPos = Crafty.ReturnXLPosition(controlTopLevel)
+  local myXRPos = Crafty.ReturnXRPosition(controlTopLevel)
+  local myLeftCol = false
+  local myRightCol = false
+  if myXLPos < 340 then myLeftCol = true end
+  local myXRightPos = GuiRoot:GetRight()
+  if myXRPos > myXRightPos - 350 then myRightCol = true end
   
   -- position the tooltip
   local controlName = control:GetParent():GetName()   
   if controlName == "CraftyWatchListListContents" then
-    -- its the watchlist
     if Crafty.showSL then -- stocklist is open
       if Crafty.ankerSL then -- stocklist is open and docked!
-        CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+        if myRightCol then
+          CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -340, 0)
+        else
+          CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+        end
       else -- not docked
-        CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
+        if myLeftCol then
+          CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+        else
+          CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
+        end
       end
     else -- stocklist not open
+      if myLeftCol then
+        CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+      else
+        CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
+      end
+    end
+  end
+  
+  if controlName == "CraftyStockListListContents" then
+    if myLeftCol then
+      if Crafty.ankerSL then
+        if Crafty.ReturnMinMode() then
+          CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, CraftyWatchList:GetLeft()-CraftyStockList:GetLeft()-150, 0)
+        else
+          CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, CraftyWatchList:GetLeft()-CraftyStockList:GetLeft()+35, 0)
+        end
+      else
+        CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+      end
+    else
       CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
     end
-  else -- its the stocklist
-    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
   end
   
   if controlName == "CraftyStockListHistoryListContents" then
-    CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -25, 0)
+    if myLeftCol then
+      CraftyStockListTooltip:SetAnchor(LEFT, control, RIGHT, 35, 0)
+    else
+      CraftyStockListTooltip:SetAnchor(RIGHT, control, LEFT, -20, 0)
+    end
   end
   
   -- display threshold for the item
