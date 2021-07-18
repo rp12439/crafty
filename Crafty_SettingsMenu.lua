@@ -90,7 +90,7 @@ function Crafty.ControlSettings()
         type = "slider",
         name = "Windowheight",
         tooltip = "Set overall window height",
-        min = 290,
+        min = 400,
         max = 1000,
         step = 10, --(optional)
         getFunc = function() return Crafty.masterHeight end,

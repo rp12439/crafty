@@ -2,7 +2,7 @@
     <Controls>
         <TopLevelControl name="CraftyStockListType" hidden="true" mouseEnabled="true" movable="false" clampedToScreen="true">
             <Anchor point="TOPRIGHT" relativeTo="CraftyStockList" relativePoint="TOPLEFT" offsetX="-15" offsetY="0"/>
-            <Dimensions x="50" y="290" />
+            <Dimensions x="50" y="395" />
             <Controls>
             
                 <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
@@ -85,6 +85,45 @@
 					<OnClicked>
 						Crafty.SetTS(0)
 					</OnClicked>
+				</Button>
+				
+				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+					<Dimensions x="50" y="4"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)MatsIcon" relativePoint="BOTTOMLEFT" offsetY="10" />
+				</Texture>
+				
+				<Button name="$(parent)ThresholdIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="40" y="40" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="10" />
+					<Textures normal="/esoui/art/treeicons/tutorial_idexicon_charprogression_up.dds"
+						pressed="/esoui/art/treeicons/tutorial_idexicon_charprogression_down.dds"
+						mouseOver="/esoui/art/treeicons/tutorial_idexicon_charprogression_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(50)
+					</OnClicked>
+					<OnMouseEnter>
+						ZO_Tooltips_ShowTextTooltip(self, LEFT, "Threshold")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
+				</Button>
+				
+				<Button name="$(parent)AlarmIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="40" y="40" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)ThresholdIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-5" />
+					<Textures normal="esoui\art\lfg\lfg_healer_up_64.dds"
+						pressed="esoui\art\lfg\lfg_healer_down_64.dds"
+						mouseOver="esoui\art\lfg\lfg_healer_over_64.dds"/>
+					<OnClicked>
+						Crafty.SetTS(100)
+					</OnClicked>
+					<OnMouseEnter>
+						ZO_Tooltips_ShowTextTooltip(self, LEFT, "Lootalarm")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
             </Controls>
         </TopLevelControl>      

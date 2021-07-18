@@ -4,7 +4,7 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
-Crafty.version = "v1.7"
+Crafty.version = "v1.8"
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
@@ -51,6 +51,8 @@ Crafty.thresholdFilter1 = false
 Crafty.thresholdFilter2 = false
 Crafty.thresholdFilter3 = false
 Crafty.activewatchListThresholdFilter = false
+Crafty.alarmTable = {}
+Crafty.alarmToggle = true
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -112,6 +114,8 @@ function Crafty:Initialize()
   if Crafty.savedVariables.ThresholdFilter2 ~= nil then Crafty.thresholdFilter2 = Crafty.savedVariables.ThresholdFilter2 end  
   if Crafty.savedVariables.ThresholdFilter3 ~= nil then Crafty.thresholdFilter3 = Crafty.savedVariables.ThresholdFilter3 end
   if Crafty.savedVariables.ActivewatchListThresholdFilter ~= nil then Crafty.activewatchListThresholdFilter = Crafty.savedVariables.ActivewatchListThresholdFilter end            
+  if Crafty.savedVariables.AlarmTable ~= nil then Crafty.alarmTable = Crafty.savedVariables.AlarmTable end
+  if Crafty.savedVariables.AlarmToggle ~= nil then Crafty.alarmToggle = Crafty.savedVariables.AlarmToggle end
    
   Crafty:RestorePosition()
   Crafty.ControlSettings()
@@ -134,7 +138,7 @@ function Crafty:Initialize()
   if table.getn(stockLH) ~= 0 then
     Crafty.UpdateScrollListLH(CraftyStockListHistoryList, stockLH, typeIdLH)
   end
-  
+    
   Crafty.SetMasterHeight()
   Crafty.SetLoothistoryHeight()
   Crafty.SetMasterAlpha()
@@ -159,6 +163,12 @@ function Crafty:Initialize()
     Crafty.OpenLH()
   else
     Crafty.CloseLH()
+  end
+ 
+  if Crafty.alarmToggle then
+    Crafty.SetAlarmMode()
+  else
+    Crafty.EndAlarmMode()
   end
  
   Crafty.BuildStyleTable()
@@ -398,7 +408,31 @@ function Crafty.SetThresholdMode()
   else
     CraftyWatchListThresholdMode:SetNormalTexture("/esoui/art/treeicons/tutorial_idexicon_charprogression_up.dds")
   end
+end
 
+function Crafty.ToggleAlarmMode()
+  Crafty.DB("Crafty: ToggleAlarmMode")
+  if Crafty.alarmToggle then
+    Crafty.alarmToggle = false
+    Crafty.EndAlarmMode()
+  else
+    Crafty.alarmToggle = true
+    Crafty.SetAlarmMode()
+  end  
+end
+
+function Crafty.SetAlarmMode()
+  Crafty.DB("Crafty: SetAlarmMode")
+  CraftyStockListAlarmMode:SetNormalTexture("/esoui/art/lfg/lfg_healer_down_64.dds")
+  Crafty.savedVariables.AlarmToggle = Crafty.alarmToggle
+  
+end
+
+function Crafty.EndAlarmMode()
+  Crafty.DB("Crafty: EndAlarmMode")
+  CraftyStockListAlarmMode:SetNormalTexture("/esoui/art/lfg/lfg_healer_up_64.dds")
+  Crafty.savedVariables.AlarmToggle = Crafty.alarmToggle
+  
 end
 
 -- restore saved position for specific watchlist
@@ -598,6 +632,8 @@ function Crafty.SetTS(arg)
   CraftyStockListTypeProvisioningIcon:SetState(0,false)
   CraftyStockListTypeWoodworkingIcon:SetState(0,false)
   CraftyStockListTypeMatsIcon:SetState(0,false)
+  CraftyStockListTypeAlarmIcon:SetState(0,false)
+  CraftyStockListTypeThresholdIcon:SetState(0,false)
   
   if         arg == 0 then CraftyStockListTypeMatsIcon:SetState(1,false)
       elseif arg == 1 then CraftyStockListTypeBlacksmithingIcon:SetState(1,false)
@@ -607,6 +643,8 @@ function Crafty.SetTS(arg)
       elseif arg == 5 then CraftyStockListTypeProvisioningIcon:SetState(1,false)
       elseif arg == 6 then CraftyStockListTypeWoodworkingIcon:SetState(1,false)
       elseif arg == 7 then CraftyStockListTypeJewelryIcon:SetState(1,false)
+      elseif arg == 50 then CraftyStockListTypeThresholdIcon:SetState(1,false)
+      elseif arg == 100 then CraftyStockListTypeAlarmIcon:SetState(1,false)
       else
   end
   
@@ -620,19 +658,50 @@ function Crafty.PopulateSL()
   local stock = {}
   local stockcounter = 0
 
-  for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
-    if data ~= nil then
-      if GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex) == type then
-        stockcounter = stockcounter + 1
-        stock[stockcounter] = {
-          link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
-          name = GetItemName(BAG_VIRTUAL,data.slotIndex),
-          amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
-          cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
-        }
+  if type == 100 then -- All items with alarmflag
+    for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
+      if data ~= nil then
+        if Crafty.ReturnAlarm(GetItemName(BAG_VIRTUAL,data.slotIndex)) then
+          stockcounter = stockcounter + 1
+          stock[stockcounter] = {
+            link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
+            name = GetItemName(BAG_VIRTUAL,data.slotIndex),
+            amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
+            cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
+          }
+        end
+      end
+    end
+  elseif type == 50 then -- All items with threshold
+    for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
+      if data ~= nil then
+        if Crafty.ReturnThreshold(GetItemName(BAG_VIRTUAL,data.slotIndex)) ~= nil then
+          stockcounter = stockcounter + 1
+          stock[stockcounter] = {
+            link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
+            name = GetItemName(BAG_VIRTUAL,data.slotIndex),
+            amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
+            cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
+          }
+        end
+      end
+    end
+  else
+    for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
+      if data ~= nil then
+        if GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex) == type then
+          stockcounter = stockcounter + 1
+          stock[stockcounter] = {
+            link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
+            name = GetItemName(BAG_VIRTUAL,data.slotIndex),
+            amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
+            cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
+          }
+        end
       end
     end
   end
+  
   return stock
 end
 
@@ -810,10 +879,15 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
   rowControl.amount = GetControl(rowControl, "Amount")
 
   rowControl.icon:SetTexture(GetItemLinkIcon(data.link))
-  rowControl.name:SetText(data.link)
   
+  local myAlarm = Crafty.ReturnAlarm(data.name)
+  if myAlarm then
+    rowControl.name:SetText(string.format("|cff4040%s|r |cffe926%s|r", data.link, "*"))
+  else
+    rowControl.name:SetText(data.link)
+  end
+
   local myThreshold = Crafty.ReturnThreshold(data.name)
-  
   if myThreshold ~= nil then
     if data.amount < myThreshold then 
       rowControl.amount:SetText(string.format("|cff4040%s|r", data.amount))
@@ -867,6 +941,11 @@ function Crafty.InvChange(eventCode, bagId, slotIndex, isNewItem, itemSoundCateg
   if stackCountChange >0 then
     Crafty.AddItemToHistory(link,stackCountChange)
   end
+  
+  if Crafty.ReturnAlarm(GetItemLinkName(link)) then
+    Crafty.ExecuteLootAlarm(link)
+  end
+  
   Crafty.Refresh()
 end 
 
@@ -1301,9 +1380,16 @@ function Crafty.OpenTH(control)
   local itemLink = control.data.link
   local itemName = control.data.name
   local myAmount = Crafty.ReturnThreshold(itemName)
+  local myAlarm = Crafty.ReturnAlarm(itemName)
 
-  CraftyStockListThresholdItemLink:SetText("Threshold for "..itemLink)
+  CraftyStockListThresholdItemLink:SetText(itemLink)
   CraftyStockListThresholdThresholdAmountThresholdAmountText:SetText(myAmount)
+  
+  if myAlarm then
+    CraftyStockListThresholdAlarmSwitch:SetText("ON")
+  else
+    CraftyStockListThresholdAlarmSwitch:SetText(string.format("|cadadad%s|r", "OFF"))
+  end
   
   CraftyStockListThreshold:SetAnchor(BOTTOMLEFT, parent, TOPLEFT, 0, -50)
   CraftyStockListThreshold:SetHidden(false)
@@ -1425,6 +1511,16 @@ function Crafty.ShowTooltip(control)
   if myThreshold == nil then
     myThreshold = ""
     CraftyStockListTooltipThresholdIcon:SetHidden(true)
+  end
+  
+  local myAlarm= Crafty.ReturnAlarm(control.data.name)
+  CraftyStockListTooltipAlarmIcon:SetHidden(true)
+  if myAlarm then
+    CraftyStockListTooltipAlarmIcon:SetAnchor(TOPRIGHT, CraftyStockListTooltipThresholdIcon, TOPLEFT, 0, 0  )
+    CraftyStockListTooltipAlarmIcon:SetHidden(false)
+    if myThreshold == "" then
+      CraftyStockListTooltipAlarmIcon:SetAnchor(TOPRIGHT, CraftyStockListTooltip, TOPRIGHT, -10, 5  )
+    end
   end
 
   local myHeight = 130
@@ -1654,6 +1750,74 @@ function Crafty.ReturnHistory()
     local myTime = Crafty.lootHistory[i].time
     Crafty.DB(myTime.."-["..i.."]: "..myLink.." * "..myAmount)
   end
+end
+
+-- set alarm for item
+function Crafty.SetAlarm()
+  Crafty.DB("Crafty: SetAlarm")
+  local myTable = Crafty.alarmTable
+  local myItem = Crafty.thresholdItem 
+  local myLink = myItem.data.link
+  local myName = myItem.data.name
+  local myAlarm = {}
+  local myRemoved = false
+  
+  myAlarm[1] = 
+  {
+    link = myLink,
+    name = myName
+  }
+  
+  if table.getn(myTable) ~= 0 then
+    for i=1,table.getn(myTable) do
+      if myTable[i].name == myName then
+        table.remove(myTable, i)
+        myRemoved = true
+        break
+      end
+    end
+  end
+  if not myRemoved then
+    table.insert(myTable,1,myAlarm[1])
+  end
+  
+  Crafty.savedVariables.AlarmTable = Crafty.alarmTable
+  Crafty.CloseTH()
+  Crafty.Refresh()
+  --Crafty.DebugAlarm()
+end
+
+function Crafty.ReturnAlarm(itemName)
+  --Crafty.DB("Crafty: ReturnAlarm: "..itemName)
+  local myTable = Crafty.alarmTable
+  local myFound = false
+  
+  for i=1,table.getn(myTable) do
+    if myTable[i].name == itemName then
+      myFound = true
+    end
+  end
+  
+  return myFound
+
+end
+
+
+function Crafty.ExecuteLootAlarm(itemLink)
+
+
+end
+
+
+function Crafty.DebugAlarm()
+  local myTable = Crafty.alarmTable
+  local myItem = Crafty.thresholdItem
+  local myName = myItem.data.name
+  
+  for i=1,table.getn(myTable) do
+     Crafty.DB("Alarm["..i.."]:"..myTable[i].name)
+  end
+
 end
 
 -- set thresholdamount for item

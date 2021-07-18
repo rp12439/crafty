@@ -18,7 +18,11 @@
                 </Label>
                 <Texture name="$(parent)ThresholdIcon" hidden="true" textureFile="/esoui/art/treeicons/tutorial_idexicon_charprogression_up.dds" tier="HIGH">
 					<Dimensions x="25" y="25"/>
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)ItemThreshold" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ItemThreshold" relativePoint="TOPLEFT" offsetX="0" offsetY="-2" />
+				</Texture>
+				<Texture name="$(parent)AlarmIcon" hidden="true" textureFile="esoui\art\lfg\lfg_healer_up_64.dds" tier="HIGH">
+					<Dimensions x="25" y="25"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)ThresholdIcon" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
 				</Texture>
                 
                 <Label name="$(parent)ItemLink" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="CENTER" text="">
