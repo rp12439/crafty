@@ -108,7 +108,7 @@ function Crafty.ControlSettings()
         getFunc = function() return Crafty.loothistoryHeight end,
         setFunc = function(value) Crafty.loothistoryHeight = value Crafty.SetLoothistoryHeight() end,
         width = "full", --or "full" (optional)
-        default = 300,  --(optional)
+        default = 180,  --(optional)
     },
     [10] = {
         type = "checkbox",

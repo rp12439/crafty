@@ -10,10 +10,12 @@
 Crafty.lua
 Crafty_SettingsMenu.lua
 
-CraftyLH.xml
 CraftySL.xml
 CraftyTS.xml
 CraftyWL.xml
-CraftyTT.xml
+CraftyLH.xml
+CraftyAL.xml
 CraftyTH.xml
+CraftyTT.xml
+
 Bindings.xml

@@ -52,6 +52,7 @@ Crafty.thresholdFilter2 = false
 Crafty.thresholdFilter3 = false
 Crafty.activewatchListThresholdFilter = false
 Crafty.alarmTable = {}
+Crafty.alarmTrigger = {}
 Crafty.alarmToggle = true
 
 ----------------------------------------------------------------------------------------
@@ -483,9 +484,9 @@ function Crafty.CalculateHeightWL(arg)
   if watchListID == 3 then minmode = Crafty.minModeWL3 end
   
   if minmode then
-    Crafty.autoHeightWL = 20+watchlistItems*30
+    Crafty.autoHeightWL = 25+watchlistItems*30
   else
-    Crafty.autoHeightWL = 70+watchlistItems*30
+    Crafty.autoHeightWL = 75+watchlistItems*30
   end
 end
 
@@ -938,14 +939,15 @@ end
 function Crafty.InvChange(eventCode, bagId, slotIndex, isNewItem, itemSoundCategory, updateReason, stackCountChange)
   local link = GetItemLink(bagId, slotIndex)
   Crafty.DB("Crafty: InvChange - "..link.." *"..stackCountChange)
+  
   if stackCountChange >0 then
     Crafty.AddItemToHistory(link,stackCountChange)
+    
+    if Crafty.ReturnAlarm(GetItemLinkName(link)) and Crafty.alarmToggle then
+      Crafty.ExecuteLootAlarm(link,stackCountChange)
+    end
   end
-  
-  if Crafty.ReturnAlarm(GetItemLinkName(link)) then
-    Crafty.ExecuteLootAlarm(link)
-  end
-  
+
   Crafty.Refresh()
 end 
 
@@ -1787,6 +1789,7 @@ function Crafty.SetAlarm()
   --Crafty.DebugAlarm()
 end
 
+-- Return if alarm is set for item (itemName)
 function Crafty.ReturnAlarm(itemName)
   --Crafty.DB("Crafty: ReturnAlarm: "..itemName)
   local myTable = Crafty.alarmTable
@@ -1797,17 +1800,70 @@ function Crafty.ReturnAlarm(itemName)
       myFound = true
     end
   end
-  
   return myFound
-
 end
 
+-- Perform the alarm for found item (itemLink)
+function Crafty.ExecuteLootAlarm(itemLink, lootAmount)
+  Crafty.DB("Crafty: ExecuteLootAlarm: "..itemLink)
+  local itemIcon = GetItemLinkIcon(itemLink)
+  local itemName = GetItemLinkName(itemLink)
+  local myControl = WINDOW_MANAGER:GetControlByName("Alert"..itemLink, "")
+  local alertBox
+  local myLastControl
+  local myLHHidden = CraftyStockListHistory:IsHidden()
+  
+  if myControl == nil then
+    alertBox = WINDOW_MANAGER:CreateControlFromVirtual("Alert"..itemLink, GuiRoot, "CraftyStockListAlarm")
+  else
+    alertBox = myControl
+  end
 
-function Crafty.ExecuteLootAlarm(itemLink)
+  alertBox:ClearAnchors()
+  Crafty.LogAlarmControl(alertBox)
+  myLastControl = Crafty.ReturnLastAlarmControl()
+  
+  if myLastControl ~= nil and myLastControl ~= alertBox then
+    alertBox:SetAnchor(BOTTOMLEFT, myLastControl, TOPLEFT, 0,-45)
+  else
+    alertBox:SetAnchor(BOTTOMLEFT, CraftyStockListHistory, TOPLEFT, 0,-20)
+  end
+  alertBox:SetHidden(false)
+  if myLHHidden then
+    CraftyStockListHistory:SetHidden(false)
+  end
+  
+  local myItemIcon = WINDOW_MANAGER:GetControlByName("Alert"..itemLink.."ItemIcon", "")
+  local myItemLink = WINDOW_MANAGER:GetControlByName("Alert"..itemLink.."ItemLink", "")
+  myItemIcon:SetTexture(itemIcon)
+  myItemLink:SetText(lootAmount.." * "..itemLink)
 
-
+  zo_callLater(function () alertBox:SetHidden(true) end, 5000)
+  if myLHHidden then
+    zo_callLater(function () CraftyStockListHistory:SetHidden(true) end, 5000)
+  end
 end
 
+function Crafty.LogAlarmControl(control)
+  --Crafty.DB("Crafty: LogAlarmControl")
+  local myTable = Crafty.alarmTrigger
+  table.insert(myTable,control)
+end
+
+function Crafty.ReturnLastAlarmControl()
+  --Crafty.DB("Crafty: ReturnLastAlarmControlTOPLEFT")
+  local myTable = Crafty.alarmTrigger
+  local myLastControl
+  for i=1,table.getn(myTable) do
+    if myTable[i]~=nil then
+      if myTable[i]:IsHidden()==false then
+        myLastControl = myTable[i]
+      end
+    end
+  end
+  if myLastControl ~= nil then Crafty.DB(myLastControl:GetName()) end
+  return myLastControl
+end
 
 function Crafty.DebugAlarm()
   local myTable = Crafty.alarmTable
