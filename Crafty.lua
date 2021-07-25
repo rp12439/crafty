@@ -4,7 +4,7 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
-Crafty.version = "v1.8"
+Crafty.version = "v1.9"
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
@@ -1444,7 +1444,7 @@ end
 
 -- show ToolTip
 function Crafty.ShowTooltip(control)
-  --Crafty.DB("Crafty: OnMouseEnterWL")
+  Crafty.DB("Crafty: ShowTooltip")
   
   CraftyStockListTooltip:SetHidden(false)
   CraftyStockListTooltip:ClearAnchors()
@@ -1829,19 +1829,70 @@ function Crafty.ExecuteLootAlarm(itemLink, lootAmount)
     alertBox:SetAnchor(BOTTOMLEFT, CraftyStockListHistory, TOPLEFT, 0,-20)
   end
   alertBox:SetHidden(false)
+  
+  local AlertAnim, AlertTimeline = CreateSimpleAnimation(ANIMATION_ALPHA, alertBox)
+  AlertAnim:SetAlphaValues(0, 1)
+  AlertAnim:SetDuration(500)
+  AlertTimeline:SetPlaybackType(ANIMATION_PLAYBACK_ONE_SHOT)
+  AlertTimeline:PlayFromStart()
+  
   if myLHHidden then
     CraftyStockListHistory:SetHidden(false)
+    
+    local HistAnim, HistTimeline = CreateSimpleAnimation(ANIMATION_ALPHA, CraftyStockListHistory)
+    HistAnim:SetAlphaValues(0, 1)
+    HistAnim:SetDuration(500)
+    HistTimeline:SetPlaybackType(ANIMATION_PLAYBACK_ONE_SHOT)
+    HistTimeline:PlayFromStart()
   end
   
   local myItemIcon = WINDOW_MANAGER:GetControlByName("Alert"..itemLink.."ItemIcon", "")
   local myItemLink = WINDOW_MANAGER:GetControlByName("Alert"..itemLink.."ItemLink", "")
   myItemIcon:SetTexture(itemIcon)
   myItemLink:SetText(lootAmount.." * "..itemLink)
-
-  zo_callLater(function () alertBox:SetHidden(true) end, 5000)
+  
+  --Glow Animation
+  local animControl = WINDOW_MANAGER:GetControlByName("Alert"..itemLink.."AlarmGlow1", "")
+  local timeline = ANIMATION_MANAGER:CreateTimeline()
+  
+  local rotateright = timeline:InsertAnimation(ANIMATION_TEXTUREROTATE, animControl)
+  rotateright:SetRotationValues(0, 360)
+  rotateright:SetDuration(2000)
+  local rotateleft = timeline:InsertAnimation(ANIMATION_TEXTUREROTATE, animControl, 2000)
+  rotateleft:SetRotationValues(360, 0)
+  rotateleft:SetDuration(2000)
+  
+  timeline:SetPlaybackType(ANIMATION_PLAYBACK_LOOP, LOOP_INDEFINITELY)
+  timeline:PlayFromStart()
+  
+  zo_callLater(function () timeline:Stop() end, 5500)
+  zo_callLater(function () Crafty.LootAlarmCloseAlertBox(alertBox) end, 5000)
   if myLHHidden then
-    zo_callLater(function () CraftyStockListHistory:SetHidden(true) end, 5000)
+    zo_callLater(function () Crafty.LootAlarmCloseHistory() end, 5000)
   end
+end
+
+function Crafty.LootAlarmCloseAlertBox(control)
+  local AlertAnim, AlertTimeline = CreateSimpleAnimation(ANIMATION_ALPHA, control)
+  AlertAnim:SetAlphaValues(1, 0)
+  AlertAnim:SetDuration(500)
+  AlertTimeline:SetPlaybackType(ANIMATION_PLAYBACK_ONE_SHOT)
+  AlertTimeline:PlayFromStart()
+  
+  zo_callLater(function () control:SetHidden(true) end, 500)
+  
+end
+
+function Crafty.LootAlarmCloseHistory()
+  local HistAnim, HistTimeline = CreateSimpleAnimation(ANIMATION_ALPHA, CraftyStockListHistory)
+    HistAnim:SetAlphaValues(1, 0)
+    HistAnim:SetDuration(500)
+    HistTimeline:SetPlaybackType(ANIMATION_PLAYBACK_ONE_SHOT)
+    HistTimeline:PlayFromStart()
+    
+    zo_callLater(function () CraftyStockListHistory:SetHidden(true) end, 500)
+    zo_callLater(function () CraftyStockListHistory:SetAlpha(1) end, 1000)
+
 end
 
 function Crafty.LogAlarmControl(control)
