@@ -34,7 +34,7 @@
 						Crafty.ToggleThresholdMode()
 					</OnClicked>
 					<OnMouseEnter>
-						ZO_Tooltips_ShowTextTooltip(self, TOP, "Toggle threshold mode")
+						Crafty.ThresholdTooltip(self)
 					</OnMouseEnter>
 					<OnMouseExit>
                 		ZO_Tooltips_HideTextTooltip()

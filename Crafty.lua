@@ -188,9 +188,23 @@ function Crafty.SetMasterHeight()
   
   local width = Crafty.masterWidth
   local height = Crafty.masterHeight
+  local myMinMode = false
   
-  CraftyWatchList:SetWidth(width)
+  if Crafty.activewatchListID == 1 then
+    if Crafty.minModeWL1 then myMinMode = true end
+  elseif Crafty.activewatchListID == 2 then
+    if Crafty.minModeWL2 then myMinMode = true end
+  elseif Crafty.activewatchListID == 3 then
+    if Crafty.minModeWL3 then myMinMode = true end
+  end
+  
+  if myMinMode then
+    CraftyWatchList:SetWidth(115)
+  else
+    CraftyWatchList:SetWidth(width)
+  end
   CraftyWatchList:SetHeight(height)
+
   CraftyStockList:SetWidth(width)
   CraftyStockList:SetHeight(height)
   --CraftyStockListType:SetWidth(width)
@@ -616,6 +630,8 @@ function Crafty.SetActiveWatchList(arg)
   Crafty.SetThresholdMode()
   Crafty.RestoreWLPosition(arg)
   Crafty.Refresh()
+  
+  Crafty.ReturnWLItemAmounts()
 end
 
 -- set the global var for material type for the typelist
@@ -2042,6 +2058,54 @@ function Crafty.UndoTooltip(control)
   if Crafty.undoRemove ~= nil then
     ZO_Tooltips_ShowTextTooltip(control, TOP, "Insert: "..Crafty.undoRemove.link)
   end
+end
+
+function Crafty.ThresholdTooltip(control)
+  Crafty.DB("Crafty: ThresholdTooltip")
+  
+  local myAmount, myLootalarm, myThreshold, myBThreshold = Crafty.ReturnWLItemAmounts()
+  ZO_Tooltips_ShowTextTooltip(control, TOP, "Threshold mode:\n"..myThreshold.." from "..myAmount.." items with threshold\n"..myBThreshold.." below threshold")
+  
+end
+
+
+-- helper function to return number of items in active watchlist
+-- return arg1 - number of items
+-- return arg2 - number of items with lootalarm
+-- return arg3 - number of items with threshold
+-- return arg4 - number of items below threshold
+function Crafty.ReturnWLItemAmounts()
+  --Crafty.DB("Crafty: ReturnWLItemAmounts")
+  local myAmount
+  local myLootalarm = 0
+  local myThreshold = 0
+  local myBThreshold = 0
+  local myWL = Crafty.activewatchList
+  
+  myAmount = table.getn(myWL)
+  
+  for i=1, myAmount do
+    local myName = myWL[i].name
+    if Crafty.ReturnAlarm(myName) then myLootalarm = myLootalarm+1 end
+  end
+  
+  for i=1, myAmount do
+    local myName = myWL[i].name
+    if Crafty.ReturnThreshold(myName) ~= nil then myThreshold = myThreshold+1 end
+  end
+  
+  for i=1, myAmount do
+    local myName = myWL[i].name
+    local myBagAmount = myWL[i].amount
+    if Crafty.ReturnThreshold(myName) ~= nil then
+      if myBagAmount < Crafty.ReturnThreshold(myName) then myBThreshold = myBThreshold+1 end
+    end
+  end
+
+  Crafty.DB("Crafty: ReturnWLItemAmounts: N-"..myAmount.." LA-"..myLootalarm.." TH-"..myThreshold .." BTH-"..myBThreshold)
+
+  return myAmount, myLootalarm, myThreshold, myBThreshold
+
 end
 
 -- helper function to check if an item is in the watchlist (the name!)
