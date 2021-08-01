@@ -649,10 +649,12 @@ function Crafty.SetTS(arg)
   CraftyStockListTypeProvisioningIcon:SetState(0,false)
   CraftyStockListTypeWoodworkingIcon:SetState(0,false)
   CraftyStockListTypeMatsIcon:SetState(0,false)
+  CraftyStockListTypeTraitIcon:SetState(0,false)
+  CraftyStockListTypeStyleIcon:SetState(0,false)
   CraftyStockListTypeAlarmIcon:SetState(0,false)
   CraftyStockListTypeThresholdIcon:SetState(0,false)
   
-  if         arg == 0 then CraftyStockListTypeMatsIcon:SetState(1,false)
+  if         arg == 40 then CraftyStockListTypeMatsIcon:SetState(1,false)
       elseif arg == 1 then CraftyStockListTypeBlacksmithingIcon:SetState(1,false)
       elseif arg == 2 then CraftyStockListTypeClothierIcon:SetState(1,false)
       elseif arg == 3 then CraftyStockListTypeEnchantingIcon:SetState(1,false)
@@ -660,6 +662,8 @@ function Crafty.SetTS(arg)
       elseif arg == 5 then CraftyStockListTypeProvisioningIcon:SetState(1,false)
       elseif arg == 6 then CraftyStockListTypeWoodworkingIcon:SetState(1,false)
       elseif arg == 7 then CraftyStockListTypeJewelryIcon:SetState(1,false)
+      elseif arg == 20 then CraftyStockListTypeTraitIcon:SetState(1,false)
+      elseif arg == 30 then CraftyStockListTypeStyleIcon:SetState(1,false)
       elseif arg == 50 then CraftyStockListTypeThresholdIcon:SetState(1,false)
       elseif arg == 100 then CraftyStockListTypeAlarmIcon:SetState(1,false)
       else
@@ -674,8 +678,59 @@ function Crafty.PopulateSL()
   local type = Crafty.filterTypeSL
   local stock = {}
   local stockcounter = 0
-
-  if type == 100 then -- All items with alarmflag
+  local itemType
+  local itemTypeSpec
+  local itemTypeSpecText
+  
+  if type == 20 then -- Traititems
+    for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
+      if data ~= nil then
+        itemType, itemTypeSpec = GetItemLinkItemType(GetItemLink(BAG_VIRTUAL,data.slotIndex))
+        itemTypeSpecText = GetString("SI_SPECIALIZEDITEMTYPE", itemTypeSpec)
+        if itemTypeSpecText == "Armor Trait" or itemTypeSpecText == "Weapon Trait" or itemTypeSpecText == "Jewelry Trait" then
+          stockcounter = stockcounter + 1
+          stock[stockcounter] = {
+            link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
+            name = GetItemName(BAG_VIRTUAL,data.slotIndex),
+            amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
+            cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
+          }
+        end
+      end
+    end
+  elseif type == 30 then -- Styleitems
+    for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
+      if data ~= nil then
+        itemType, itemTypeSpec = GetItemLinkItemType(GetItemLink(BAG_VIRTUAL,data.slotIndex))
+        itemTypeSpecText = GetString("SI_SPECIALIZEDITEMTYPE", itemTypeSpec)
+        if itemTypeSpecText == "Style Material" then
+          stockcounter = stockcounter + 1
+          stock[stockcounter] = {
+            link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
+            name = GetItemName(BAG_VIRTUAL,data.slotIndex),
+            amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
+            cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
+          }
+        end
+      end
+    end
+  elseif type == 40 then -- Other material (GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex) == 0)
+    for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
+      if data ~= nil then
+        itemType, itemTypeSpec = GetItemLinkItemType(GetItemLink(BAG_VIRTUAL,data.slotIndex))
+        itemTypeSpecText = GetString("SI_SPECIALIZEDITEMTYPE", itemTypeSpec)
+        if GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex) == 0 and itemTypeSpecText ~= "Armor Trait" and itemTypeSpecText ~= "Weapon Trait" and itemTypeSpecText ~= "Jewelry Trait" and itemTypeSpecText ~= "Style Material" then
+          stockcounter = stockcounter + 1
+          stock[stockcounter] = {
+            link = GetItemLink(BAG_VIRTUAL,data.slotIndex),
+            name = GetItemName(BAG_VIRTUAL,data.slotIndex),
+            amount = GetSlotStackSize(BAG_VIRTUAL,data.slotIndex),
+            cinfo = GetItemCraftingInfo(BAG_VIRTUAL,data.slotIndex)
+          }
+        end
+      end
+    end   
+  elseif type == 100 then -- All items with alarmflag
     for index, data in pairs(SHARED_INVENTORY.bagCache[BAG_VIRTUAL]) do
       if data ~= nil then
         if Crafty.ReturnAlarm(GetItemName(BAG_VIRTUAL,data.slotIndex)) then

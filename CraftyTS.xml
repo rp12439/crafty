@@ -2,7 +2,7 @@
     <Controls>
         <TopLevelControl name="CraftyStockListType" hidden="true" mouseEnabled="true" movable="false" clampedToScreen="true">
             <Anchor point="TOPRIGHT" relativeTo="CraftyStockList" relativePoint="TOPLEFT" offsetX="-15" offsetY="0"/>
-            <Dimensions x="50" y="395" />
+            <Dimensions x="50" y="500" />
             <Controls>
             
                 <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
@@ -75,26 +75,52 @@
 					<OnClicked>
 						Crafty.SetTS(7)
 					</OnClicked>
-				</Button>				
+				</Button>		
+				
+				<Texture name="$(parent)Divider1" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+					<Dimensions x="50" y="4"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)JewelryIcon" relativePoint="BOTTOMLEFT" offsetY="10" />
+				</Texture>
+				
+				<Button name="$(parent)TraitIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Divider1" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="5" />
+					<Textures normal="esoui/art/inventory/inventory_tabicon_craftbag_itemtrait_up.dds"
+						pressed="esoui/art/inventory/inventory_tabicon_craftbag_itemtrait_down.dds"
+						mouseOver="esoui/art/inventory/inventory_tabicon_craftbag_itemtrait_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(20)
+					</OnClicked>
+				</Button>
+				<Button name="$(parent)StyleIcon" inherits="ZO_ButtonBehaviorClickSound">
+					<Dimensions x="45" y="45" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)TraitIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Textures normal="esoui/art/inventory/inventory_tabicon_craftbag_stylematerial_up.dds"
+						pressed="esoui/art/inventory/inventory_tabicon_craftbag_stylematerial_down.dds"
+						mouseOver="esoui/art/inventory/inventory_tabicon_craftbag_stylematerial_over.dds"/>
+					<OnClicked>
+						Crafty.SetTS(30)
+					</OnClicked>
+				</Button>
 				<Button name="$(parent)MatsIcon" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="45" y="45" />
-					<Anchor point="TOPLEFT" relativeTo="$(parent)JewelryIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)StyleIcon" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10" />
 					<Textures normal="esoui\art\inventory\inventory_tabicon_crafting_up.dds"
 						pressed="esoui\art\inventory\inventory_tabicon_crafting_down.dds"
 						mouseOver="esoui\art\inventory\inventory_tabicon_crafting_over.dds"/>
 					<OnClicked>
-						Crafty.SetTS(0)
+						Crafty.SetTS(40)
 					</OnClicked>
 				</Button>
 				
-				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+				<Texture name="$(parent)Divider2" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
 					<Dimensions x="50" y="4"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)MatsIcon" relativePoint="BOTTOMLEFT" offsetY="10" />
 				</Texture>
 				
 				<Button name="$(parent)ThresholdIcon" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="40" y="40" />
-					<Anchor point="TOPLEFT" relativeTo="$(parent)Divider" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="10" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Divider2" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="10" />
 					<Textures normal="/esoui/art/treeicons/tutorial_idexicon_charprogression_up.dds"
 						pressed="/esoui/art/treeicons/tutorial_idexicon_charprogression_down.dds"
 						mouseOver="/esoui/art/treeicons/tutorial_idexicon_charprogression_over.dds"/>
