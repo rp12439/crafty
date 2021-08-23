@@ -4,7 +4,11 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
+<<<<<<< Updated upstream
 Crafty.version = "v1.9"
+=======
+Crafty.version = "v2.0"
+>>>>>>> Stashed changes
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
