@@ -4,7 +4,7 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
-Crafty.version = "v1.91"
+Crafty.version = "v2.0"
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
