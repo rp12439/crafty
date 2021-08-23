@@ -4,11 +4,7 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
-<<<<<<< Updated upstream
-Crafty.version = "v1.9"
-=======
 Crafty.version = "v2.0"
->>>>>>> Stashed changes
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
@@ -58,6 +54,7 @@ Crafty.activewatchListThresholdFilter = false
 Crafty.alarmTable = {}
 Crafty.alarmTrigger = {}
 Crafty.alarmToggle = true
+Crafty.vendorIsOpen = false
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -1107,6 +1104,8 @@ function Crafty.EventCheckVendorOpen()
     Crafty.SetActiveWatchList(Crafty.vendorwatchListID)
     CraftyStockListHistory:SetHidden(true)
   end
+  Crafty.vendorIsOpen = true
+  
 end
 
 -- close interface on vendor if set (called from eventmanager)
@@ -1130,6 +1129,8 @@ function Crafty.EventCheckVendorClose()
       CraftyStockListHistory:SetHidden(false)
     end
   end 
+  Crafty.vendorIsOpen = false
+  
 end
 
 -- Disable Setting "Close after guildvendor" if vendorOpen == false
@@ -1706,10 +1707,29 @@ end
 function Crafty.OnMouseUpWL(control, button, upInside)
   Crafty.DB("Crafty: OnMouseUpWL")
   if button == 1 then
-    Crafty.RemoveItemFromWatchList(control)
+    if Crafty.vendorIsOpen then
+      Crafty.InsertItemToVendorSearch(control)
+    else
+      Crafty.RemoveItemFromWatchList(control)
+    end
   else
     Crafty.OpenTH(control)
   end
+end
+
+-- if vendorIsOpen insert item to vendor search box
+function Crafty.InsertItemToVendorSearch(control)
+  Crafty.DB("Crafty: AddItemToVendorSearch")
+  local vendorControl = Crafty.IdentifyVendorSearch()
+  vendorControl:SetText("test")
+  Crafty.DB(vendorControl)
+end
+
+-- what control is the vendor search field
+function Crafty.IdentifyVendorSearch()
+  Crafty.DB("Crafty: identifyVendorSearch")
+  local vendorControl = WINDOW_MANAGER:GetControlByName("AwesomeGuildStoreFilterFragment5ContentInputInputBox")
+  return vendorControl
 end
 
 -- adds an item to the watchlist, only if its not there, undoitem removed, updated icons on interface
