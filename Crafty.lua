@@ -55,6 +55,8 @@ Crafty.alarmTable = {}
 Crafty.alarmTrigger = {}
 Crafty.alarmToggle = true
 Crafty.vendorIsOpen = false
+Crafty.durationAlarm = 5000
+Crafty.durationLoot = 5000
 
 ----------------------------------------------------------------------------------------
 -- Init functions
@@ -118,6 +120,8 @@ function Crafty:Initialize()
   if Crafty.savedVariables.ActivewatchListThresholdFilter ~= nil then Crafty.activewatchListThresholdFilter = Crafty.savedVariables.ActivewatchListThresholdFilter end            
   if Crafty.savedVariables.AlarmTable ~= nil then Crafty.alarmTable = Crafty.savedVariables.AlarmTable end
   if Crafty.savedVariables.AlarmToggle ~= nil then Crafty.alarmToggle = Crafty.savedVariables.AlarmToggle end
+  if Crafty.savedVariables.DurationAlarm ~= nil then Crafty.durationAlarm = Crafty.savedVariables.DurationAlarm end
+  if Crafty.savedVariables.DurationLoot ~= nil then Crafty.durationLoot = Crafty.savedVariables.DurationLoot end
    
   Crafty:RestorePosition()
   Crafty.ControlSettings()
@@ -1195,6 +1199,20 @@ function Crafty.SaveShowwatchlist()
   end
 end
 
+-- save duration for alarmwindow (from settings)
+function Crafty.SaveDurationAlarm()
+  Crafty.DB("Crafty: SaveDurationAlarm")
+  Crafty.DB(Crafty.durationAlarm)
+  Crafty.savedVariables.DurationAlarm = Crafty.durationAlarm
+end
+
+-- save duration for lootwindow (from settings)
+function Crafty.SaveDurationLoot()
+  Crafty.DB("Crafty: SaveDurationLoot")
+  Crafty.DB(Crafty.durationLoot)
+  Crafty.savedVariables.DurationLoot = Crafty.durationLoot
+end
+
 -- Sort WL Initial (set texture)
 function Crafty.SortWLTexture()
   Crafty.DB("Crafty: SortWLTexture")
@@ -1960,10 +1978,10 @@ function Crafty.ExecuteLootAlarm(itemLink, lootAmount)
   timeline:SetPlaybackType(ANIMATION_PLAYBACK_LOOP, LOOP_INDEFINITELY)
   timeline:PlayFromStart()
   
-  zo_callLater(function () timeline:Stop() end, 5500)
-  zo_callLater(function () Crafty.LootAlarmCloseAlertBox(alertBox) end, 5000)
+  zo_callLater(function () timeline:Stop() end, Crafty.durationAlarm+500)
+  zo_callLater(function () Crafty.LootAlarmCloseAlertBox(alertBox) end, Crafty.durationAlarm)
   if myLHHidden then
-    zo_callLater(function () Crafty.LootAlarmCloseHistory() end, 5000)
+    zo_callLater(function () Crafty.LootAlarmCloseHistory() end, Crafty.durationLoot)
   end
 end
 

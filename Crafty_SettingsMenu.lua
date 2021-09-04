@@ -111,6 +111,30 @@ function Crafty.ControlSettings()
         default = 180,  --(optional)
     },
     [10] = {
+        type = "slider",
+        name = "Duration alarmwindow",
+        tooltip = "Set duration for alarmwindow. How long will the alarmwindow be visible? (1000 = 1 second)",
+        min = 500,
+        max = 20000,
+        step = 500, --(optional)
+        getFunc = function() return Crafty.durationAlarm end,
+        setFunc = function(value) Crafty.durationAlarm = value Crafty.SaveDurationAlarm() end,
+        width = "full", --or "full" (optional)
+        default = 5000,  --(optional)
+    },
+    [11] = {
+        type = "slider",
+        name = "Duration lootwindow",
+        tooltip = "Set duration for lootwindow. How long will the lootwindow be visible if the lootalarm is triggered? (1000 = 1 second)",
+        min = 500,
+        max = 20000,
+        step = 500, --(optional)
+        getFunc = function() return Crafty.durationLoot end,
+        setFunc = function(value) Crafty.durationLoot = value Crafty.SaveDurationLoot() end,
+        width = "full", --or "full" (optional)
+        default = 5000,  --(optional)
+    },
+    [12] = {
         type = "checkbox",
         name = "Enable tooltips",
         tooltip = "Enable or disable tooltips",
@@ -118,7 +142,7 @@ function Crafty.ControlSettings()
         setFunc = function(value) Crafty.toolTip = value Crafty.SavetoolTip() end,
         default = true,
     },
-    [11] = {
+    [13] = {
         type = "checkbox",
         name = "Accountwide settings",
         tooltip = "Save same settings for all characters",
