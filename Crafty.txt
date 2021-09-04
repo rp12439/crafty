@@ -1,6 +1,6 @@
 ## Title: Crafty
 ## APIVersion: 101031
-## Version: 2.0
+## Version: 2.1
 ## Author: rp12439
 ## Description: CRAFTY Stocklist - The craftbag stock watchlist for your crafting profession
 ## SavedVariables: CraftySavedVariables
