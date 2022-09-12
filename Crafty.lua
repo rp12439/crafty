@@ -4,7 +4,7 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
-Crafty.version = "v2.5"
+Crafty.version = "v2.51"
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
@@ -1726,7 +1726,8 @@ function Crafty.OnMouseUpWL(control, button, upInside)
   Crafty.DB("Crafty: OnMouseUpWL")
   if button == 1 then
     if Crafty.vendorIsOpen then
-      Crafty.InsertItemToVendorSearch(control)
+      Crafty.RemoveItemFromWatchList(control)
+      --Crafty.InsertItemToVendorSearch(control)
     else
       Crafty.RemoveItemFromWatchList(control)
     end
