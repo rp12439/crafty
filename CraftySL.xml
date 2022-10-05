@@ -19,7 +19,7 @@
 						Crafty.ToggleAlarmMode()
 					</OnClicked>
 					<OnMouseEnter>
-						ZO_Tooltips_ShowTextTooltip(self, TOP, "Toggle lootalarm")
+						Crafty.ShowUIToolTip(self,TOP,"Toggle lootalarm")
 					</OnMouseEnter>
 					<OnMouseExit>
                 		ZO_Tooltips_HideTextTooltip()
@@ -38,6 +38,12 @@
 					<OnClicked>
 						Crafty.CloseSL()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Close")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				<Button name="$(parent)ButtonToggleAnkerSL" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="15" y="15" />
@@ -47,6 +53,12 @@
 					<OnClicked>
 						Crafty.ToggleAnkerSL()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Lock/Unlock")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
                 	
 				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
@@ -62,6 +74,12 @@
 					<OnClicked>
 						Crafty.SortSLName()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Sort name")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				<Button name="$(parent)SortAmount" inherits="ZO_ButtonBehaviorClickSound" hidden="false">
 					<Dimensions x="15" y="25" />
@@ -71,6 +89,12 @@
 					<OnClicked>
 						Crafty.SortSLAmount()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Sort amount")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 
                 <Control name="$(parent)List" inherits="ZO_ScrollList">

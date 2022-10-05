@@ -42,6 +42,7 @@ Crafty.minModeWL1 = false
 Crafty.minModeWL2 = false
 Crafty.minModeWL3 = false
 Crafty.toolTip = true
+Crafty.showUIToolTip = true
 Crafty.myStyles = {}
 Crafty.lootHistory = {}
 Crafty.historyAmount = 0
@@ -115,13 +116,14 @@ function Crafty:Initialize()
   if Crafty.savedVariables.HistoryAmount ~= nil then Crafty.historyAmount = Crafty.savedVariables.HistoryAmount end
   if Crafty.savedVariables.ThresholdTable ~= nil then Crafty.thresholdTable = Crafty.savedVariables.ThresholdTable end
   if Crafty.savedVariables.ThresholdFilter1 ~= nil then Crafty.thresholdFilter1 = Crafty.savedVariables.ThresholdFilter1 end
-  if Crafty.savedVariables.ThresholdFilter2 ~= nil then Crafty.thresholdFilter2 = Crafty.savedVariables.ThresholdFilter2 end  
+  if Crafty.savedVariables.ThresholdFilter2 ~= nil then Crafty.thresholdFilter2 = Crafty.savedVariables.ThresholdFilter2 end
   if Crafty.savedVariables.ThresholdFilter3 ~= nil then Crafty.thresholdFilter3 = Crafty.savedVariables.ThresholdFilter3 end
-  if Crafty.savedVariables.ActivewatchListThresholdFilter ~= nil then Crafty.activewatchListThresholdFilter = Crafty.savedVariables.ActivewatchListThresholdFilter end            
+  if Crafty.savedVariables.ActivewatchListThresholdFilter ~= nil then Crafty.activewatchListThresholdFilter = Crafty.savedVariables.ActivewatchListThresholdFilter end
   if Crafty.savedVariables.AlarmTable ~= nil then Crafty.alarmTable = Crafty.savedVariables.AlarmTable end
   if Crafty.savedVariables.AlarmToggle ~= nil then Crafty.alarmToggle = Crafty.savedVariables.AlarmToggle end
   if Crafty.savedVariables.DurationAlarm ~= nil then Crafty.durationAlarm = Crafty.savedVariables.DurationAlarm end
   if Crafty.savedVariables.DurationLoot ~= nil then Crafty.durationLoot = Crafty.savedVariables.DurationLoot end
+  if Crafty.savedVariables.ShowUIToolTip ~= nil then Crafty.showUITooltip = Crafty.savedVariables.ShowUIToolTip end
    
   Crafty:RestorePosition()
   Crafty.ControlSettings()
@@ -1191,7 +1193,14 @@ function Crafty.SavetoolTip()
   --ReloadUI("ingame")
 end
 
--- Save setting "Enable tooltip"
+-- Save setting "Enable ui tooltip"
+function Crafty.SaveUIToolTip()
+  Crafty.DB("Crafty: SaveUIToolTip")
+  Crafty.savedVariables.ShowUIToolTip = Crafty.showUIToolTip
+  --ReloadUI("ingame")
+end
+
+-- Save setting "Show Watchlist"
 function Crafty.SaveShowwatchlist()
   Crafty.DB("Crafty: SaveShowwatchlist")
   Crafty.savedVariables.ShowWL = Crafty.showWL
@@ -1708,7 +1717,6 @@ function Crafty.HideTooltip(control)
   --Crafty.DB("Crafty: OnMouseExitWL")
   CraftyStockListTooltip:SetHidden(true)
 end
-
 
 ----------------------------------------------------------------------------------------
 -- Functions for modifying the listdata (add items, remove, undo)
@@ -2258,6 +2266,13 @@ function Crafty.PopulateCompleteStock()
     end
   end
   return cstock
+end
+
+function Crafty.ShowUIToolTip(control,pos,text)
+  Crafty.DB("Crafty: ShowUIToolTip")
+  if Crafty.showUIToolTip then
+    ZO_Tooltips_ShowTextTooltip(control, pos, text)
+  end
 end
 
 ----------------------------------------------------------------------------------------

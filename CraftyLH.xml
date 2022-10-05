@@ -27,6 +27,12 @@
 					<OnClicked>
 						Crafty.CloseLH()
 					</OnClicked>
+                    <OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Close")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				<Button name="$(parent)ButtonReset" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="30" y="30" />
@@ -38,6 +44,12 @@
 					<OnClicked>
 						Crafty.ResetHistory()
 					</OnClicked>
+                    <OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Reset")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				
 				<Texture name="$(parent)EmptyLogo" hidden="true" textureFile="esoui\art\inventory\inventory_tabicon_crafting_up.dds" tier="HIGH">

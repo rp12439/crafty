@@ -136,13 +136,21 @@ function Crafty.ControlSettings()
     },
     [12] = {
         type = "checkbox",
-        name = "Enable tooltips",
-        tooltip = "Enable or disable tooltips",
+        name = "Enable item tooltips",
+        tooltip = "Enable or disable item tooltips",
         getFunc = function() return Crafty.toolTip end,
         setFunc = function(value) Crafty.toolTip = value Crafty.SavetoolTip() end,
         default = true,
     },
     [13] = {
+        type = "checkbox",
+        name = "Enable UI tooltips",
+        tooltip = "Enable or disable UI tooltips",
+        getFunc = function() return Crafty.showUIToolTip end,
+        setFunc = function(value) Crafty.showUIToolTip = value Crafty.SaveUIToolTip() end,
+        default = true,
+    },
+    [14] = {
         type = "checkbox",
         name = "Accountwide settings",
         tooltip = "Save same settings for all characters",

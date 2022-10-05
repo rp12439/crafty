@@ -14,6 +14,12 @@
 					<OnClicked>
 						Crafty.CloseTH()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Close")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				
 				<Label name="$(parent)ItemLink" font="ZoFontGameLargeBold" color="CFDCBD" wrapMode="ELLIPSIS" verticalAlignment="LEFT" text="">
@@ -42,6 +48,12 @@
 					<OnClicked>
 						Crafty.SetThreshold()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Save")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				<Button name="$(parent)ButtonDelete" inherits="ZO_ButtonBehaviorClickSound">
 					<Dimensions x="35" y="35" />
@@ -51,6 +63,12 @@
 					<OnClicked>
 						Crafty.DeleteThreshold()
 					</OnClicked>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Delete")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
 				</Button>
 				
 				<Texture name="$(parent)Divider" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
@@ -67,6 +85,12 @@
                 	<OnMouseUp>
 						Crafty.SetAlarm()
 					</OnMouseUp>
+					<OnMouseEnter>
+						Crafty.ShowUIToolTip(self,TOP,"Toggle lootalarm")
+					</OnMouseEnter>
+					<OnMouseExit>
+                		ZO_Tooltips_HideTextTooltip()
+            		</OnMouseExit>
                 </Label>
 
             </Controls>
