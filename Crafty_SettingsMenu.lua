@@ -17,7 +17,7 @@ function Crafty.ControlSettings()
     registerForRefresh = true,  --boolean (optional) (will refresh all options controls when a setting is changed and when the panel is shown)
     registerForDefaults = true, --boolean (optional) (will set all options controls back to default values)
   }
-    
+
   local optionsTable = {
 
     [1] = {
@@ -27,7 +27,7 @@ function Crafty.ControlSettings()
           getFunc = function() return Crafty.showWL end,
           setFunc = function(value) Crafty.showWL = value Crafty.SaveShowwatchlist() end,
           default = true
-    }, 
+    },
     [2] = {
           type = "checkbox",
           name = "Open on guildvendor",
@@ -36,7 +36,7 @@ function Crafty.ControlSettings()
           setFunc = function(value) Crafty.vendorOpen = value Crafty.SavevendorOpen() end,
           width = "full",
           default = false
-    }, 
+    },
     [3] = {
         type = "dropdown",
         name = "Guildvendor watchlist",
@@ -57,7 +57,7 @@ function Crafty.ControlSettings()
           width = "full",
           default = false,
           disabled = function() return not Crafty.vendorOpen end
-    }, 
+    },
     [5] = {
           type = "checkbox",
           name = "Autoheight watchlist",
@@ -65,7 +65,7 @@ function Crafty.ControlSettings()
           getFunc = function() return Crafty.autoHeightWLOpt end,
           setFunc = function(value) Crafty.autoHeightWLOpt = value Crafty.CheckAutoHeightWLOpt() end,
           default = true
-    }, 
+    },
     [6] = {
           type = "checkbox",
           name = "Different watchlist positions",
@@ -73,7 +73,7 @@ function Crafty.ControlSettings()
           getFunc = function() return Crafty.differentWLPositions end,
           setFunc = function(value) Crafty.differentWLPositions = value Crafty.SavedifferentWLPositions() end,
           default = false
-    }, 
+    },
     [7] = {
         type = "slider",
         name = "Background opacity",
@@ -159,9 +159,9 @@ function Crafty.ControlSettings()
         default = false,
         requiresReload = true
     },
-    
+
   }
-  
+
     -- Create Keybindings 
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST", "Show/Hide Watchlist")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST2", "Show Watchlist 1")
@@ -169,10 +169,10 @@ function Crafty.ControlSettings()
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST4", "Show Watchlist 3")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST5", "Show/Hide Loothistory")
     ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST6", "Reload Stockamounts")
-    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST7", "Debugmode on/off")     
-    
+    ZO_CreateStringId("SI_BINDING_NAME_CRAFTY_STOCKLIST7", "Debugmode on/off")
+
     -- Register the settingmenu
-    LibAddonMenu2:RegisterAddonPanel("CraftySettings", panelData) 
+    LibAddonMenu2:RegisterAddonPanel("CraftySettings", panelData)
     LibAddonMenu2:RegisterOptionControls("CraftySettings", optionsTable)
-    
+
 end
