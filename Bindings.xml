@@ -17,9 +17,12 @@
 				<Down>Crafty.ToggleLH()</Down>
 			</Action>
 			<Action name="CRAFTY_STOCKLIST6">
-				<Down>Crafty.FullRefresh()</Down>
+				<Down>Crafty.ToggleSL()</Down>
 			</Action>
 			<Action name="CRAFTY_STOCKLIST7">
+				<Down>Crafty.FullRefresh()</Down>
+			</Action>
+			<Action name="CRAFTY_STOCKLIST8">
 				<Down>Crafty.ToggleDB()</Down>
 			</Action>
 		</Category>

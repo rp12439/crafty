@@ -1365,11 +1365,26 @@ function Crafty.ToggleLH()
   end
 end
 
+-- show or hide stocklist (from keybinding)
+function Crafty.ToggleSL()
+  Crafty.DB("Crafty: ToggleSL")
+  if Crafty.showSL then
+    Crafty.CloseSL()
+  else
+    Crafty.OpenSL()
+  end
+end
+
 -- anker the stocklist to watchlist
 function Crafty.AnkerSL()
   Crafty.DB("Crafty: AnkerSL")
   CraftyStockList:ClearAnchors()
   CraftyStockList:SetAnchor(TOPRIGHT, CraftyWatchList, TOPLEFT, -15 ,0)
+
+  -- Close Stocklist if there is no watchlist open
+  if Crafty.showWL == false then
+    Crafty.CloseSL()
+  end
 end
 
 -- set anker on or off, also sets the texture
@@ -1442,11 +1457,16 @@ function Crafty.CloseWL()
   CraftyWatchList:SetHidden(true)
   Crafty.showWL = false
   Crafty.savedVariables.ShowWL = false
-  CraftyStockList:SetHidden(true)
-  Crafty.showSL = false
-  Crafty.savedVariables.ShowSL = false
-  Crafty.CloseSL()
-  Crafty.CloseTS()
+
+  -- Only close Stocklist if its locked to watchlist
+  if Crafty.ankerSL then
+    CraftyStockList:SetHidden(true)
+    Crafty.showSL = false
+    Crafty.savedVariables.ShowSL = false
+    Crafty.CloseSL()
+    Crafty.CloseTS()
+  end
+
   Crafty.undoRemove = nil
   Crafty.CheckUndo()
   Crafty.CloseTH()
