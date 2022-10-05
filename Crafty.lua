@@ -377,7 +377,7 @@ function Crafty.EndMinMode()
 end
 
 function Crafty.ToggleThresholdMode()
-  Crafty.DB("Crafty: ToggleThresholdMode - WL:"..Crafty.activewatchListID)
+  Crafty.DB("Crafty: ToggleThresholdMode - WL: "..Crafty.activewatchListID)
   local wl = Crafty.activewatchListID
 
   if wl == 1 then
@@ -414,13 +414,14 @@ function Crafty.ToggleThresholdMode()
 end
 
 function Crafty.SetThresholdMode()
-  Crafty.DB("Crafty: SetThresholdMode - WL:"..Crafty.activewatchListID)
-  
+
   local wl = Crafty.activewatchListID
   if wl == 1 then Crafty.activewatchListThresholdFilter = Crafty.thresholdFilter1 end
   if wl == 2 then Crafty.activewatchListThresholdFilter = Crafty.thresholdFilter2 end
   if wl == 3 then Crafty.activewatchListThresholdFilter = Crafty.thresholdFilter3 end
-  
+
+  Crafty.DB("Crafty: SetThresholdMode - WL: "..wl)
+
   Crafty.savedVariables.ActivewatchListThresholdFilter = Crafty.activewatchListThresholdFilter
 
   if Crafty.activewatchListThresholdFilter then
@@ -788,28 +789,29 @@ function Crafty.PopulateWL()
   local watchList = Crafty.activewatchList
   local thresholdfilter = Crafty.activewatchListThresholdFilter
   
-  Crafty.DB("Crafty: PopulateWL Items:"..table.getn(watchList))
+  Crafty.DB("Crafty: PopulateWL -"..Crafty.activewatchListID.."- Items: "..table.getn(watchList))
   Crafty.RefreshWLAmounts()
   local stock = {}
   local mj = 1
   
-  if thresholdfilter then 
+  if thresholdfilter then
+    Crafty.DB("Crafty: Thresholdfilter is ON for WL -"..Crafty.activewatchListID.."-")
     for i=1, table.getn(watchList) do
-      --Crafty.DB(watchList[i].amount.." < "..Crafty.ReturnThreshold(watchList[i].name))
-      
-      if Crafty.ReturnThreshold(watchList[i].name) == nil or watchList[i].amount < Crafty.ReturnThreshold(watchList[i].name) then
+     if Crafty.ReturnThreshold(watchList[i].name) ~= nil and watchList[i].amount < Crafty.ReturnThreshold(watchList[i].name) then
+        Crafty.DB("Crafty: Threshold for item "..watchList[i].name.." is "..Crafty.ReturnThreshold(watchList[i].name))
         stock[mj] = {
           link = watchList[i].link,
           name = watchList[i].name,
           amount = watchList[i].amount,
           cinfo = watchList[i].cinfo
         }
-        --Crafty.DB(mj.."-"..stock[mj].name)
+        Crafty.DB(mj.."-"..stock[mj].name)
         mj = mj+1
       end
     end
 
   else
+    Crafty.DB("Crafty: Thresholdfilter is OFF for WL -"..Crafty.activewatchListID.."-")
     for i=1,table.getn(watchList) do
         stock[i] = {
           link = watchList[i].link,
@@ -966,6 +968,7 @@ function Crafty.LayoutRow(rowControl, data, scrollList)
 
   local myThreshold = Crafty.ReturnThreshold(data.name)
   if myThreshold ~= nil then
+    --Crafty.DB("Crafty: myThreshold="..data.name.." is "..myThreshold.."")
     if data.amount < myThreshold then 
       rowControl.amount:SetText(string.format("|cff4040%s|r", data.amount))
     else
