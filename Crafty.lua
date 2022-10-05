@@ -1540,7 +1540,7 @@ end
 function Crafty.ShowTooltip(control)
   Crafty.DB("Crafty: ShowTooltip")
   
-  CraftyStockListTooltip:SetHidden(false)
+  CraftyStockListTooltip:SetHidden(false) -- position at end of function?
   CraftyStockListTooltip:ClearAnchors()
   CraftyStockListTooltipThresholdIcon:SetHidden(false)
   local controlTopLevel = control:GetParent():GetParent():GetParent()
