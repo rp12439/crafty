@@ -1,6 +1,6 @@
 <GuiXml>
     <Controls>
-        <TopLevelControl name="CraftyStockListTooltip" hidden="true" mouseEnabled="true" movable="false" clampedToScreen="true">
+        <TopLevelControl name="CraftyStockListTooltip" hidden="true" mouseEnabled="true" movable="false" clampedToScreen="true" layer="CONTROLS" tier="HIGH">
             <DimensionConstraints minX="300" minY="0" maxX="300" maxY="500" />
             <Controls>
                 <Backdrop name="$(parent)BG" inherits="ZO_DefaultBackdrop" />
