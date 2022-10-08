@@ -4,7 +4,7 @@
 
 Crafty = {}
 Crafty.name = "Crafty"
-Crafty.version = "v2.52"
+Crafty.version = "v2.6"
 Crafty.showSL = false
 Crafty.showWL = true
 Crafty.ankerSL = true
@@ -1752,9 +1752,10 @@ end
 function Crafty.OnMouseUpWL(control, button, upInside)
   Crafty.DB("Crafty: OnMouseUpWL")
   if button == 1 then
-    if Crafty.vendorIsOpen then
+    -- if vendorIsOpen insert item to vendor search box
+    if Crafty.vendorIsOpen then --------------------------------------------------------- Change here if you dont want the vendor text set
       Crafty.RemoveItemFromWatchList(control)
-      --Crafty.InsertItemToVendorSearch(control)
+      --Crafty.InsertItemToVendorSearch(control.data.link)
     else
       Crafty.RemoveItemFromWatchList(control)
     end
@@ -1763,12 +1764,13 @@ function Crafty.OnMouseUpWL(control, button, upInside)
   end
 end
 
--- if vendorIsOpen insert item to vendor search box
 function Crafty.InsertItemToVendorSearch(control)
   Crafty.DB("Crafty: AddItemToVendorSearch")
+  local MakeExactSearchText = ZO_TradingHouseNameSearchFeature_Shared.MakeExactSearchText
   local vendorControl = Crafty.IdentifyVendorSearch()
-  vendorControl:SetText("test")
-  Crafty.DB(vendorControl)
+  local text = MakeExactSearchText(zo_strformat(SI_TOOLTIP_ITEM_NAME, GetItemLinkName(control)))
+  vendorControl:SetText(text)
+  --Crafty.DB(vendorControl)
 end
 
 -- what control is the vendor search field
@@ -1786,7 +1788,7 @@ function Crafty.AddItemToWatchList(control)
   local size = table.getn(watchList)
 
   local found = Crafty.CheckItemInWatchList(control.data.name)
-  
+
   if not found then
     watchList[size+1] = {
         link = control.data.link,
@@ -1800,7 +1802,7 @@ function Crafty.AddItemToWatchList(control)
     
   Crafty.DB("Crafty: Added "..name.." at #"..table.getn(watchList))
   --Crafty.DBPrintWatchList()
-  Crafty.Refresh()  
+  Crafty.Refresh()
 end
 
 -- removes an item from the watchlist
