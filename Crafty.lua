@@ -1434,12 +1434,14 @@ end
 
 -- close the stocklist and typewindow
 function Crafty.CloseSL()
-  Crafty.DB("Crafty: CloseSL")
-  CraftyStockList:SetHidden(true)
-  Crafty.showSL = false
-  Crafty.savedVariables.ShowSL = false
-  Crafty.CloseTS()
-  Crafty.CloseTH()
+  if Crafty.ankerSL then -- close SL only if its anchored
+    Crafty.DB("Crafty: CloseSL")
+    CraftyStockList:SetHidden(true)
+    Crafty.showSL = false
+    Crafty.savedVariables.ShowSL = false
+    Crafty.CloseTS()
+    Crafty.CloseTH()
+  end
 end
 
 -- show the stocklist and typewindow
@@ -1742,23 +1744,24 @@ end
 function Crafty.OnMouseUpSL(control, button, upInside)
   Crafty.DB("Crafty: OnMouseUpSL")
   if button == 1 then
-    Crafty.AddItemToWatchList(control)
+    if Crafty.vendorIsOpen then
+      Crafty.DB("Crafty: SearchForItemLink in Vendor")
+      TRADING_HOUSE:SearchForItemLink(control.data.link)
+    else
+      Crafty.AddItemToWatchList(control)
+    end
   else
     Crafty.OpenTH(control)
   end
 end
 
--- removes an item from the watchlist, function for calling from xml (watchlist)
+-- removes an item from the watchlist, function for calling from xml (watchlist) / or insert item into guildvendorsearch if vendor is open
 function Crafty.OnMouseUpWL(control, button, upInside)
   Crafty.DB("Crafty: OnMouseUpWL")
   if button == 1 then
-    -- if vendorIsOpen insert item to vendor search box (only for vanilla vendor)
     if Crafty.vendorIsOpen then
-      if Crafty.IdentifyVendorSearch() ~= nil then -- the vanilla vendor is used
-        Crafty.InsertItemToVendorSearch(control.data.link)
-      else
-        Crafty.RemoveItemFromWatchList(control)
-      end
+      Crafty.DB("Crafty: SearchForItemLink in Vendor")
+      TRADING_HOUSE:SearchForItemLink(control.data.link)
     else
       Crafty.RemoveItemFromWatchList(control)
     end
@@ -1767,6 +1770,7 @@ function Crafty.OnMouseUpWL(control, button, upInside)
   end
 end
 
+-- depricated
 function Crafty.InsertItemToVendorSearch(control)
   Crafty.DB("Crafty: AddItemToVendorSearch")
   local MakeExactSearchText = ZO_TradingHouseNameSearchFeature_Shared.MakeExactSearchText
@@ -1777,6 +1781,7 @@ function Crafty.InsertItemToVendorSearch(control)
   --Crafty.DB(vendorControl)
 end
 
+-- depricated
 -- what control is the vendor search field
 function Crafty.IdentifyVendorSearch()
   Crafty.DB("Crafty: identifyVendorSearch")
