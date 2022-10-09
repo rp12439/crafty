@@ -1754,8 +1754,8 @@ function Crafty.OnMouseUpWL(control, button, upInside)
   if button == 1 then
     -- if vendorIsOpen insert item to vendor search box
     if Crafty.vendorIsOpen then --------------------------------------------------------- Change here if you dont want the vendor text set
-      Crafty.RemoveItemFromWatchList(control)
-      --Crafty.InsertItemToVendorSearch(control.data.link)
+      --Crafty.RemoveItemFromWatchList(control)
+      Crafty.InsertItemToVendorSearch(control.data.link)
     else
       Crafty.RemoveItemFromWatchList(control)
     end
@@ -1770,13 +1770,15 @@ function Crafty.InsertItemToVendorSearch(control)
   local vendorControl = Crafty.IdentifyVendorSearch()
   local text = MakeExactSearchText(zo_strformat(SI_TOOLTIP_ITEM_NAME, GetItemLinkName(control)))
   vendorControl:SetText(text)
+  --ZO_TradingHouseSearch:DoSearchWhenReady()
   --Crafty.DB(vendorControl)
 end
 
 -- what control is the vendor search field
 function Crafty.IdentifyVendorSearch()
   Crafty.DB("Crafty: identifyVendorSearch")
-  local vendorControl = WINDOW_MANAGER:GetControlByName("AwesomeGuildStoreFilterFragment5ContentInputInputBox")
+  --local vendorControl = WINDOW_MANAGER:GetControlByName("AwesomeGuildStoreFilterFragment5ContentInputInputBox")
+  local vendorControl = WINDOW_MANAGER:GetControlByName("ZO_TradingHouseItemNameSearchBox")
   return vendorControl
 end
 
