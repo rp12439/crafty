@@ -152,6 +152,14 @@ function Crafty.ControlSettings()
     },
     [14] = {
         type = "checkbox",
+        name = "Disable vendor itemsearch",
+        tooltip = "Disables the itemsearch for the vendorscreen on leftclick",
+        getFunc = function() return Crafty.disableVendorItemsearch end,
+        setFunc = function(value) Crafty.disableVendorItemsearch = value Crafty.SaveDisableVendorItemsearch() end,
+        default = false,
+    },
+    [15] = {
+        type = "checkbox",
         name = "Accountwide settings",
         tooltip = "Save same settings for all characters",
         getFunc = function() return Crafty.accountWide end,

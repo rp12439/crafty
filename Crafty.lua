@@ -43,6 +43,7 @@ Crafty.minModeWL2 = false
 Crafty.minModeWL3 = false
 Crafty.toolTip = true
 Crafty.showUIToolTip = true
+Crafty.disableVendorItemsearch = false
 Crafty.myStyles = {}
 Crafty.lootHistory = {}
 Crafty.historyAmount = 0
@@ -124,6 +125,7 @@ function Crafty:Initialize()
   if Crafty.savedVariables.DurationAlarm ~= nil then Crafty.durationAlarm = Crafty.savedVariables.DurationAlarm end
   if Crafty.savedVariables.DurationLoot ~= nil then Crafty.durationLoot = Crafty.savedVariables.DurationLoot end
   if Crafty.savedVariables.ShowUIToolTip ~= nil then Crafty.showUITooltip = Crafty.savedVariables.ShowUIToolTip end
+  if Crafty.savedVariables.DisableVendorItemsearch ~= nil then Crafty.disableVendorItemsearch = Crafty.savedVariables.DisableVendorItemsearch end
  
   Crafty:RestorePosition()
   Crafty.ControlSettings()
@@ -1198,6 +1200,13 @@ function Crafty.SaveUIToolTip()
   --ReloadUI("ingame")
 end
 
+-- Save setting "Disable vendor itemsearch"
+function Crafty.SaveDisableVendorItemsearch()
+  Crafty.DB("Crafty: SaveDisableVendorItemsearch")
+  Crafty.savedVariables.DisableVendorItemsearch = Crafty.disableVendorItemsearch
+  --ReloadUI("ingame")
+end
+
 -- Save setting "Show Watchlist"
 function Crafty.SaveShowwatchlist()
   Crafty.DB("Crafty: SaveShowwatchlist")
@@ -1760,8 +1769,12 @@ function Crafty.OnMouseUpWL(control, button, upInside)
   Crafty.DB("Crafty: OnMouseUpWL")
   if button == 1 then
     if Crafty.vendorIsOpen then
-      Crafty.DB("Crafty: SearchForItemLink in Vendor")
-      TRADING_HOUSE:SearchForItemLink(control.data.link)
+      if Crafty.disableVendorItemsearch then
+        Crafty.RemoveItemFromWatchList(control)
+      else
+        Crafty.DB("Crafty: SearchForItemLink in Vendor")
+        TRADING_HOUSE:SearchForItemLink(control.data.link)
+      end
     else
       Crafty.RemoveItemFromWatchList(control)
     end
