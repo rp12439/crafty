@@ -1,12 +1,12 @@
 ## Title: Crafty
-## APIVersion: 101039
-## Version: 2.63
+## APIVersion: 101042
+## Version: 2.64
 ## Author: rp12439
 ## Description: CRAFTY Stocklist - The craftbag stock watchlist for your crafting profession
 ## SavedVariables: CraftySavedVariables
 ## SavedVariables: CraftySavedVariablesACC
 ## Check LibAddon Version!!
-## DependsOn: LibAddonMenu-2.0>=34
+## DependsOn: LibAddonMenu-2.0>=37
 
 Crafty.lua
 Crafty_SettingsMenu.lua
