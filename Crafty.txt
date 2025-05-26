@@ -6,7 +6,7 @@
 ## SavedVariables: CraftySavedVariables
 ## SavedVariables: CraftySavedVariablesACC
 ## Check LibAddon Version!!
-## DependsOn: LibAddonMenu-2.0>=39
+## DependsOn: LibAddonMenu-2.0>=38
 
 Crafty.lua
 Crafty_SettingsMenu.lua
